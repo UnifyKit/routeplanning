@@ -75,7 +75,6 @@ public class RoadNetwork {
 			//Getting the type of road
 			List roads = document.selectNodes("//way[@id='"+wayId+"']/tag[@k='highway']");
 			String roadType = ((Element)roads.get(0)).attribute("v").getValue();
-			
 							
 			List nodesInWay = document.selectNodes("//way[@id='"+wayId+"']/nd");
 			for (int j=0; j<nodesInWay.size(); j++){
@@ -105,7 +104,7 @@ public class RoadNetwork {
 					if(node!=null && adjNode!=null){
 						double distance = getDistance(node, adjNode);
 						double cost = computeCost(roadType, distance);
-						Arc newArc = new Arc(adjNode, 1);
+						Arc newArc = new Arc(adjNode, cost);
 						addAdjacentArc(node, newArc);
 					}
 				}
@@ -121,13 +120,13 @@ public class RoadNetwork {
 					if(node!=null && nextAdjNode!=null){
 						double distance = getDistance(node, nextAdjNode);
 						double cost = computeCost(roadType, distance);
-						Arc newArc = new Arc(nextAdjNode, 1);
+						Arc newArc = new Arc(nextAdjNode, cost);
 						addAdjacentArc(node, newArc);
 					}
 					if(node!=null && prevAdjNode!=null){
 						double distance = getDistance(node, prevAdjNode);
 						double cost = computeCost(roadType, distance);
-						Arc newArc = new Arc(prevAdjNode, 1);
+						Arc newArc = new Arc(prevAdjNode, cost);
 						addAdjacentArc(node, newArc);
 					}	
 				}
@@ -227,10 +226,62 @@ public class RoadNetwork {
    * @param node2
    * @return distance
    */
-  public double getDistance(Node node1, Node node2) {
+/*  public double getDistance2(Node node1, Node node2) {
     double distance;
     distance = Math.sqrt(Math.pow(node1.latitude - node2.latitude, 2) + Math.pow(node1.longitude - node2.longitude, 2));
     return distance;
+  }*/
+  
+  /**  
+  * Compute and return distance from node1 to node2.
+  * @param node1
+  * @param node2
+  * @return distance
+  */
+/*  public double getDistance(Node node1, Node node2) {
+	  double lat1 = node1.getLatitude();
+	  double lat2 = node2.getLatitude();
+	  double lon1 = node1.getLongitude();
+	  double lon2 = node1.getLongitude();
+      double theta = lon1 - lon2;
+      double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+      dist = Math.acos(dist);
+      dist = rad2deg(dist);
+      dist = dist * 60 * 1.1515;
+       return (dist);
+    }
+    
+    private double deg2rad(double deg) {
+      return (deg * Math.PI / 180.0);
+    }
+   private double rad2deg(double rad) {
+      return (rad * 180.0 / Math.PI);
+    }
+    */
+  
+  /**  
+  * Compute and return distance in mts from node1 to node2.
+  * @param node1
+  * @param node2
+  * @return distance
+  */
+  public double getDistance(Node node1, Node node2) {
+	  double lat1 = node1.getLatitude();
+	  double lat2 = node2.getLatitude();
+	  double lon1 = node1.getLongitude();
+	  double lon2 = node1.getLongitude();
+	  double earthRadius = 3958.75;
+	  double dLat = Math.toRadians(lat2-lat1);
+	  double dLng = Math.toRadians(lon2-lon1);
+	  double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+			  Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+	          Math.sin(dLng/2) * Math.sin(dLng/2);
+	  double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+	  double dist = earthRadius * c;
+
+	  int meterConversion = 1609;
+
+	  return new Float(dist * meterConversion).floatValue();
   }
   
   private Node findNodebyId(int id){
