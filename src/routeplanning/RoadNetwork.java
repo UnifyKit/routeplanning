@@ -63,4 +63,39 @@ public class RoadNetwork {
     }
     return res;
   }
+  /**
+   * Compute cost (travel time).
+   * If roadType is not valid, method return -1 to indicate that we should
+   * ignore this road.
+   * @param roadType
+   * @param distance in km
+   * @return
+   */
+  public double computeCost (String roadType, double distance){
+	//speed in km/h  
+	double speed=1;
+	double cost;
+	if (roadType.equals("motorway") || roadType.equals("trunk")) {
+		speed = 110;
+	} else if (roadType.equals("primary")) {
+		speed = 70;
+	} else if (roadType.equals("secondary")) {
+		speed = 60;
+	} else if (roadType.equals("tertiary") || roadType.equals("motorway_link") || roadType.equals("trunk_link") || roadType.equals("primary_link") || roadType.equals("secondary_link")) {
+		speed = 50;
+	} else if(roadType.equals("road") || roadType.equals("unclassified")) {
+		speed = 40;
+	} else if (roadType.equals("residential") || roadType.equals("unsurfaced")) {
+		speed = 30;
+	} else if (roadType.equals("living_street")) {
+		speed = 10;
+	} else if (roadType.equals("service")) {
+		speed = 5;	
+	} else {
+		return -1;
+	}
+	  
+	cost = distance / speed;  
+    return cost; 
+  }
 }
