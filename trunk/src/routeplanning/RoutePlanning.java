@@ -10,8 +10,8 @@ public class RoutePlanning {
    */
   public static void main(String[] args) {
     RoadNetwork rn = new RoadNetwork();
-    Node n1 = new Node(1, 49.3432663, 7.3032654);
-    Node n2 = new Node(2, 49.3432663, 7.3032654);
+    Node n1 = new Node(1, 1.0, 4.0);
+    Node n2 = new Node(2, 3.0, 2.0);
     Node n3 = new Node(3, 49.3432663, 7.3032654);
     Node n4 = new Node(4, 49.3432663, 7.3032654);
     Node n5 = new Node(5, 49.3432663, 7.3032654);
@@ -20,7 +20,6 @@ public class RoutePlanning {
     rn.addNodeToGraph(n3);
     rn.addNodeToGraph(n4);
     rn.addNodeToGraph(n5);
-    
     Arc arc1_2 = new Arc(n2, 3);
     rn.addAdjacentArc(n1, arc1_2);
     
