@@ -4,8 +4,6 @@ package routeplanning;
  * 
  */
 public class RoutePlanning {
-<<<<<<< .mine
-
     /**
      * @param args the command line arguments
      */
