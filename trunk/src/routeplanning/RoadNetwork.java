@@ -89,7 +89,7 @@ public class RoadNetwork {
       speed = 60;
     } else if (roadType.equals("tertiary") || roadType.equals("motorway_link")
             || roadType.equals("trunk_link") || roadType.equals("primary_link")
-    		|| roadType.equals("secondary_link")) {
+            || roadType.equals("secondary_link")) {
       speed = 50;
     } else if (roadType.equals("road") || roadType.equals("unclassified")) {
       speed = 40;
@@ -98,17 +98,22 @@ public class RoadNetwork {
     } else if (roadType.equals("living_street")) {
       speed = 10;
     } else if (roadType.equals("service")) {
-      speed = 5;	
+      speed = 5;
     } else {
-	  return -1;
+      return -1;
     }
     cost = distance / speed;
     return cost;
-	}
-  
+  }
+  /**
+   * Compute and return distance from node1 to node2.
+   * @param node1
+   * @param node2
+   * @return distance
+   */
   public double getDistance(Node node1, Node node2) {
     double distance;
     distance = Math.sqrt(Math.pow(node1.latitude - node2.latitude, 2) + Math.pow(node1.longitude - node2.longitude, 2));
-	return distance;  
+    return distance;
   }
 }
