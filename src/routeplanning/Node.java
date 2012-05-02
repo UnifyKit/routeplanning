@@ -29,6 +29,13 @@ public class Node {
     this.longitude = longitude;
   }
   /**
+   * Get the ID of the node.
+   * @return
+   */
+    public Integer getId(){
+        return id;
+    }
+  /**
    * Get longitude of the node.
    * @return
    */
