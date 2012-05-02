@@ -35,7 +35,7 @@ public class RoadNetwork {
    * Read OSM file (in XML format) and construct the corresponding road network.
    */
   public void readFromOsmFile(){
-	URL osmUrl = this.getClass().getClassLoader().getResource("routeplanning/resources/saarland.osm");
+	URL osmUrl = this.getClass().getClassLoader().getResource("routeplanning/resources/osm-sample.osm");
     SAXReader  reader = new SAXReader ();
     try {
     	Document document = reader.read(osmUrl);
@@ -66,11 +66,16 @@ public class RoadNetwork {
 			createdNodes.add(newNode);
 		}
 			
-		//CREATION OF ARCS IN WAYS (FOR EARCH NODE)			
+		//CREATION OF ARCS IN WAYS	
 		List ways = document.selectNodes("//way[tag/@k='highway']");
 		for (int k= 0; k<ways.size(); k++){
 			Element way  = (Element) ways.get(k);
 			String wayId = way.attribute("id").getValue();
+			
+			//Getting the type of road
+			List roads = document.selectNodes("//way[@id='"+wayId+"']/tag[@k='highway']");
+			String roadType = ((Element)roads.get(0)).attribute("v").getValue();
+			
 							
 			List nodesInWay = document.selectNodes("//way[@id='"+wayId+"']/nd");
 			for (int j=0; j<nodesInWay.size(); j++){
@@ -85,7 +90,9 @@ public class RoadNetwork {
 					Node adjNode = findNodebyId(Integer.parseInt(adjacentNodeId));
 											
 					if(node!=null && adjNode!=null){
-						Arc newArc = new Arc(adjNode, 1);
+						double distance = getDistance(node, adjNode);
+						double cost = computeCost(roadType, distance);
+						Arc newArc = new Arc(adjNode, cost);
 						addAdjacentArc(node, newArc);
 					}
 				}
@@ -96,6 +103,8 @@ public class RoadNetwork {
 					Node adjNode = findNodebyId(Integer.parseInt(adjacentNodeId));
 					
 					if(node!=null && adjNode!=null){
+						double distance = getDistance(node, adjNode);
+						double cost = computeCost(roadType, distance);
 						Arc newArc = new Arc(adjNode, 1);
 						addAdjacentArc(node, newArc);
 					}
@@ -110,10 +119,14 @@ public class RoadNetwork {
 					Node prevAdjNode = findNodebyId(Integer.parseInt(prevAdjacentNodeId));
 					
 					if(node!=null && nextAdjNode!=null){
+						double distance = getDistance(node, nextAdjNode);
+						double cost = computeCost(roadType, distance);
 						Arc newArc = new Arc(nextAdjNode, 1);
 						addAdjacentArc(node, newArc);
 					}
 					if(node!=null && prevAdjNode!=null){
+						double distance = getDistance(node, prevAdjNode);
+						double cost = computeCost(roadType, distance);
 						Arc newArc = new Arc(prevAdjNode, 1);
 						addAdjacentArc(node, newArc);
 					}	
