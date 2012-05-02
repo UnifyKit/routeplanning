@@ -25,9 +25,10 @@ public class RoadNetwork {
     
   }
   /**
-   * First element of the ArrayList<Arc> is the tail node, the other lists contain the headnodes.
+   * First element of the ArrayList<Arc> is the tail node,
+   * the other lists contain the headnodes.
    * because node1->node1 then cost=0
-   * @param tailNode 
+   * @param tailNode
    */
   public void addNodeToGraph(Node tailNode) {
     Arc arc0 = new Arc(tailNode, 0);
@@ -69,33 +70,39 @@ public class RoadNetwork {
    * ignore this road.
    * @param roadType
    * @param distance in km
-   * @return
+   * @return cost
    */
-  public double computeCost (String roadType, double distance){
-	//speed in km/h  
-	double speed=1;
-	double cost;
-	if (roadType.equals("motorway") || roadType.equals("trunk")) {
-		speed = 110;
-	} else if (roadType.equals("primary")) {
-		speed = 70;
-	} else if (roadType.equals("secondary")) {
-		speed = 60;
-	} else if (roadType.equals("tertiary") || roadType.equals("motorway_link") || roadType.equals("trunk_link") || roadType.equals("primary_link") || roadType.equals("secondary_link")) {
-		speed = 50;
-	} else if(roadType.equals("road") || roadType.equals("unclassified")) {
-		speed = 40;
-	} else if (roadType.equals("residential") || roadType.equals("unsurfaced")) {
-		speed = 30;
-	} else if (roadType.equals("living_street")) {
-		speed = 10;
-	} else if (roadType.equals("service")) {
-		speed = 5;	
-	} else {
-		return -1;
+  public double computeCost(String roadType, double distance) {
+    /**
+     * Speed in km/h.
+     */
+    double speed = 1;
+    /**
+     * Travel time.
+     */
+    double cost;
+    if (roadType.equals("motorway") || roadType.equals("trunk")) {
+      speed = 110;
+    } else if (roadType.equals("primary")) {
+      speed = 70;
+    } else if (roadType.equals("secondary")) {
+      speed = 60;
+    } else if (roadType.equals("tertiary") || roadType.equals("motorway_link")
+            || roadType.equals("trunk_link") || roadType.equals("primary_link")
+    		|| roadType.equals("secondary_link")) {
+      speed = 50;
+    } else if (roadType.equals("road") || roadType.equals("unclassified")) {
+      speed = 40;
+    } else if (roadType.equals("residential") || roadType.equals("unsurfaced")) {
+      speed = 30;
+    } else if (roadType.equals("living_street")) {
+      speed = 10;
+    } else if (roadType.equals("service")) {
+      speed = 5;	
+    } else {
+	  return -1;
+    }
+    cost = distance / speed;
+    return cost;
 	}
-	  
-	cost = distance / speed;  
-    return cost; 
-  }
 }
