@@ -105,4 +105,10 @@ public class RoadNetwork {
     cost = distance / speed;
     return cost;
 	}
+  
+  public double getDistance(Node node1, Node node2) {
+    double distance;
+    distance = Math.sqrt(Math.pow(node1.latitude - node2.latitude, 2) + Math.pow(node1.longitude - node2.longitude, 2));
+	return distance;  
+  }
 }
