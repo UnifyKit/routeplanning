@@ -1,11 +1,24 @@
 package routeplanning;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.net.URL;
+
+
+import org.dom4j.Document;
+import org.dom4j.io.SAXReader;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.io.DOMReader;
+import org.dom4j.io.SAXReader;
+import org.dom4j.Element;
+import org.dom4j.Attribute;
+
 
 /**
  *
- * @author CJC
+ * @author CJC | AAA
  */
 public class RoadNetwork {
   /**
@@ -21,9 +34,97 @@ public class RoadNetwork {
   /**
    * Read OSM file (in XML format) and construct the corresponding road network.
    */
-  public void readFromOsmFile() {
-    
-  }
+  public void readFromOsmFile(){
+	URL osmUrl = this.getClass().getClassLoader().getResource("routeplanning/resources/saarland.osm");
+    SAXReader  reader = new SAXReader ();
+    try {
+    	Document document = reader.read(osmUrl);
+			
+		//CREATION OF NODES
+		List<Node> createdNodes = new ArrayList();
+		List nodes = document.selectNodes("//osm/node");
+		//for each of the nodes in the XML file
+		for (int i= 0; i<nodes.size(); i++){
+			Node newNode = null;
+			Element node = (Element) nodes.get(i);
+			List nodeAttributes = node.attributes();
+			//for each of the attributes of the node
+			Integer id = new Integer(0);
+			Double lat = new Double(0.0);
+			Double lon = new Double(0.0);
+			for (int k= 0; k<nodeAttributes.size(); k++){
+				Attribute att = (Attribute) nodeAttributes.get(k);
+				if(att.getName().equals("id"))
+					id = Integer.parseInt(att.getValue());
+				if(att.getName().equals("lat"))
+					lat = Double.parseDouble(att.getValue());
+				if(att.getName().equals("lon"))
+					lon = Double.parseDouble(att.getValue());
+			}
+			newNode = new Node(id, lat, lon);
+			addNodeToGraph(newNode);
+			createdNodes.add(newNode);
+		}
+			
+		//CREATION OF ARCS IN WAYS (FOR EARCH NODE)			
+		List ways = document.selectNodes("//way[tag/@k='highway']");
+		for (int k= 0; k<ways.size(); k++){
+			Element way  = (Element) ways.get(k);
+			String wayId = way.attribute("id").getValue();
+							
+			List nodesInWay = document.selectNodes("//way[@id='"+wayId+"']/nd");
+			for (int j=0; j<nodesInWay.size(); j++){
+				Element nodeInWay = (Element)nodesInWay.get(j);
+				String nodeId = ((Attribute)nodeInWay.attribute("ref")).getValue();
+				Node node = findNodebyId(Integer.parseInt(nodeId));
+				
+				if(j==0){
+					Element adjacentNode =  (Element) nodesInWay.get(j+1);
+					String adjacentNodeId = ((Attribute)adjacentNode.attribute("ref")).getValue();				
+						
+					Node adjNode = findNodebyId(Integer.parseInt(adjacentNodeId));
+											
+					if(node!=null && adjNode!=null){
+						Arc newArc = new Arc(adjNode, 1);
+						addAdjacentArc(node, newArc);
+					}
+				}
+				else if(j==nodesInWay.size()-1){
+					Element adjacentNode =  (Element) nodesInWay.get(j-1);
+					String adjacentNodeId = ((Attribute)adjacentNode.attribute("ref")).getValue();
+					
+					Node adjNode = findNodebyId(Integer.parseInt(adjacentNodeId));
+					
+					if(node!=null && adjNode!=null){
+						Arc newArc = new Arc(adjNode, 1);
+						addAdjacentArc(node, newArc);
+					}
+				}
+				else{
+					Element nextAdjacentNode =  (Element) nodesInWay.get(j+1);
+					String nextAdjacentNodeId = ((Attribute)nextAdjacentNode.attribute("ref")).getValue();
+					Element prevAdjacentNode =  (Element) nodesInWay.get(j-1);
+					String prevAdjacentNodeId = ((Attribute)prevAdjacentNode.attribute("ref")).getValue();
+					
+					Node nextAdjNode = findNodebyId(Integer.parseInt(nextAdjacentNodeId));
+					Node prevAdjNode = findNodebyId(Integer.parseInt(prevAdjacentNodeId));
+					
+					if(node!=null && nextAdjNode!=null){
+						Arc newArc = new Arc(nextAdjNode, 1);
+						addAdjacentArc(node, newArc);
+					}
+					if(node!=null && prevAdjNode!=null){
+						Arc newArc = new Arc(prevAdjNode, 1);
+						addAdjacentArc(node, newArc);
+					}	
+				}
+			}
+		}
+    }
+    catch (DocumentException e) {
+    	e.printStackTrace();
+	}
+  }	
   /**
    * First element of the ArrayList<Arc> is the tail node,
    * the other lists contain the headnodes.
@@ -48,6 +149,7 @@ public class RoadNetwork {
       }
     }
   }
+  
   /**
    * Get RoadNetwork as String.
    * @return
@@ -63,7 +165,8 @@ public class RoadNetwork {
       res.add(list);
     }
     return res;
-  }
+  }  
+  
   /**
    * Compute cost (travel time).
    * If roadType is not valid, method return -1 to indicate that we should
@@ -115,5 +218,18 @@ public class RoadNetwork {
     double distance;
     distance = Math.sqrt(Math.pow(node1.latitude - node2.latitude, 2) + Math.pow(node1.longitude - node2.longitude, 2));
     return distance;
+  }
+  
+  private Node findNodebyId(int id){
+    Node matchedNode = null;
+    for(int i=0; i<adjacentArcs.size(); i++){
+    	List<Arc> arcList = adjacentArcs.get(i);
+    	Arc firstArc = arcList.get(0);
+    	Node firstNode = firstArc.getHeadNode();
+    	if(firstNode.getId()==id){
+    		matchedNode = firstNode;
+    	}	
+    }
+    return matchedNode;
   }
 }
