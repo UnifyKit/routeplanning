@@ -24,8 +24,13 @@ public class RoadNetwork {
   /**
    * List of adjacent Arcs. First element of a each list is the head node.
    */
-  List<List<Arc>> adjacentArcs;
-  /**
+  private List<List<Arc>> adjacentArcs;
+  
+  public List<List<Arc>> getAdjacentArcs() {
+	return adjacentArcs;
+  }
+
+/**
    * Constructor.
    */
   public RoadNetwork() {
