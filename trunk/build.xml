@@ -4,7 +4,8 @@
 		makes your tutor's life a lot easier. -->
 	<property name="src-dir" location="./src" />
 	<property name="bin-dir" location="./bin" />
-	<property name="dist-dir" location="./" />
+	<property name="lib-dir" location="./lib" />
+	<property name="dist-dir" location="./build" />
 	<property name="junit-jar" location="./lib/junit-4.9b2.jar" />
 	<property name="checkstyle-jar" location="./checkstyle-5.3-all.jar" />
 	<property name="checkstyle-config" location="./checkstyle_config.xml" />
@@ -16,9 +17,14 @@
 	 See demo.properties for required variables -->
 	<property name="properties" value="cj48-va6" />
 	<property file="${properties}.properties"/>
+	<property name="Main-Class" value="routeplanning.MainClass"/>
+	<property name="manifest-file" value="${src-dir}/MANIFEST.MF"/>
+	
 	
 	<!-- If you use third party libraries, you'll have to modify the classpath. -->
+	
 	<path id="classpath.base">
+		<fileset dir="${lib-dir}" includes="**/*.jar"/>
 	</path>
 	
 	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -59,10 +65,15 @@
 		But we want to avoid  any trouble for you that would be caused
 		by multiple source folders or if a non-test-class ends on "...Test" --> 
 	<target name="jar" depends="compile">
-		<jar destfile="${dist-dir}/${jar-name}.jar" basedir="${bin-dir}">
+		<jar destfile="${dist-dir}/erp.jar" basedir="${bin-dir}">
 			<manifest>
-				<attribute name="Main-Class" value="${Main-class}" />
+				<attribute name="Main-Class" value="${Main-Class}" />
 			</manifest>
+		</jar>
+		
+	    <!-- Place all jars into erp.jar -->
+	    <jar jarfile="${dist-dir}/erp.jar" basedir="${bin-dir}" manifest="${manifest-file}">
+	    	<zipgroupfileset dir="${lib-dir}" includes="**/*.jar" />
 		</jar>
 	</target>
 
