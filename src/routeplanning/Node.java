@@ -28,27 +28,7 @@ public class Node {
     this.latitude = latitude;
     this.longitude = longitude;
   }
-  /**
-   * Get the ID of the node.
-   * @return
-   */
-    public Integer getId(){
-        return id;
-    }
-  /**
-   * Get longitude of the node.
-   * @return
-   */
-  public Double getLongitude() {
-    return longitude;
-  }
-  /**
-   * Get latitude of the node.
-   * @return
-   */
-  public Double getLatitude() {
-    return latitude;
-  }
+ 
   /**
   * Get node as String.
   * @return
