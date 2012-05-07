@@ -34,7 +34,7 @@ public class DijkstraAlgorithm {
 		while (found == false && index<adjacentsArcs.size()){
 			sourceAdjArcs = adjacentsArcs.get(index);
 			Node node = sourceAdjArcs.get(0).getHeadNode();
-			if(node.getId()==sourceNodeId){
+			if(node.id==sourceNodeId){
 				found  = true;
 			}
 		}
