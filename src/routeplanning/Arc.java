@@ -8,11 +8,11 @@ public class Arc {
   /**
    * Variable for headNode of Arc.
    */
-  Node headNode;
+  public Node headNode;
   /**
    * Variable for cost of Arc.
    */
-  double cost;
+  public double cost;
   /**
    * Constructor Arc.  
    * @param headNode
