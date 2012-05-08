@@ -63,7 +63,7 @@ public class DijkstraAlgorithm {
       iter = keySet.iterator();
       while(iter.hasNext()) {
         if (minValue > activeNodes.get(iter.next())) {
-          minValue = activeNodes.get(iter.next().intValue());
+          //minValue = activeNodes.get(iter.next().intValue());
         }
         System.out.println("keys iterator: " + iter.next());
       }
