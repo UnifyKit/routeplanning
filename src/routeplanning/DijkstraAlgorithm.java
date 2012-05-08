@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.TreeMap;
 /**
  * 
- * @author CJC
+ * @author CJC, AAA
  *
  */
 public class DijkstraAlgorithm {
