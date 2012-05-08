@@ -41,19 +41,19 @@ public class RoadNetwork {
    * Map nodeid -> position of node as tail node in adjacentArcs
    * used to avoid search by id of the node in adjacentArcs, when adding a new arc.
    */
-  Map<Integer,Integer> nodeIdPosAdjArc;
+  //public Map<Integer,Integer> nodeIdPosAdjArc;
   /**
-   * List of all nodes
+   * List of all NodesID
    */
-  public List<Node> nodes;
+  public List<Integer> nodes;
   /**
    * Constructor.
    */
   public RoadNetwork() {
     adjacentArcs = new ArrayList<List<Arc>>();
     mapNodeId = new HashMap<Integer, Node>();
-    nodes = new ArrayList<Node>();
-    nodeIdPosAdjArc = new HashMap<Integer, Integer>();
+    nodes = new ArrayList<Integer>();
+    //nodeIdPosAdjArc = new HashMap<Integer, Integer>();
   }
   /**
    * Read OSM file (in XML format) and construct the corresponding road network.
@@ -86,7 +86,7 @@ public class RoadNetwork {
 					lon = Double.parseDouble(att.getValue());
 			}
 			newNode = new Node(id, lat, lon);
-			addNodeToGraph(newNode);
+			addNodeToGraph(newNode.id);
 			createdNodes.add(newNode);
 		}
 		System.out.println("createdNodes: "+createdNodes.size());	
@@ -193,25 +193,24 @@ public class RoadNetwork {
 				  
 				  newNode = new Node(tmpNodeID, tmpLatitude, tmpLongitude);
 				  mapNodeId.put(tmpNodeID, newNode);
-				  nodes.add(newNode);
-				  adjacentArcs.add(new ArrayList<Arc>()); //probar y luego quitar!
-				  nodeIdPosAdjArc.put(newNode.id, adjacentArcs.size() - 1); //probar y quitar! tailnode
+				  addNodeToGraph(newNode.id);
+				  //nodeIdPosAdjArc.put(newNode.id, adjacentArcs.size() - 1); //probar y quitar! tailnode
 			  } else if (lineIn.contains("<way")) {
 				  readingWay = true;
 				  tmpWay = new ArrayList<String>();
 			  } else if(lineIn.contains("</way")) {
 				  readingWay = false;
 			  } else if(lineIn.contains("<tag k=\"highway\"") && readingWay) {
-				  //last pos of each list contains roadType, we use it to compute travel time (cost)
+				  //roadType, we use it to compute travel time (cost)
 				  //from pos 2 nodes that are in the way
 				  roadType = String.valueOf(lineIn.substring(lineIn.indexOf("v=")+3, lineIn.indexOf("\" />")));
-				  tmpWay.add(roadType);
+				  //tmpWay.add(roadType);
 				  prevNode = null;
 				  if (tmpWay.size() > 2){ //To avoid arcs without head nodes.
 					  //System.out.println(tmpWay.toString());
 					  for (int i=0; i<tmpWay.size()-1; i++){
 						  	currentNode = mapNodeId.get(Integer.valueOf(tmpWay.get(i)));
-						  	position =  nodeIdPosAdjArc.get(currentNode.id);
+						  	position =  nodes.indexOf(currentNode.id);// nodeIdPosAdjArc.get(currentNode.id);
 						  	//If node doesn't exist in adjacentArcs, then add it
 						  	if(position == null){
 						  		//addNodeToGraph(currentNode); regresar!!!
@@ -235,7 +234,7 @@ public class RoadNetwork {
 									countArcs++;
 								}
 								//prevNode -> currentNode
-								position = nodeIdPosAdjArc.get(prevNode.id);
+								position = nodes.indexOf(prevNode.id); //nodeIdPosAdjArc.get(prevNode.id);
 								if(!arcAlreadyInserted(position,arc2.headNode.id)){
 									this.adjacentArcs.get(position).add(arc2);
 									countArcs++;
@@ -288,7 +287,7 @@ public void checkArcs(){
 		for(int j=0; j<adjacentArcs.get(i).size(); j++){
 			if(listid.contains(adjacentArcs.get(i).get(j).headNode.id)){
 				count++;
-				System.out.println("Error en nodeid: " +nodes.get(i).id +" nodeid repeated:"+adjacentArcs.get(i).get(j).headNode.id);
+				System.out.println("Error en nodeid: " +nodes.get(i) +" nodeid repeated:"+adjacentArcs.get(i).get(j).headNode.id);
 			}else{
 				listid.add(adjacentArcs.get(i).get(j).headNode.id);
 			}	
@@ -297,16 +296,12 @@ public void checkArcs(){
 	System.out.println("Num errores: " + count);
 }
   /**
-   * First element of the ArrayList<Arc> is the tail node,
-   * the other lists contain the headnodes.
-   * because node1->node1 then cost=0
+   * Add an ArrayList<Arc> for the arcs of tail node
    * @param tailNode
    */
-  public void addNodeToGraph(Node tailNode) {
-    Arc arc0 = new Arc(tailNode, 0);
+  public void addNodeToGraph(int tailNodeID) {
     adjacentArcs.add(new ArrayList<Arc>());
-    adjacentArcs.get(adjacentArcs.size() - 1).add(arc0);
-    nodeIdPosAdjArc.put(tailNode.id, adjacentArcs.size() - 1);
+    nodes.add(tailNodeID);
   }
   /**
    * Add adjacent arc to tail node.
@@ -331,7 +326,7 @@ public void checkArcs(){
     List<String> list;
     for (int i = 0; i < adjacentArcs.size(); i++) {
       list = new ArrayList<String>();
-      list.add(String.valueOf(nodes.get(i).id));
+      list.add(String.valueOf(nodes.get(i)));
       for (int j = 0; j < adjacentArcs.get(i).size(); j++) {
         list.add(adjacentArcs.get(i).get(j).asString());
       }
@@ -343,7 +338,7 @@ public void checkArcs(){
 	  List<String> list = new ArrayList<String>();
 	  list.add(String.valueOf(nodeid));
 	  int pos;
-	  pos = nodeIdPosAdjArc.get(nodeid);
+	  pos = nodes.indexOf(nodeid);
 	  for(int i=0; i<adjacentArcs.get(pos).size(); i++){
 		  list.add(String.valueOf(adjacentArcs.get(pos).get(i).headNode.id));
 	  }
