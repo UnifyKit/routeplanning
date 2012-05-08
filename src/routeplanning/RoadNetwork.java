@@ -245,45 +245,45 @@ public class RoadNetwork {
    * @return A subgraph of the original road network representing
    * its biggest component
    */
-//  public RoadNetwork reduceToLargestConnectedComponent() {
-//    RoadNetwork biggestConnectedComponent = new RoadNetwork();
-//    List<Integer> bConnectedCompNodes = new ArrayList<Integer>();
-//    List<List<Arc>> arcsOfConnectedComp = new ArrayList<List<Arc>>();
-//    List<Integer> remainingNodes = nodes;
-//    Integer nextNodeId = nodes.get(0);
-//    
-//    while (remainingNodes.size() > 0) {
-//      remainingNodes.remove(new Integer(nextNodeId));
-//      
-//      List<Integer> connectedNodes = new ArrayList<Integer>();
-//      List<List<Arc>> arcsOfComp = new ArrayList<List<Arc>>();
-//
-//      connectedNodes.add(nextNodeId);
-//      arcsOfComp.add(getAdjacentArcs(nextNodeId));
-//      
-//      DijkstraAlgorithm dij = new DijkstraAlgorithm(this);
-//      dij.computeShortestPath(nextNodeId, -1);
-//      List<Integer> costs = dij.getVisitedNodes();
-//      
-//      for (int i = 0; i < costs.size(); i++) {
-//        Integer costOfCurrentNode = costs.get(i);
-//        if (costOfCurrentNode > 0) {
-//          connectedNodes.add(nodes.get(i));
-//          arcsOfComp.add(adjacentArcs.get(i));
-//          remainingNodes.remove(new Integer(nodes.get(i)));
-//        }
-//      }
-//      if (connectedNodes.size() > bConnectedCompNodes.size()) {
-//        bConnectedCompNodes = connectedNodes;
-//        arcsOfConnectedComp = arcsOfComp;
-//      }
-//      nextNodeId = remainingNodes.get(0);
-//    }
-//    biggestConnectedComponent.setNodes(bConnectedCompNodes);
-//    biggestConnectedComponent.setAdjacentArcs(arcsOfConnectedComp);
-//    
-//    return biggestConnectedComponent;
-//  }
+  public RoadNetwork reduceToLargestConnectedComponent() {
+    RoadNetwork biggestConnectedComponent = new RoadNetwork();
+    List<Integer> bConnectedCompNodes = new ArrayList<Integer>();
+    List<List<Arc>> arcsOfConnectedComp = new ArrayList<List<Arc>>();
+    List<Integer> remainingNodes = nodes;
+    Integer nextNodeId = nodes.get(0);
+    
+    while (remainingNodes.size() > 0) {
+      remainingNodes.remove(new Integer(nextNodeId));
+      
+      List<Integer> connectedNodes = new ArrayList<Integer>();
+      List<List<Arc>> arcsOfComp = new ArrayList<List<Arc>>();
+
+      connectedNodes.add(nextNodeId);
+      arcsOfComp.add(getAdjacentArcs(nextNodeId));
+      
+      DijkstraAlgorithm dij = new DijkstraAlgorithm(this);
+      dij.computeShortestPath(nextNodeId, -1);
+      List<Integer> costs = dij.getVisitedNodes();
+      
+      for (int i = 0; i < costs.size(); i++) {
+        Integer costOfCurrentNode = costs.get(i);
+        if (costOfCurrentNode > 0) {
+          connectedNodes.add(nodes.get(i));
+          arcsOfComp.add(adjacentArcs.get(i));
+          remainingNodes.remove(new Integer(nodes.get(i)));
+        }
+      }
+      if (connectedNodes.size() > bConnectedCompNodes.size()) {
+        bConnectedCompNodes = connectedNodes;
+        arcsOfConnectedComp = arcsOfComp;
+      }
+      nextNodeId = remainingNodes.get(0);
+    }
+    biggestConnectedComponent.setNodes(bConnectedCompNodes);
+    biggestConnectedComponent.setAdjacentArcs(arcsOfConnectedComp);
+    
+    return biggestConnectedComponent;
+  }
   
   /**
    * Compute cost (travel time). If the type of road is not valid, 
