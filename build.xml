@@ -38,9 +38,9 @@
 	</path>
 	
 	<path id="classpath.run">
-			<pathelement location="${bin-dir}" />
-			<path refid="classpath.base" />
-		</path>
+		<pathelement location="${bin-dir}" />
+		<path refid="classpath.base" />
+	</path>
 
 	<target name="checkstyle">
 		<taskdef resource="checkstyletask.properties"
