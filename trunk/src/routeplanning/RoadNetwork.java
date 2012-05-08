@@ -3,17 +3,12 @@ package routeplanning;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.dom4j.Attribute;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
+import java.util.Random;
 
 /**
  * 
@@ -250,45 +245,45 @@ public class RoadNetwork {
    * @return A subgraph of the original road network representing
    * its biggest component
    */
-/*  public RoadNetwork reduceToLargestConnectedComponent() {
-    RoadNetwork biggestConnectedComponent = new RoadNetwork();
-    List<Integer> bConnectedCompNodes = new ArrayList<Integer>();
-    List<List<Arc>> arcsOfConnectedComp = new ArrayList<List<Arc>>();
-    List<Integer> remainingNodes = nodes;
-    Integer nextNodeId = nodes.get(0);
-    
-    while (remainingNodes.size() > 0) {
-      remainingNodes.remove(new Integer(nextNodeId));
-      
-      List<Integer> connectedNodes = new ArrayList<Integer>();
-      List<List<Arc>> arcsOfComp = new ArrayList<List<Arc>>();
-
-      connectedNodes.add(nextNodeId);
-      arcsOfComp.add(getAdjacentArcs(nextNodeId));
-      
-      DijkstraAlgorithm dij = new DijkstraAlgorithm(this);
-      dij.computeShortestPath(nextNodeId, -1);
-      List<Integer> costs = dij.getVisitedNodes();
-      
-      for (int i = 0; i < costs.size(); i++) {
-        Integer costOfCurrentNode = costs.get(i);
-        if (costOfCurrentNode > 0) {
-          connectedNodes.add(nodes.get(i));
-          arcsOfComp.add(adjacentArcs.get(i));
-          remainingNodes.remove(new Integer(nodes.get(i)));
-        }
-      }
-      if (connectedNodes.size() > bConnectedCompNodes.size()) {
-        bConnectedCompNodes = connectedNodes;
-        arcsOfConnectedComp = arcsOfComp;
-      }
-      nextNodeId = remainingNodes.get(0);
-    }
-    biggestConnectedComponent.setNodes(bConnectedCompNodes);
-    biggestConnectedComponent.setAdjacentArcs(arcsOfConnectedComp);
-    
-    return biggestConnectedComponent;
-  }*/
+//  public RoadNetwork reduceToLargestConnectedComponent() {
+//    RoadNetwork biggestConnectedComponent = new RoadNetwork();
+//    List<Integer> bConnectedCompNodes = new ArrayList<Integer>();
+//    List<List<Arc>> arcsOfConnectedComp = new ArrayList<List<Arc>>();
+//    List<Integer> remainingNodes = nodes;
+//    Integer nextNodeId = nodes.get(0);
+//    
+//    while (remainingNodes.size() > 0) {
+//      remainingNodes.remove(new Integer(nextNodeId));
+//      
+//      List<Integer> connectedNodes = new ArrayList<Integer>();
+//      List<List<Arc>> arcsOfComp = new ArrayList<List<Arc>>();
+//
+//      connectedNodes.add(nextNodeId);
+//      arcsOfComp.add(getAdjacentArcs(nextNodeId));
+//      
+//      DijkstraAlgorithm dij = new DijkstraAlgorithm(this);
+//      dij.computeShortestPath(nextNodeId, -1);
+//      List<Integer> costs = dij.getVisitedNodes();
+//      
+//      for (int i = 0; i < costs.size(); i++) {
+//        Integer costOfCurrentNode = costs.get(i);
+//        if (costOfCurrentNode > 0) {
+//          connectedNodes.add(nodes.get(i));
+//          arcsOfComp.add(adjacentArcs.get(i));
+//          remainingNodes.remove(new Integer(nodes.get(i)));
+//        }
+//      }
+//      if (connectedNodes.size() > bConnectedCompNodes.size()) {
+//        bConnectedCompNodes = connectedNodes;
+//        arcsOfConnectedComp = arcsOfComp;
+//      }
+//      nextNodeId = remainingNodes.get(0);
+//    }
+//    biggestConnectedComponent.setNodes(bConnectedCompNodes);
+//    biggestConnectedComponent.setAdjacentArcs(arcsOfConnectedComp);
+//    
+//    return biggestConnectedComponent;
+//  }
   
   /**
    * Compute cost (travel time). If the type of road is not valid, 
@@ -378,6 +373,17 @@ public class RoadNetwork {
       res.add(list);
     }
     return res;
+  }
+  
+ /**
+  * Generated a random integers in range from 0 to the size of the nodes' list.
+  * It returns the node ID saved at that position in the list.
+  * @return 
+  */
+  public int getRandomNodeId() {
+    Random randomGenerator = new Random();
+    int randomInt = randomGenerator.nextInt(nodes.size());
+    return nodes.get(randomInt);
   }
   
   //DEBUGGING PURPOSES
