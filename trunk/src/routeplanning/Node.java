@@ -2,6 +2,7 @@ package routeplanning;
 
 /**
  * Class Node.
+ * 
  * @author CJC
  */
 public class Node {
@@ -17,8 +18,10 @@ public class Node {
    * Longitude of the node.
    */
   Double longitude;
+
   /**
    * Constructor.
+   * 
    * @param id
    * @param latitude
    * @param longitude
@@ -28,11 +31,39 @@ public class Node {
     this.latitude = latitude;
     this.longitude = longitude;
   }
- 
+
   /**
-  * Get node as String.
-  * @return
-  */
+   * Get the ID of the node.
+   * 
+   * @return
+   */
+  public Integer getId() {
+    return id;
+  }
+
+  /**
+   * Get longitude of the node.
+   * 
+   * @return
+   */
+  public Double getLongitude() {
+    return longitude;
+  }
+
+  /**
+   * Get latitude of the node.
+   * 
+   * @return
+   */
+  public Double getLatitude() {
+    return latitude;
+  }
+
+  /**
+   * Get node as String.
+   * 
+   * @return
+   */
   public String asString() {
     return "(" + this.id + "|" + this.latitude + "|" + this.longitude + ")";
   }
