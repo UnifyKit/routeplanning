@@ -7,24 +7,12 @@ import java.util.List;
  * RoutePlanning.
  */
 public class MainClass {
-  
   /**
-   * Main method.
-   * @param args
+   * As requested in Exercise Sheet 2 - ex. 3.
+   * @param network the original road network extracted from the osm file.
    */
-  public static void main(String[] args) {
-    /*ReduceFileSize rfs = new ReduceFileSize(
-        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
-          + "src/routeplanning/resources/osm-sample.osm",
-        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
-          +  "src/routeplanning/resources/osm-sample_reduced.osm");
-    rfs.process();*/
-    RoadNetwork roadNet = new RoadNetwork();
-    roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
-      + "groupRepository/src/routeplanning/resources/osm-sample_reduced.osm");
-    //System.out.println("ROAD NETWORK: " + roadNet.asString());
-    
-    RoadNetwork largestComponent = roadNet.reduceToLargestConnectedComponent();
+  public static void try100Dijkstras(RoadNetwork network) {
+    RoadNetwork largestComponent = network.reduceToLargestConnectedComponent();
     
     //Exercise Sheet 2 - ex. 3
     int totalCost = 0;
@@ -73,5 +61,25 @@ public class MainClass {
         + Double.valueOf(twoDForm.format((totalExecutionTime * 1000) / 100)));
     System.out.println("AVERAGE SETTLED NODES: " + totalSettledNodes / 100);
     System.out.println("AVERAGE SP. COST: " + totalCost / 100);
+  }
+  
+  
+  /**
+   * Main method.
+   * @param args
+   */
+  public static void main(String[] args) {
+    /*ReduceFileSize rfs = new ReduceFileSize(
+        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
+          + "src/routeplanning/resources/osm-sample.osm",
+        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
+          +  "src/routeplanning/resources/osm-sample_reduced.osm");
+    rfs.process();*/
+    RoadNetwork roadNet = new RoadNetwork();
+    roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
+      + "groupRepository/src/routeplanning/resources/osm-sample_reduced.osm");
+    //System.out.println("ROAD NETWORK: " + roadNet.asString());
+    
+    MainClass.try100Dijkstras(roadNet);
   }
 }
