@@ -1,7 +1,5 @@
 package routeplanning;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +15,7 @@ public class RoadNetworkTest {
   /**
    * Tests constructor and string representation of object.
    */
-/*  @Test
+  @Test
   public void testRoadNetwork() {
     RoadNetwork rn = new RoadNetwork();
     List<Integer> nodes =  rn.getNodeIds();
@@ -26,9 +24,9 @@ public class RoadNetworkTest {
     Assert.assertTrue("Arc's structure was created", adjacentArcs.size() >= 0);
   }
 
-  *//**
+  /**
    * Tests setNodes() and getNodes().
-   *//*
+   */
   @Test
   public void testSetGetNodes() {
     List<Integer> testNodes = new ArrayList<Integer>();
@@ -41,9 +39,9 @@ public class RoadNetworkTest {
     Assert.assertTrue("", (rn.getNodeIds()).size() == 5);
   }
   
-  *//**
+  /**
    * Tests setAdjacentArcs() and getAdjacentArcs().
-   *//*
+   */
   @Test
   public void testSetGetAdjacentArcs() {
     List<List<Arc>> testAdjArcs = new ArrayList<List<Arc>>();
@@ -72,9 +70,9 @@ public class RoadNetworkTest {
     Assert.assertTrue("ALL ARCS are inserted", numberOfArcs == 15);
   }
 
-  *//**
+  /**
    * This method will test the graph shown in the lecture.
-   *//*
+   */
   @Test
   public void testLectureGraph() {
     RoadNetwork rn = new RoadNetwork();
@@ -152,18 +150,17 @@ public class RoadNetworkTest {
     rn.addAdjacentArc(node5, newArc55);   
     rn.addAdjacentArc(node5, newArc52);       
     rn.addAdjacentArc(node5, newArc54);
-    
-    System.out.println(rn.asString());
-    
+        
     String stringRep = rn.asString();
-    String expectedRep = new String();
+    String expectedRep = new String("0|0-1-2-3-4-\n1|1-0-3-"
+      + "\n2|2-0-3-5-\n3|3-0-1-2-4-\n4|4-0-3-5-\n5|5-2-4-\n");
     Assert.assertEquals(stringRep, expectedRep);
   }
 
   
-  *//**
+  /**
    * This method tests addNodeToGraph().
-   *//*
+   */
   @Test
   public void testAddNodeToGraph() {
     RoadNetwork rn = new RoadNetwork();
@@ -189,7 +186,7 @@ public class RoadNetworkTest {
     rn.addNodeToGraph(nullNode);
     Assert.assertEquals(expectedOutput, rn.asString());
     
-  }*/
+  }
 
   /**
    * This method tests addAdjacentArc().
@@ -222,9 +219,8 @@ public class RoadNetworkTest {
     rn.addAdjacentArc(nullNode, arcnull0);
     rn.addAdjacentArc(ghostNode, arcGhost0);
     
-    System.out.println(rn.asString());
-    
-    //Assert.assertEquals(new String(""), new String(""));
+    String expectedString = new String("0|0-1-\n1|0-1-\n5|0-\n");
+    Assert.assertEquals(expectedString, rn.asString());
   }
 //
 //  @Test
