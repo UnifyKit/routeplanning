@@ -60,7 +60,7 @@ public class DijkstraAlgorithm {
     Double minDist = 0.0;
     Integer minDistNode = 0;
     Double distToAdjNode = 0.0;
-    int minValue = Integer.MAX_VALUE;
+    //int minValue = Integer.MAX_VALUE;
     int minValueKey = 0;
     
     List<Integer> path = new ArrayList<Integer>();
@@ -69,8 +69,6 @@ public class DijkstraAlgorithm {
     testNode = sourceNodeId;
     activeNodesId.add(testNode);
     activeNodesCost.add(0.0);
-    //distancesFromSource.get(posInGraph(testNode));
-    
     Boolean noAdjacentNodes = false;
     
     pos = this.graph.nodeIds.indexOf(sourceNodeId);
@@ -150,10 +148,10 @@ public class DijkstraAlgorithm {
       }
       
       //eliminar de activeNodes porque ya lo recorrimos
-      //if(activeNodesId.contains(testNode)){
+
       activeNodesCost.remove(activeNodesId.indexOf(testNode));
       activeNodesId.remove(activeNodesId.indexOf(testNode));
-      //}
+
       
       //nuevo testNode
       testNode = activeNodesId.get(activeNodesId.indexOf(minDistNode));
@@ -165,7 +163,7 @@ public class DijkstraAlgorithm {
      
     }
     //System.out.println("visited: " + visitedNodeMarks.toString());
-    System.out.println("Path: " + path.toString());
+    //System.out.println("Path: " + path.toString());
     System.out.println("shortestPathCost: " + shortestPathCost);
     return shortestPathCost;
   }
