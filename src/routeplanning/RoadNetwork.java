@@ -280,7 +280,10 @@ public class RoadNetwork {
     RoadNetwork biggestConnectedComponent = new RoadNetwork();
     List<Integer> bConnectedCompNodes = new ArrayList<Integer>();
     List<List<Arc>> arcsOfConnectedComp = new ArrayList<List<Arc>>();
-    List<Integer> remainingNodes = nodeIds;
+    List<Integer> remainingNodes = new ArrayList<Integer>();
+    for (int i = 0; i < nodeIds.size(); i++) {
+      remainingNodes.add(nodeIds.get(i));
+    }
     Integer nextNodeId = nodeIds.get(0);
     
     while (remainingNodes.size() > 0) {
