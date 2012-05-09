@@ -17,60 +17,60 @@ public class RoadNetworkTest {
   /**
    * Tests constructor and string representation of object.
    */
-//  @Test
-//  public void testRoadNetwork() {
-//    RoadNetwork rn = new RoadNetwork();
-//    List<Integer> nodes =  rn.getNodes();
-//    List<List<Arc>> adjacentArcs = rn.getAdjacentArcs();
-//    Assert.assertTrue("Node's structure was created", nodes.size() >= 0);
-//    Assert.assertTrue("Arc's structure was created", adjacentArcs.size() >= 0);
-//  }
+  @Test
+  public void testRoadNetwork() {
+    RoadNetwork rn = new RoadNetwork();
+    List<Integer> nodes =  rn.getNodes();
+    List<List<Arc>> adjacentArcs = rn.getAdjacentArcs();
+    Assert.assertTrue("Node's structure was created", nodes.size() >= 0);
+    Assert.assertTrue("Arc's structure was created", adjacentArcs.size() >= 0);
+  }
 
   /**
    * Tests setNodes() and getNodes().
    */
-//  @Test
-//  public void testSetGetNodes() {
-//    List<Integer> testNodes = new ArrayList<Integer>();
-//    //Adds 5 elements to the list
-//    for (int i = 0; i < 5; i++) {
-//      testNodes.add(i);
-//    }
-//    RoadNetwork rn = new RoadNetwork();
-//    rn.setNodes(testNodes);
-//    Assert.assertTrue("", (rn.getNodes()).size() == 5);
-//  }
+  @Test
+  public void testSetGetNodes() {
+    List<Integer> testNodes = new ArrayList<Integer>();
+    //Adds 5 elements to the list
+    for (int i = 0; i < 5; i++) {
+      testNodes.add(i);
+    }
+    RoadNetwork rn = new RoadNetwork();
+    rn.setNodes(testNodes);
+    Assert.assertTrue("", (rn.getNodes()).size() == 5);
+  }
   
-//  /**
-//   * Tests setAdjacentArcs() and getAdjacentArcs().
-//   */
-//  @Test
-//  public void testSetGetAdjacentArcs() {
-//    List<List<Arc>> testAdjArcs = new ArrayList<List<Arc>>();
-//    //Adds 5 lists to the list and for each list 3 arcs
-//    for (Integer i = 0; i < 5; i++) {
-//      List<Arc> arcs = new ArrayList<Arc>();
-//      for (Integer k = 0; k < 3; k++) {
-//        Integer nodeId = Integer.parseInt(
-//          new String(i.toString() + k.toString()));
-//        Arc newArc = new Arc(new Node(nodeId, 1.0, 1.0), 1);
-//        arcs.add(newArc);
-//      }
-//      testAdjArcs.add(arcs);
-//    }
-//    
-//    RoadNetwork rn = new RoadNetwork();
-//    rn.setAdjacentArcs(testAdjArcs);
-//    
-//    int numberOfArcs = 0;
-//    for (int i = 0; i < rn.getAdjacentArcs().size(); i++) { 
-//      List<Arc> arcs = rn.getAdjacentArcs().get(i);
-//      for (int k = 0; k < arcs.size(); k++) {
-//        numberOfArcs++;
-//      } 
-//    }
-//    Assert.assertTrue("ALL ARCS are inserted", numberOfArcs == 15);
-//  }
+  /**
+   * Tests setAdjacentArcs() and getAdjacentArcs().
+   */
+  @Test
+  public void testSetGetAdjacentArcs() {
+    List<List<Arc>> testAdjArcs = new ArrayList<List<Arc>>();
+    //Adds 5 lists to the list and for each list 3 arcs
+    for (Integer i = 0; i < 5; i++) {
+      List<Arc> arcs = new ArrayList<Arc>();
+      for (Integer k = 0; k < 3; k++) {
+        Integer nodeId = Integer.parseInt(
+          new String(i.toString() + k.toString()));
+        Arc newArc = new Arc(new Node(nodeId, 1.0, 1.0), 1);
+        arcs.add(newArc);
+      }
+      testAdjArcs.add(arcs);
+    }
+    
+    RoadNetwork rn = new RoadNetwork();
+    rn.setAdjacentArcs(testAdjArcs);
+    
+    int numberOfArcs = 0;
+    for (int i = 0; i < rn.getAdjacentArcs().size(); i++) { 
+      List<Arc> arcs = rn.getAdjacentArcs().get(i);
+      for (int k = 0; k < arcs.size(); k++) {
+        numberOfArcs++;
+      } 
+    }
+    Assert.assertTrue("ALL ARCS are inserted", numberOfArcs == 15);
+  }
 
   /**
    * This method will test the graph shown in the lecture.
@@ -107,14 +107,14 @@ public class RoadNetworkTest {
     Arc newArc32 = new Arc(node2, 5);
     Arc newArc34 = new Arc(node4, 1);
     
-    Arc newArc44 = new Arc(node0, 0);
+    Arc newArc44 = new Arc(node4, 0);
     Arc newArc40 = new Arc(node0, 10);
-    Arc newArc43 = new Arc(node0, 1);
-    Arc newArc45 = new Arc(node0, 1);
+    Arc newArc43 = new Arc(node3, 1);
+    Arc newArc45 = new Arc(node5, 1);
     
-    Arc newArc55 = new Arc(node0, 0);
-    Arc newArc52 = new Arc(node0, 3);
-    Arc newArc54 = new Arc(node0, 1);
+    Arc newArc55 = new Arc(node5, 0);
+    Arc newArc52 = new Arc(node2, 3);
+    Arc newArc54 = new Arc(node4, 1);
     
     rn.addNodeToGraph(node0);
     rn.addNodeToGraph(node1);
@@ -153,7 +153,9 @@ public class RoadNetworkTest {
     rn.addAdjacentArc(node5, newArc52);       
     rn.addAdjacentArc(node5, newArc54);  
     
-    System.out.println(rn.asString());
+    String stringRep = rn.asString().toString();
+    String expectedRep = new String();
+    Assert.assertEquals(stringRep, expectedRep);
   }
 
   
