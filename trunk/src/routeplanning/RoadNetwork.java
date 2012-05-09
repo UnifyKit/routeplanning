@@ -207,23 +207,25 @@ public class RoadNetwork {
                   //+ getDistance2(prevNode,currentNode));                
                 Double cost = computeCost(roadType, getDistance2(
                     prevNode, currentNode));
-                //System.out.println("timeTravel in min: " + cost);
-                Arc arc1 = new Arc(prevNode, cost);
-                Arc arc2 = new Arc(currentNode, cost);
+                if(cost > 0){
+                  //System.out.println("timeTravel in min: " + cost);
+                  Arc arc1 = new Arc(prevNode, cost);
+                  Arc arc2 = new Arc(currentNode, cost);
 
-                // currentNode -> prevNode
-                // Check if the arc already exist.
-                if (!arcAlreadyInserted(position, arc1.headNode.id)) {
-                  this.adjacentArcs.get(position).add(arc1);
-                  countArcs++;
+                  // currentNode -> prevNode
+                  // Check if the arc already exist.
+                  if (!arcAlreadyInserted(position, arc1.headNode.id)) {
+                    this.adjacentArcs.get(position).add(arc1);
+                    countArcs++;
+                  }
+                  // prevNode -> currentNode
+                  position = nodeIdPosAdjArc.get(prevNode.id);
+                  if (!arcAlreadyInserted(position, arc2.headNode.id)) {
+                    this.adjacentArcs.get(position).add(arc2);
+                    countArcs++;
+                  }
                 }
-                // prevNode -> currentNode
-                position = nodeIdPosAdjArc.get(prevNode.id);
-                if (!arcAlreadyInserted(position, arc2.headNode.id)) {
-                  this.adjacentArcs.get(position).add(arc2);
-                  countArcs++;
-                }
-              }
+                              }
               prevNode = currentNode;
             }
 
@@ -307,6 +309,7 @@ public class RoadNetwork {
    */ 
   //TODO time needed unit might be wrong
   public double computeCost(String roadType, double distance) {
+    
     /**
      * Speed in km/h.
      */
