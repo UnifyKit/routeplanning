@@ -12,7 +12,7 @@ public class Arc {
   /**
    * Variable for cost of Arc.
    */
-  public double cost;
+  public Double cost;
   /**
    * Constructor Arc.  
    * @param headNode
