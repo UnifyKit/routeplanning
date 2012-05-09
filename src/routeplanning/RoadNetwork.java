@@ -18,7 +18,7 @@ public class RoadNetwork {
   /**
    * List of all Nodes IDs.
    */
-  public List<Integer> nodes;
+  public List<Integer> nodeIds;
   /**
    * List of adjacent Arcs. First element of a each list is the head node.
    */
@@ -41,27 +41,29 @@ public class RoadNetwork {
   public RoadNetwork() {
     adjacentArcs = new ArrayList<List<Arc>>();
     mapNodeId = new HashMap<Integer, Node>();
-    nodes = new ArrayList<Integer>();
+    nodeIds = new ArrayList<Integer>();
     nodeIdPosAdjArc = new HashMap<Integer, Integer>();
   }
   
   /**
    *Setter method for nodes.
    */
-  public void setNodes(List<Integer> nodes) {
-    this.nodes = nodes;
+  //TODO
+  public void setNodes(List<Integer> nodeIds) {
+    this.nodeIds = nodeIds;
   }
 
   /**
    * Getter method for nodes.
-   */  
-  public List<Integer> getNodes() {
-    return nodes;
+   */
+  public List<Integer> getNodeIds() {
+    return nodeIds;
   }
   
   /**
    * Setter method for adjacentArcs.
    */
+  //TODO
   public void setAdjacentArcs(List<List<Arc>> adjacentArcs) {
     this.adjacentArcs = adjacentArcs;
   }
@@ -78,10 +80,18 @@ public class RoadNetwork {
    * @param tailNode ID of the node added to the road network
    */
   public void addNodeToGraph(Node tailNode) {
-    // Arc arc0 = new Arc(tailNode, 0);
-    adjacentArcs.add(new ArrayList<Arc>());
-    // adjacentArcs.get(adjacentArcs.size() - 1).add(arc0);
-    nodeIdPosAdjArc.put(tailNode.id, adjacentArcs.size() - 1);
+    if (tailNode != null) {
+      Integer nodeId = tailNode.getId();
+      //Is the node already there?
+      boolean alreadyInNetwork = mapNodeId.containsKey(nodeId);
+      if (!alreadyInNetwork) {
+        List<Arc> arcs = new ArrayList<Arc>();
+        nodeIds.add(nodeId);
+        mapNodeId.put(nodeId, tailNode);
+        adjacentArcs.add(arcs);
+        nodeIdPosAdjArc.put(nodeId, adjacentArcs.size() - 1);
+      }
+    }
   }
 
   /**
@@ -90,12 +100,19 @@ public class RoadNetwork {
    * @param arc New Arc
    */
   public void addAdjacentArc(Node tailNode, Arc arc) {
-    for (int i = 0; i < adjacentArcs.size(); i++) {
-      // First list, first element
-      if (adjacentArcs.get(i).get(0).getHeadNode().equals(tailNode)) {
-        adjacentArcs.get(i).add(arc);
+    if (tailNode != null && arc != null) {
+      if (arc.getHeadNode() != null) {
+        Integer tailNodeId = tailNode.getId();
+        if (mapNodeId.containsKey(tailNodeId)) {
+          Integer position = nodeIdPosAdjArc.get(tailNodeId);
+          List<Arc> arcs = getAdjacentArcs().get(position);
+          arcs.add(arc);
+        } else {
+          addNodeToGraph(tailNode);
+          addAdjacentArc(tailNode, arc);
+        }
       }
-    }
+    }  
   }
 
   /**
@@ -107,7 +124,7 @@ public class RoadNetwork {
    */
   public List<Arc> getNodeAdjacentArcs(Integer nodeId) {
     List<Arc> arcs = null;
-    int index = nodes.indexOf(nodeId);
+    int index = nodeIds.indexOf(nodeId);
     if (index != -1) {
       arcs = adjacentArcs.get(index);
     }
@@ -166,7 +183,7 @@ public class RoadNetwork {
 
           newNode = new Node(tmpNodeID, tmpLatitude, tmpLongitude);
           mapNodeId.put(tmpNodeID, newNode);
-          nodes.add(tmpNodeID);
+          nodeIds.add(tmpNodeID);
           adjacentArcs.add(new ArrayList<Arc>()); // probar y luego quitar!
           nodeIdPosAdjArc.put(newNode.id, adjacentArcs.size() - 1); // probar y
                                                                     // quitar!
@@ -263,8 +280,8 @@ public class RoadNetwork {
     RoadNetwork biggestConnectedComponent = new RoadNetwork();
     List<Integer> bConnectedCompNodes = new ArrayList<Integer>();
     List<List<Arc>> arcsOfConnectedComp = new ArrayList<List<Arc>>();
-    List<Integer> remainingNodes = nodes;
-    Integer nextNodeId = nodes.get(0);
+    List<Integer> remainingNodes = nodeIds;
+    Integer nextNodeId = nodeIds.get(0);
     
     while (remainingNodes.size() > 0) {
       remainingNodes.remove(new Integer(nextNodeId));
@@ -282,9 +299,9 @@ public class RoadNetwork {
       for (int i = 0; i < costs.size(); i++) {
         Double costOfCurrentNode = costs.get(i);
         if (costOfCurrentNode > 0) {
-          connectedNodes.add(nodes.get(i));
+          connectedNodes.add(nodeIds.get(i));
           arcsOfComp.add(adjacentArcs.get(i));
-          remainingNodes.remove(new Integer(nodes.get(i)));
+          remainingNodes.remove(new Integer(nodeIds.get(i)));
         }
       }
       if (connectedNodes.size() > bConnectedCompNodes.size()) {
@@ -396,21 +413,43 @@ public class RoadNetwork {
   }
   
   /**
-   * Get RoadNetwork as String.
+   * Get RoadNetwork as a list of lists.
    * @return
    */
-  public ArrayList<List<String>> asString() {
+  public List<List<String>> asLists() {
     ArrayList<List<String>> res = new ArrayList<List<String>>();
     List<String> list;
     for (int i = 0; i < adjacentArcs.size(); i++) {
       list = new ArrayList<String>();
-      list.add(String.valueOf(nodes.get(i)));
+      list.add(String.valueOf(nodeIds.get(i)));
       for (int j = 0; j < adjacentArcs.get(i).size(); j++) {
         list.add(adjacentArcs.get(i).get(j).asString());
       }
       res.add(list);
     }
     return res;
+  }
+  
+  /**
+   * Get RoadNetwork as a String.
+   * @return
+   */
+  public String asString() {
+    String outputString = new String();
+    for (int i = 0; i < nodeIds.size(); i++) {
+      Integer nodeId = nodeIds.get(i);
+      System.out.println("TIME OF " + nodeId);
+      outputString = outputString + nodeId + "|";
+      List<Arc> arcs = getAdjacentArcs().get(i);
+      if (!arcs.isEmpty()) {
+        for (int k = 0; k < arcs.size(); k++) {
+          outputString = outputString + ((arcs.get(k)).getHeadNode())
+            .getId() + "-";
+        }
+      }
+      outputString = outputString + "\n";
+    }
+    return outputString;
   }
   
   
@@ -421,8 +460,8 @@ public class RoadNetwork {
    */
   public int getRandomNodeId() {
     Random randomGenerator = new Random();
-    int randomInt = randomGenerator.nextInt(nodes.size());
-    return nodes.get(randomInt);
+    int randomInt = randomGenerator.nextInt(nodeIds.size());
+    return nodeIds.get(randomInt);
   }
   
 //  //DEBUGGING PURPOSES  
