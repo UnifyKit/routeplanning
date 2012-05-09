@@ -17,18 +17,18 @@ public class RoadNetworkTest {
   /**
    * Tests constructor and string representation of object.
    */
-  @Test
+/*  @Test
   public void testRoadNetwork() {
     RoadNetwork rn = new RoadNetwork();
-    List<Integer> nodes =  rn.getNodes();
+    List<Integer> nodes =  rn.getNodeIds();
     List<List<Arc>> adjacentArcs = rn.getAdjacentArcs();
     Assert.assertTrue("Node's structure was created", nodes.size() >= 0);
     Assert.assertTrue("Arc's structure was created", adjacentArcs.size() >= 0);
   }
 
-  /**
+  *//**
    * Tests setNodes() and getNodes().
-   */
+   *//*
   @Test
   public void testSetGetNodes() {
     List<Integer> testNodes = new ArrayList<Integer>();
@@ -38,12 +38,12 @@ public class RoadNetworkTest {
     }
     RoadNetwork rn = new RoadNetwork();
     rn.setNodes(testNodes);
-    Assert.assertTrue("", (rn.getNodes()).size() == 5);
+    Assert.assertTrue("", (rn.getNodeIds()).size() == 5);
   }
   
-  /**
+  *//**
    * Tests setAdjacentArcs() and getAdjacentArcs().
-   */
+   *//*
   @Test
   public void testSetGetAdjacentArcs() {
     List<List<Arc>> testAdjArcs = new ArrayList<List<Arc>>();
@@ -72,9 +72,9 @@ public class RoadNetworkTest {
     Assert.assertTrue("ALL ARCS are inserted", numberOfArcs == 15);
   }
 
-  /**
+  *//**
    * This method will test the graph shown in the lecture.
-   */
+   *//*
   @Test
   public void testLectureGraph() {
     RoadNetwork rn = new RoadNetwork();
@@ -151,24 +151,81 @@ public class RoadNetworkTest {
 
     rn.addAdjacentArc(node5, newArc55);   
     rn.addAdjacentArc(node5, newArc52);       
-    rn.addAdjacentArc(node5, newArc54);  
+    rn.addAdjacentArc(node5, newArc54);
     
-    String stringRep = rn.asString().toString();
+    System.out.println(rn.asString());
+    
+    String stringRep = rn.asString();
     String expectedRep = new String();
     Assert.assertEquals(stringRep, expectedRep);
   }
 
   
-//
-//  @Test
-//  public void testAddNodeToGraph() {
-//    fail("Not yet implemented");
-//  }
+  *//**
+   * This method tests addNodeToGraph().
+   *//*
+  @Test
+  public void testAddNodeToGraph() {
+    RoadNetwork rn = new RoadNetwork();
+    
+    Node node0 = new Node(0, 1.0, 1.0);
+    Node node1 = new Node(1, 1.0, 1.0);
+    Node node2 = new Node(2, 1.0, 1.0);
+    Node node3 = new Node(3, 1.0, 1.0);
+    Node node4 = new Node(4, 1.0, 1.0);
+    Node node5 = new Node(5, 1.0, 1.0);
+    
+    Node nullNode = null;
+    
+    rn.addNodeToGraph(node0);
+    rn.addNodeToGraph(node1);
+    rn.addNodeToGraph(node2);
+    rn.addNodeToGraph(node3);
+    rn.addNodeToGraph(node4);
+    rn.addNodeToGraph(node5);
+    String expectedOutput = new String("0|\n1|\n2|\n3|\n4|\n5|\n");
+    Assert.assertEquals(expectedOutput, rn.asString());
+    
+    rn.addNodeToGraph(nullNode);
+    Assert.assertEquals(expectedOutput, rn.asString());
+    
+  }*/
 
-//  @Test
-//  public void testAddAdjacentArc() {
-//    fail("Not yet implemented");
-//  }
+  /**
+   * This method tests addAdjacentArc().
+   */
+  @Test
+  public void testAddAdjacentArc() {
+    RoadNetwork rn = new RoadNetwork();
+    
+    Node node0 = new Node(0, 1.0, 1.0);
+    Node node1 = new Node(1, 1.0, 1.0);
+    Node ghostNode = new Node(5, 1.0, 1.0);
+    Node nullNode = null;
+    
+    Arc arc00 = new Arc(node0, 0);
+    Arc arc01 = new Arc(node1, 10);
+    Arc arc10 = new Arc(node0, 10);
+    Arc arc11 = new Arc(node1, 11);
+    Arc arc0null = new Arc(nullNode, 5);
+    Arc arcnull0 = new Arc(node0, 5);
+    Arc arcGhost0 = new Arc(node0, 4);
+    
+    rn.addNodeToGraph(node0);
+    rn.addNodeToGraph(node1);
+    rn.addNodeToGraph(nullNode);
+    rn.addAdjacentArc(node0, arc00);
+    rn.addAdjacentArc(node0, arc01);
+    rn.addAdjacentArc(node1, arc10);
+    rn.addAdjacentArc(node1, arc11);
+    rn.addAdjacentArc(node0, arc0null);
+    rn.addAdjacentArc(nullNode, arcnull0);
+    rn.addAdjacentArc(ghostNode, arcGhost0);
+    
+    System.out.println(rn.asString());
+    
+    //Assert.assertEquals(new String(""), new String(""));
+  }
 //
 //  @Test
 //  public void testGetNodeAdjacentArcs() {
