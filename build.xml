@@ -3,6 +3,7 @@
 		However, this default is recommended and 
 		makes your tutor's life a lot easier. -->
 	<property name="src-dir" location="./src" />
+	<property name="test-dir" location="./test" />	
 	<property name="bin-dir" location="./bin" />
 	<property name="lib-dir" location="./lib" />
 	<property name="dist-dir" location="./build" />
@@ -16,7 +17,7 @@
 	 named <xxx>.properties to exist. 
 	 See demo.properties for required variables -->
 	<property name="properties" value="cj48-va6" />
-	<property file="${properties}.properties"/>
+	<!--property file="${properties}.properties"/-->
 	<property name="Main-Class" value="routeplanning.MainClass"/>
 	<property name="manifest-file" value="${src-dir}/MANIFEST.MF"/>
 	
@@ -89,7 +90,7 @@
 			<classpath refid="classpath.test" />
 			<batchtest fork="yes">
 				<formatter type="plain" usefile="false"/>
-				<fileset dir="${src-dir}">
+				<fileset dir="${test-dir}">
 					<include name="**/*Test.java" />
 				</fileset>
 			</batchtest>
