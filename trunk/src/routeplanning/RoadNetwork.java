@@ -19,17 +19,21 @@ public class RoadNetwork {
    * List of all Nodes IDs.
    */
   public List<Integer> nodes;
-  
   /**
-   * List of lists of adjacent Arcs. Each position of this list
-   * corresponds to the position of nodes 
+   * List of adjacent Arcs. First element of a each list is the head node.
    */
   private List<List<Arc>> adjacentArcs;
-  
+
   /**
    * Map nodeId->Node. Contains all nodes
    */
   public Map<Integer, Node> mapNodeId;
+  /**
+   * Map nodeid -> position of node as tail node in adjacentArcs used to avoid
+   * search by id of the node in adjacentArcs, when adding a new arc.
+   */
+  Map<Integer, Integer> nodeIdPosAdjArc;
+
 
   /**
    * Default Constructor.
@@ -38,8 +42,8 @@ public class RoadNetwork {
     adjacentArcs = new ArrayList<List<Arc>>();
     mapNodeId = new HashMap<Integer, Node>();
     nodes = new ArrayList<Integer>();
+    nodeIdPosAdjArc = new HashMap<Integer, Integer>();
   }
-  
   
   /**
    *Setter method for nodes.
@@ -67,31 +71,33 @@ public class RoadNetwork {
    */
   public List<List<Arc>> getAdjacentArcs() {
     return adjacentArcs;
-  }  
+  }
 
   /**
    * Add an ArrayList<Arc> for the arcs of tail node.
-   * @param nodeId ID of the node added to the road network
+   * @param tailNode ID of the node added to the road network
    */
-  public void addNodeToGraph(int nodeId) {
+  public void addNodeToGraph(Node tailNode) {
+    // Arc arc0 = new Arc(tailNode, 0);
     adjacentArcs.add(new ArrayList<Arc>());
-    nodes.add(nodeId);
+    // adjacentArcs.get(adjacentArcs.size() - 1).add(arc0);
+    nodeIdPosAdjArc.put(tailNode.id, adjacentArcs.size() - 1);
   }
 
   /**
    * Add adjacent arc to for the given node.
-   * @param nodeId Node's ID.
+   * @param tailNode Node's ID.
    * @param arc New Arc
    */
-  public void addAdjacentArc(Node nodeId, Arc arc) {
+  public void addAdjacentArc(Node tailNode, Arc arc) {
     for (int i = 0; i < adjacentArcs.size(); i++) {
       // First list, first element
-      if (adjacentArcs.get(i).get(0).getHeadNode().equals(nodeId)) {
+      if (adjacentArcs.get(i).get(0).getHeadNode().equals(tailNode)) {
         adjacentArcs.get(i).add(arc);
       }
     }
   }
-  
+
   /**
    * Given a node ID it finds the list containing its adjacent arcs.
    * If the ID cannot be find in the road network. It simply returns 
@@ -107,30 +113,27 @@ public class RoadNetwork {
     }
     return arcs;
   }
-
-  /**
-   * Checks if the Arc is already present to avoid duplicates.
-   * @param tailNodeId ID of tail node
-   * @param headNodeId ID of head node
-   */
-  private Boolean arcAlreadyInserted(int tailNodeId, int headNodeId) {
-    List<Arc> nodeAdjArcs = getNodeAdjacentArcs(tailNodeId);
-    
-    if (nodeAdjArcs != null) {
-      for (int i = 0; i < nodeAdjArcs.size(); i++) {
-        if (headNodeId == nodeAdjArcs.get(i).getHeadNode().getId()) {
-          return true;
-        }
+  
+   /**
+    * Checks if the Arc is already present to avoid duplicates.
+    * @param tailNodePos ID of tail node
+    * @param nodeid ID of head node
+    */   
+  public Boolean arcAlreadyInserted(int tailNodePos, int nodeid) {
+    for (int k = 0; k < adjacentArcs.get(tailNodePos).size(); k++) {
+      if (nodeid == adjacentArcs.get(tailNodePos).get(k).headNode.id) {
+        return true;
       }
     }
     return false;
-  }
-  
-  
+  }   
+   
   /**
    * Read OSM file (in XML format) and construct the corresponding road network.
    */
   public void readFromOsmFile(String pathIn) {
+    // List <String> nodesIDs = new ArrayList<String>();
+    // String strFile = new String();
     int tmpNodeID = 0;
     Double tmpLatitude = 0.0;
     Double tmpLongitude = 0.0;
@@ -163,14 +166,20 @@ public class RoadNetwork {
 
           newNode = new Node(tmpNodeID, tmpLatitude, tmpLongitude);
           mapNodeId.put(tmpNodeID, newNode);
-          addNodeToGraph(newNode.id);
+          nodes.add(tmpNodeID);
+          adjacentArcs.add(new ArrayList<Arc>()); // probar y luego quitar!
+          nodeIdPosAdjArc.put(newNode.id, adjacentArcs.size() - 1); // probar y
+                                                                    // quitar!
+                                                                    // tailnode
         } else if (lineIn.contains("<way")) {
           readingWay = true;
           tmpWay = new ArrayList<String>();
         } else if (lineIn.contains("</way")) {
           readingWay = false;
         } else if (lineIn.contains("<tag k=\"highway\"") && readingWay) {
-          // roadType, we use it to compute travel time (cost)
+          // last pos of each list contains roadType, we use it to compute
+          // travel time (cost)
+          // from pos 2 nodes that are in the way
           roadType = String.valueOf(lineIn.substring(lineIn.indexOf("v=") + 3,
               lineIn.indexOf("\" />")));
           // tmpWay.add(roadType);
@@ -179,22 +188,26 @@ public class RoadNetwork {
             // System.out.println(tmpWay.toString());
             for (int i = 0; i < tmpWay.size(); i++) {
               currentNode = mapNodeId.get(Integer.valueOf(tmpWay.get(i)));
-           // nodeIdPosAdjArc.get(currentNode.id);
-              position = nodes.indexOf(currentNode.id);
+              position = nodeIdPosAdjArc.get(currentNode.id);
               // If node doesn't exist in adjacentArcs, then add it
               if (position == null) {
                 // addNodeToGraph(currentNode); regresar!!!
                 position = adjacentArcs.size() - 1;
                 // nodeIdPosAdjArc.put(currentNode.id, position);
               }
-              // first element doesn't have previous node
+              //First element doesn't have previous node
               if (i != 0) {
                 // add arcs to adjacentArcs
                 // prev -> current and current -> prev because is an undirected
                 // graph
                 // Compute cost and create new arcs
-                double distance = getDistance(prevNode, currentNode);
-                Double cost = computeCost(roadType, distance);
+                //System.out.println("prevNode: " + prevNode.id 
+                  //+ " currentNode: " + currentNode.id);
+                //System.out.println("dist: " 
+                  //+ getDistance2(prevNode,currentNode));                
+                Double cost = computeCost(roadType, getDistance2(
+                    prevNode, currentNode));
+                //System.out.println("timeTravel in min: " + cost);
                 Arc arc1 = new Arc(prevNode, cost);
                 Arc arc2 = new Arc(currentNode, cost);
 
@@ -205,7 +218,7 @@ public class RoadNetwork {
                   countArcs++;
                 }
                 // prevNode -> currentNode
-                position = nodes.indexOf(prevNode.id);
+                position = nodeIdPosAdjArc.get(prevNode.id);
                 if (!arcAlreadyInserted(position, arc2.headNode.id)) {
                   this.adjacentArcs.get(position).add(arc2);
                   countArcs++;
@@ -221,7 +234,6 @@ public class RoadNetwork {
           tmpWay.add(String.valueOf(lineIn.substring(
               lineIn.indexOf("<nd ref=") + 9, lineIn.indexOf("\"/>"))));
           // System.out.println(tmpWay.toString());
-
         }
       }
 
@@ -232,66 +244,68 @@ public class RoadNetwork {
       System.out.println("Finish: " + Calendar.getInstance().getTime());
 
       // System.out.println(printArcsFromNode(10467200));
-      checkArcs();
+      //checkArcs();
 
     } catch (Exception e) {
       e.printStackTrace();
     }
-  }
+  }  
 
-  /**
-   * Method to reduce the graph (already read from an OSM file) 
-   * to its largest connected component.
-   * @return A subgraph of the original road network representing
-   * its biggest component
-   */
-  public RoadNetwork reduceToLargestConnectedComponent() {
-    RoadNetwork biggestConnectedComponent = new RoadNetwork();
-    List<Integer> bConnectedCompNodes = new ArrayList<Integer>();
-    List<List<Arc>> arcsOfConnectedComp = new ArrayList<List<Arc>>();
-    List<Integer> remainingNodes = nodes;
-    Integer nextNodeId = nodes.get(0);
-    
-    while (remainingNodes.size() > 0) {
-      remainingNodes.remove(new Integer(nextNodeId));
-      
-      List<Integer> connectedNodes = new ArrayList<Integer>();
-      List<List<Arc>> arcsOfComp = new ArrayList<List<Arc>>();
-
-      connectedNodes.add(nextNodeId);
-      arcsOfComp.add(getAdjacentArcs(nextNodeId));
-      
-      DijkstraAlgorithm dij = new DijkstraAlgorithm(this);
-      dij.computeShortestPath(nextNodeId, -1);
-      List<Integer> costs = dij.getVisitedNodes();
-      
-      for (int i = 0; i < costs.size(); i++) {
-        Integer costOfCurrentNode = costs.get(i);
-        if (costOfCurrentNode > 0) {
-          connectedNodes.add(nodes.get(i));
-          arcsOfComp.add(adjacentArcs.get(i));
-          remainingNodes.remove(new Integer(nodes.get(i)));
-        }
-      }
-      if (connectedNodes.size() > bConnectedCompNodes.size()) {
-        bConnectedCompNodes = connectedNodes;
-        arcsOfConnectedComp = arcsOfComp;
-      }
-      nextNodeId = remainingNodes.get(0);
-    }
-    biggestConnectedComponent.setNodes(bConnectedCompNodes);
-    biggestConnectedComponent.setAdjacentArcs(arcsOfConnectedComp);
-    
-    return biggestConnectedComponent;
-  }
+//  /**
+//   * Method to reduce the graph (already read from an OSM file) 
+//   * to its largest connected component.
+//   * @return A subgraph of the original road network representing
+//   * its biggest component
+//   */
+//  public RoadNetwork reduceToLargestConnectedComponent() {
+//    RoadNetwork biggestConnectedComponent = new RoadNetwork();
+//    List<Integer> bConnectedCompNodes = new ArrayList<Integer>();
+//    List<List<Arc>> arcsOfConnectedComp = new ArrayList<List<Arc>>();
+//    List<Integer> remainingNodes = nodes;
+//    Integer nextNodeId = nodes.get(0);
+//    
+//    while (remainingNodes.size() > 0) {
+//      remainingNodes.remove(new Integer(nextNodeId));
+//      
+//      List<Integer> connectedNodes = new ArrayList<Integer>();
+//      List<List<Arc>> arcsOfComp = new ArrayList<List<Arc>>();
+//
+//      connectedNodes.add(nextNodeId);
+//      arcsOfComp.add(getNodeAdjacentArcs(nextNodeId));
+//      
+//      DijkstraAlgorithm dij = new DijkstraAlgorithm(this);
+//      dij.computeShortestPath(nextNodeId, -1);
+//      List<Integer> costs = dij.getVisitedNodes();
+//      
+//      for (int i = 0; i < costs.size(); i++) {
+//        Integer costOfCurrentNode = costs.get(i);
+//        if (costOfCurrentNode > 0) {
+//          connectedNodes.add(nodes.get(i));
+//          arcsOfComp.add(adjacentArcs.get(i));
+//          remainingNodes.remove(new Integer(nodes.get(i)));
+//        }
+//      }
+//      if (connectedNodes.size() > bConnectedCompNodes.size()) {
+//        bConnectedCompNodes = connectedNodes;
+//        arcsOfConnectedComp = arcsOfComp;
+//      }
+//      nextNodeId = remainingNodes.get(0);
+//    }
+//    biggestConnectedComponent.setNodes(bConnectedCompNodes);
+//    biggestConnectedComponent.setAdjacentArcs(arcsOfConnectedComp);
+//    
+//    return biggestConnectedComponent;
+//  }
+  
   
   /**
    * Compute cost (travel time). If the type of road is not valid, 
    * the method returns -1 to indicate that we should ignore this road.
    * @param roadType 
-   * @param distance Distance in KMs.
-   * @return Time needed to    
-   */
+   * @param distance Distance in Meters.
+   * @return Time needed for the given distance  
+   */ 
+  //TODO time needed unit might be wrong
   public double computeCost(String roadType, double distance) {
     /**
      * Speed in km/h.
@@ -300,9 +314,8 @@ public class RoadNetwork {
     /**
      * Travel time.
      */
-    Double cost;
-    if (roadType.equals("motorway") 
-        || roadType.equals("trunk")) {
+    double cost;
+    if (roadType.equals("motorway") || roadType.equals("trunk")) {
       speed = 110;
     } else if (roadType.equals("primary")) {
       speed = 70;
@@ -316,7 +329,7 @@ public class RoadNetwork {
       speed = 50;
     } else if (roadType.equals("road") || roadType.equals("unclassified")) {
       speed = 40;
-    } else if (roadType.equals("residential")
+    } else if (roadType.equals("residential") 
         || roadType.equals("unsurfaced")) {
       speed = 30;
     } else if (roadType.equals("living_street")) {
@@ -326,12 +339,13 @@ public class RoadNetwork {
     } else {
       return -1;
     }
-    cost = (distance / speed);
+    cost = (distance / 1000) / (speed * 60);
     return cost;
   }
-
+  
+  
   /**
-   * Compute and return distance in Kilometers from node1 to node2.
+   * Compute and return distance in Meters from node1 to node2.
    * 
    * @param node1 Node at position one
    * @param node2 Node at position two
@@ -353,13 +367,34 @@ public class RoadNetwork {
 
     int meterConversion = 1609;
 
-    return new Float(dist * meterConversion).floatValue() / 1000;
+    return new Float(dist * meterConversion).floatValue();
+  }
+  
+  /**
+   * Compute and return distance in Meters from node1 to node2.
+   * 
+   * @param node1 Node at position one
+   * @param node2 Node at position two
+   * @return Distance in KMs
+   */
+  //TODO Check distance
+  public int getDistance2(Node node1, Node node2) { 
+    int distance;
+    Double tmpdist;
+    Integer diffLat, diffLon;
+    tmpdist = (node1.latitude * 111229) - (node2.latitude * 111229);
+    diffLat = tmpdist.intValue();
+    tmpdist = (node1.longitude * 71695) - (node2.longitude * 71695);
+    diffLon = tmpdist.intValue();
+    
+    tmpdist = Math.sqrt(Math.pow(diffLat, 2) + Math.pow(diffLon, 2));
+    distance = tmpdist.intValue();
+    return distance; 
   }
   
   /**
    * Get RoadNetwork as String.
-   * 
-   * @return A list of lists of strings
+   * @return
    */
   public ArrayList<List<String>> asString() {
     ArrayList<List<String>> res = new ArrayList<List<String>>();
@@ -375,45 +410,45 @@ public class RoadNetwork {
     return res;
   }
   
- /**
-  * Generated a random integers in range from 0 to the size of the nodes' list.
-  * It returns the node ID saved at that position in the list.
-  * @return 
-  */
+  
+  /**
+   * Generated a random integers in range from 0 to the size of the nodes' list.
+   * It returns the node ID saved at that position in the list.
+   * @return 
+   */
   public int getRandomNodeId() {
     Random randomGenerator = new Random();
     int randomInt = randomGenerator.nextInt(nodes.size());
     return nodes.get(randomInt);
   }
   
-  //DEBUGGING PURPOSES
-  public List<String> printArcsFromNode(int nodeid) {
-    List<String> list = new ArrayList<String>();
-    list.add(String.valueOf(nodeid));
-    int pos;
-    pos = nodes.indexOf(nodeid);
-    for (int i = 0; i < adjacentArcs.get(pos).size(); i++) {
-      list.add(String.valueOf(adjacentArcs.get(pos).get(i).headNode.id));
-    }
-    return list;
-  }
-
-  private void checkArcs() {
-    List<Integer> listid;
-    int count = 0;
-    for (int i = 0; i < adjacentArcs.size(); i++) {
-      listid = new ArrayList<Integer>();
-      for (int j = 0; j < adjacentArcs.get(i).size(); j++) {
-        if (listid.contains(adjacentArcs.get(i).get(j).headNode.id)) {
-          count++;
-          System.out.println("Error en nodeid: " + nodes.get(i)
-              + " nodeid repeated:" + adjacentArcs.get(i).get(j).headNode.id);
-        } else {
-          listid.add(adjacentArcs.get(i).get(j).headNode.id);
-        }
-      }
-    }
-    System.out.println("Num errores: " + count);
-  }
-  
+//  //DEBUGGING PURPOSES  
+//  public List<String> printArcsFromNode(int nodeid) {
+//    List<String> list = new ArrayList<String>();
+//    list.add(String.valueOf(nodeid));
+//    int pos;
+//    pos = nodeIdPosAdjArc.get(nodeid);
+//    for (int i = 0; i < adjacentArcs.get(pos).size(); i++) {
+//      list.add(String.valueOf(adjacentArcs.get(pos).get(i).headNode.id));
+//    }
+//    return list;
+//  }
+//  
+//  public void checkArcs() {
+//    List<Integer> listid;
+//    int count = 0;
+//    for (int i = 0; i < adjacentArcs.size(); i++) {
+//      listid = new ArrayList<Integer>();
+//      for (int j = 0; j < adjacentArcs.get(i).size(); j++) {
+//        if (listid.contains(adjacentArcs.get(i).get(j).headNode.id)) {
+//          count++;
+//          System.out.println("Error en nodeid: " + nodes.get(i)
+//              + " nodeid repeated:" + adjacentArcs.get(i).get(j).headNode.id);
+//        } else {
+//          listid.add(adjacentArcs.get(i).get(j).headNode.id);
+//        }
+//      }
+//    }
+//    System.out.println("Num errores: " + count);
+//  }
 }
