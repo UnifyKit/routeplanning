@@ -93,8 +93,6 @@ public class DijkstraAlgorithmTest {
     DijkstraAlgorithm alg = new DijkstraAlgorithm(rn);
     Double cost = alg.computeShortestPath(0, 4);
     Double expectedValue = 3.0;
-    System.out.println(cost);
     Assert.assertEquals(cost, expectedValue);
   }
-
 }
