@@ -149,6 +149,10 @@ public class DijkstraAlgorithm {
       path.add(minDistNode);
       System.out.println("Path: " + path.toString());
       
+      if(minDistNode ==targetNodeId) {
+        break;
+      }
+      
       //eliminar de activeNodes porque ya lo recorrimos
       //if(activeNodesId.contains(testNode)){
         activeNodesCost.remove(activeNodesId.indexOf(testNode));
