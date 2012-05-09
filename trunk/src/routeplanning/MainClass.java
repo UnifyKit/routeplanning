@@ -48,7 +48,7 @@ public class MainClass {
 
     }
     System.out.println("1. NUMBER OF NODES OF LCC: "
-      +  largestComponent.getNodes().size());
+      +  largestComponent.getNodeIds().size());
     
     List<List<Arc>> adjacentArcs = largestComponent.getAdjacentArcs();
     for (int k = 0; k < adjacentArcs.size(); k++) {
