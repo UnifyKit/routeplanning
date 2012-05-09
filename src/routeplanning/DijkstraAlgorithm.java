@@ -24,7 +24,7 @@ public class DijkstraAlgorithm {
    * Reference to graph on which this object is supposed to work.
    */
   private RoadNetwork graph;
-  List<Integer> distancesFromSource;
+  
   
   
   /**
@@ -34,10 +34,9 @@ public class DijkstraAlgorithm {
   public DijkstraAlgorithm(RoadNetwork graph) {
     this.graph = graph;
     visitedNodeMarks = new ArrayList<Double>();
-    distancesFromSource = new ArrayList<Integer>(); //shortest distances from source node
+    
     for (int i = 0; i < this.graph.nodes.size(); i++) {
       visitedNodeMarks.add(null);
-      distancesFromSource.add(Integer.MAX_VALUE);
     }
     
   }
@@ -68,14 +67,14 @@ public class DijkstraAlgorithm {
     Double distToAdjNode=0.0;
     int minValue = Integer.MAX_VALUE;
     int minValueKey = 0;
-    int previous=0;
+    
     List<Integer> path = new ArrayList<Integer>();
     
-    Object next;
+    
     testNode = sourceNodeId;
     activeNodesId.add(testNode);
     activeNodesCost.add(0.0);
-    distancesFromSource.get(posInGraph(testNode));
+    //distancesFromSource.get(posInGraph(testNode));
     
     Boolean noAdjacentNodes=false;
     
