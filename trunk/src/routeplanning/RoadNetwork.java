@@ -224,7 +224,7 @@ public class RoadNetwork {
                   //+ getDistance2(prevNode,currentNode));                
                 Double cost = computeCost(roadType, getDistance2(
                     prevNode, currentNode));
-                if(cost > 0){
+                if (cost > 0) {
                   //System.out.println("timeTravel in min: " + cost);
                   Arc arc1 = new Arc(prevNode, cost);
                   Arc arc2 = new Arc(currentNode, cost);
@@ -242,7 +242,7 @@ public class RoadNetwork {
                     countArcs++;
                   }
                 }
-                              }
+              }
               prevNode = currentNode;
             }
 
@@ -438,7 +438,6 @@ public class RoadNetwork {
     String outputString = new String();
     for (int i = 0; i < nodeIds.size(); i++) {
       Integer nodeId = nodeIds.get(i);
-      System.out.println("TIME OF " + nodeId);
       outputString = outputString + nodeId + "|";
       List<Arc> arcs = getAdjacentArcs().get(i);
       if (!arcs.isEmpty()) {
