@@ -1,12 +1,7 @@
 package routeplanning;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Set;
-import java.util.TreeMap;
 /**
  * 
  * @author CJC, AAA
@@ -172,16 +167,17 @@ public class DijkstraAlgorithm {
    * @param nodeId
    * @param actualDistance
    */
-  private int getAdjNodeWithShortestDist(int nodeId){
+  private int getAdjNodeWithShortestDist(int nodeId) {
     List<Arc> adjArcsTestNode;
-    Double minDist=Double.MAX_VALUE;
+    Double minDist = Double.MAX_VALUE;
     Double distToAdjNode;
-    int closerNode=-1; //manejar cuando sea -1
+    int closerNode = -1; //manejar cuando sea -1
     
-    adjArcsTestNode = this.graph.getAdjacentArcs().get(this.graph.nodes.indexOf(nodeId));
+    adjArcsTestNode = this.graph.getAdjacentArcs().get(
+        this.graph.nodes.indexOf(nodeId));
     
-    for(int i = 0; i < adjArcsTestNode.size(); i++) {
-      if(visitedNodeMarks.get(posInGraph(adjArcsTestNode.get(i).headNode.id)) == null ){
+    for (int i = 0; i < adjArcsTestNode.size(); i++) {
+      if (visitedNodeMarks.get(posInGraph(adjArcsTestNode.get(i).headNode.id)) == null ){
         distToAdjNode = adjArcsTestNode.get(i).cost;
         if(minDist > distToAdjNode) {
           minDist = distToAdjNode;
@@ -200,5 +196,11 @@ public class DijkstraAlgorithm {
 
   }
   
-  
+  /**
+   * Returns visitedNodeMarks.
+   * @return visitedNodeMarks
+   */  
+  public List<Double> getVisitedNodes() {
+    return visitedNodeMarks;
+  }
 }
