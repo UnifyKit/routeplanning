@@ -12,13 +12,13 @@ public class Arc {
   /**
    * Variable for cost of Arc.
    */
-  public Double cost;
+  public int cost;
   /**
    * Constructor Arc.  
    * @param headNode
    * @param cost
    */
-  public Arc(Node headNode, double cost) {
+  public Arc(Node headNode, int cost) {
     this.headNode = headNode;
     this.cost = cost;
   }
