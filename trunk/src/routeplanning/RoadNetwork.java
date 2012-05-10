@@ -222,7 +222,7 @@ public class RoadNetwork {
                   //+ " currentNode: " + currentNode.id);
                 //System.out.println("dist: " 
                   //+ getDistance2(prevNode,currentNode));                
-                Double cost = computeCost(roadType, getDistance2(
+                int cost = computeCost(roadType, getDistance(
                     prevNode, currentNode));
                 if (cost > 0) {
                   //System.out.println("timeTravel in min: " + cost);
@@ -297,10 +297,10 @@ public class RoadNetwork {
       
       DijkstraAlgorithm dij = new DijkstraAlgorithm(this);
       dij.computeShortestPath(nextNodeId, -1);
-      List<Double> costs = dij.getVisitedNodes();
+      List<Integer> costs = dij.getVisitedNodes();
       
       for (int i = 0; i < costs.size(); i++) {
-        Double costOfCurrentNode = costs.get(i);
+        Integer costOfCurrentNode = costs.get(i);
         if (costOfCurrentNode > 0) {
           connectedNodes.add(nodeIds.get(i));
           arcsOfComp.add(adjacentArcs.get(i));
@@ -328,7 +328,7 @@ public class RoadNetwork {
    * @return Time needed for the given distance  
    */ 
   //TODO time needed unit might be wrong
-  public double computeCost(String roadType, double distance) {
+  public int computeCost(String roadType, double distance) {
     
     /**
      * Speed in km/h.
@@ -337,7 +337,8 @@ public class RoadNetwork {
     /**
      * Travel time.
      */
-    double cost;
+    Double cost;
+    int costMin=0;
     if (roadType.equals("motorway") || roadType.equals("trunk")) {
       speed = 110;
     } else if (roadType.equals("primary")) {
@@ -362,8 +363,10 @@ public class RoadNetwork {
     } else {
       return -1;
     }
-    cost = (distance / 1000) / (speed * 60);
-    return cost;
+    cost = distance / speed;
+    cost = cost * 60 *60;
+    costMin = cost.intValue();
+    return costMin;
   }
   
   
