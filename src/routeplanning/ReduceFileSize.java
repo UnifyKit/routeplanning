@@ -53,6 +53,12 @@ public class ReduceFileSize {
       return lineIn;
     } else if (lineIn.contains("<nd ref=")) {
       return lineIn;
+    } else if (lineIn.contains("<?xml")) {
+      return lineIn;
+    } else if (lineIn.contains("<osm")) {
+      return lineIn;
+    } else if (lineIn.contains("</osm")) {
+      return lineIn;
     }
 
     return "";
