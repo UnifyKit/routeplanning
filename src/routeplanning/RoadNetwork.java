@@ -298,13 +298,9 @@ public class RoadNetwork {
       connectedNodes.add(nextNodeId);
       arcsOfComp.add(getNodeAdjacentArcs(nextNodeId));
       
-      DijkstraAlgorithm2 dij = new DijkstraAlgorithm2(this);
+      DijkstraAlgorithm dij = new DijkstraAlgorithm(this);
       dij.computeShortestPath(nextNodeId, -1);
       List<Integer> costs = dij.getVisitedNodes();
-      
-//      for (int i = 0; i < costs.size();  i++) {
-//        System.out.println(costs.get(i));
-//      }
       
       for (int i = 0; i < costs.size(); i++) {
         Integer costOfCurrentNode = costs.get(i);
@@ -320,7 +316,9 @@ public class RoadNetwork {
         bConnectedCompNodes = connectedNodes;
         arcsOfConnectedComp = arcsOfComp;
       }
-      nextNodeId = remainingNodes.get(0);
+      if (remainingNodes.size() > 0) {
+        nextNodeId = remainingNodes.get(0);
+      }
     }
     biggestConnectedComponent.setNodes(bConnectedCompNodes);
     biggestConnectedComponent.setAdjacentArcs(arcsOfConnectedComp);
@@ -347,7 +345,7 @@ public class RoadNetwork {
      * Travel time.
      */
     Double cost;
-    int costMin=0;
+    int costMin = 0;
     if (roadType.equals("motorway") || roadType.equals("trunk")) {
       speed = 110;
     } else if (roadType.equals("primary")) {
@@ -373,7 +371,7 @@ public class RoadNetwork {
       return -1;
     }
     cost = distance / speed;
-    cost = cost * 60 *60;
+    cost = cost * 60 * 60;
     costMin = cost.intValue();
     return costMin;
   }
