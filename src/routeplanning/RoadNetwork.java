@@ -124,10 +124,13 @@ public class RoadNetwork {
    */
   public List<Arc> getNodeAdjacentArcs(Integer nodeId) {
     List<Arc> arcs = null;
-    int index = nodeIds.indexOf(nodeId);
-    if (index != -1) {
-      arcs = adjacentArcs.get(index);
+    if (nodeIdPosAdjArc.containsKey(nodeId)) {
+      arcs = adjacentArcs.get(nodeIdPosAdjArc.get(nodeId));
     }
+//    int index = nodeIds.indexOf(nodeId);
+//    if (index != -1) {
+//      arcs = adjacentArcs.get(index);
+//    }
     return arcs;
   }
   
@@ -295,16 +298,22 @@ public class RoadNetwork {
       connectedNodes.add(nextNodeId);
       arcsOfComp.add(getNodeAdjacentArcs(nextNodeId));
       
-      DijkstraAlgorithm dij = new DijkstraAlgorithm(this);
+      DijkstraAlgorithm2 dij = new DijkstraAlgorithm2(this);
       dij.computeShortestPath(nextNodeId, -1);
       List<Integer> costs = dij.getVisitedNodes();
       
+//      for (int i = 0; i < costs.size();  i++) {
+//        System.out.println(costs.get(i));
+//      }
+      
       for (int i = 0; i < costs.size(); i++) {
         Integer costOfCurrentNode = costs.get(i);
-        if (costOfCurrentNode > 0) {
-          connectedNodes.add(nodeIds.get(i));
-          arcsOfComp.add(adjacentArcs.get(i));
-          remainingNodes.remove(new Integer(nodeIds.get(i)));
+        if (costOfCurrentNode != null) { //added
+          if (costOfCurrentNode > 0) {
+            connectedNodes.add(nodeIds.get(i));
+            arcsOfComp.add(adjacentArcs.get(i));
+            remainingNodes.remove(new Integer(nodeIds.get(i)));
+          }
         }
       }
       if (connectedNodes.size() > bConnectedCompNodes.size()) {

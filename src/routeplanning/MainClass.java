@@ -32,7 +32,7 @@ public class MainClass {
         targetNodeId = largestComponent.getRandomNodeId();
       }
       double cost = dijAlg.computeShortestPath(sourceNodeId, targetNodeId);
-      List<Double> settledNodeCosts = dijAlg.getVisitedNodes();
+      List<Integer> settledNodeCosts = dijAlg.getVisitedNodes();
       for (int k = 0; k < settledNodeCosts.size(); k++) {
         if (settledNodeCosts.get(k) > 0) {
           totalSettledNodes++;
