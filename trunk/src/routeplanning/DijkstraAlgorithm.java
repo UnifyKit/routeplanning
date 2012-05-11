@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
-public class DijkstraAlgorithm2 {
+public class DijkstraAlgorithm {
   /**
    * Indicator which node was visited by a particular run of Dijkstra. Useful
    * for computing the connected components; 
@@ -33,7 +33,7 @@ public class DijkstraAlgorithm2 {
    * Create instance of this class for a given (road) graph.
    * @param graph
    */
-  public DijkstraAlgorithm2(RoadNetwork graph) {
+  public DijkstraAlgorithm(RoadNetwork graph) {
     this.graph = graph;
     visitedNodeMarks = new ArrayList<Integer>();
     for (int i = 0; i < this.graph.nodeIds.size(); i++) {
