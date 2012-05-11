@@ -1,5 +1,7 @@
 package routeplanning;
 
+import java.util.List;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -9,13 +11,13 @@ import org.junit.Test;
  * @author AAA
  */
 public class DijkstraAlgorithmTest {
-  /**
-   * Tests ComputeShortestPath().
+  
+   /**
+   * Creates a road network that can be used in other classes.
+   * @param graph
    */
-  @Test
-  public void testComputeShortestPath() {
+  public RoadNetwork createSampleGraph() {
     RoadNetwork rn = new RoadNetwork();
-    
     Node node0 = new Node(0, 1.0, 1.0);
     Node node1 = new Node(1, 1.0, 1.0);
     Node node2 = new Node(2, 1.0, 1.0);
@@ -90,9 +92,65 @@ public class DijkstraAlgorithmTest {
     rn.addAdjacentArc(node5, newArc52);       
     rn.addAdjacentArc(node5, newArc54);  
     
+    return rn;
+  }
+  
+  /**
+   * Tests ComputeShortestPath() between two nodes.
+   */
+  @Test
+  public void testComputeShortestPath() {
+    RoadNetwork rn = createSampleGraph();
     DijkstraAlgorithm alg = new DijkstraAlgorithm(rn);
-    Double cost = alg.computeShortestPath(0, 4);
-    Double expectedValue = 3.0;
+    Integer cost = alg.computeShortestPath(0, 4);
+    Integer expectedValue = 3;
     Assert.assertEquals(cost, expectedValue);
   }
+  
+  /**
+   * Tests ComputeShortestPath() with target node having -1 as parameter.
+   */
+  @Test
+  public void testComputeShortestPath2() {
+    RoadNetwork rn = createSampleGraph();
+    DijkstraAlgorithm alg = new DijkstraAlgorithm(rn);
+    Integer cost = alg.computeShortestPath(0, 4);
+    Integer expectedValue = 3;
+    Assert.assertEquals(cost, expectedValue);
+  }
+
+  /**
+   * Tests if test visited Nodes returns the expected costs.
+   */
+  @Test
+  public void testGetVisitedNodes() {
+    RoadNetwork rn = createSampleGraph();
+    DijkstraAlgorithm alg = new DijkstraAlgorithm(rn);
+    Integer cost = alg.computeShortestPath(0, 4);
+    List<Integer> visitedNodes = alg.getVisitedNodes();
+    
+    boolean conformsResult = true;
+    
+    for (int i = 0; i < visitedNodes.size(); i++) {
+      if (visitedNodes.get(i) != null) {
+        if (i == 1) {
+          if (visitedNodes.get(i) != 1) {
+            conformsResult = false;
+          }
+        }
+        if (i == 3) {
+          if (visitedNodes.get(i) != 2) {
+            conformsResult = false;
+          }
+        }
+        if (i == 4) {
+          if (visitedNodes.get(i) != 3) {
+            conformsResult = false;
+          }
+        }
+      }
+    }
+    Assert.assertTrue(conformsResult);
+  }
 }
+
