@@ -1,7 +1,10 @@
-package routeplanning;
+package routeplanning.deprecated;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import routeplanning.Arc;
+import routeplanning.RoadNetwork;
 /**
  * 
  * @author CJC, AAA
@@ -89,8 +92,8 @@ public class DijkstraAlgorithm {
       //Add adjacent nodes of source -> activeNodes
       for (int i = 0; i < adjacentsArcs.get(pos).size(); i++) {
         if (visitedNodeMarks.get(posInGraph(
-          adjacentsArcs.get(pos).get(i).headNode.id)) == null) {
-          activeNodesId.add(adjacentsArcs.get(pos).get(i).headNode.id);
+          adjacentsArcs.get(pos).get(i).headNode.getId())) == null) {
+          activeNodesId.add(adjacentsArcs.get(pos).get(i).headNode.getId());
           activeNodesCost.add(shortestPathCost 
               + adjacentsArcs.get(pos).get(i).cost);    
           noAdjacentNodes = true;
@@ -123,11 +126,11 @@ public class DijkstraAlgorithm {
       minDist = Integer.MAX_VALUE;
       for (int i = 0; i < adjArcsTestNode.size(); i++) {
         if (visitedNodeMarks.get(posInGraph(
-            adjArcsTestNode.get(i).headNode.id)) == null) {
+            adjArcsTestNode.get(i).headNode.getId())) == null) {
           distToAdjNode = shortestPathCost + adjArcsTestNode.get(i).cost;
           if (minDist > distToAdjNode) {
             minDist = distToAdjNode;
-            minDistNode = adjArcsTestNode.get(i).headNode.id;
+            minDistNode = adjArcsTestNode.get(i).headNode.getId();
             minValueKey = i; 
           }  
         }
