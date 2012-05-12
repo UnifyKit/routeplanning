@@ -102,14 +102,14 @@ public class RoadNetwork {
   }
   
   /**
-   * Getter method for nodeIdPosAdjArc.
+   * Getter method for mapNodeId.
    */
   public Map<Integer, Node> getNodeIdPosAdjArc() {
     return mapNodeId;
   }
   
   /**
-   * Getter method for mapNodeId.
+   * Getter method for nodeIdPosAdjArc.
    */
   public Map<Integer, Integer> getMapNodeId() {
     return nodeIdPosAdjArc;
@@ -126,7 +126,7 @@ public class RoadNetwork {
       numberOfArcs = numberOfArcs + arcs.size();
     }
     
-    return numberOfArcs;
+    return numberOfArcs / 2;
   }
 
   /**
@@ -169,8 +169,7 @@ public class RoadNetwork {
           boolean alreadyInserted  = 
               arcAlreadyInserted(position, arc.getHeadNode().getId());
           if (!alreadyInserted) {
-            List<Arc> arcs = getAdjacentArcs().get(position);
-            arcs.add(arc); 
+            adjacentArcs.get(position).add(arc);
           }
         }
       }
@@ -265,17 +264,17 @@ public class RoadNetwork {
             // System.out.println(tmpWay.toString());
             for (int i = 0; i < tmpWay.size(); i++) {
               currentNode = mapNodeId.get(Integer.valueOf(tmpWay.get(i)));
-              position = nodeIdPosAdjArc.get(currentNode.getId());
-              // If node doesn't exist in adjacentArcs, then add it
-              if (position == null) {
-                // addNodeToGraph(currentNode); regresar!!!
-                if (adjacentArcs.size() > 1) {
-                  position = adjacentArcs.size() - 1;
-                } else {
-                  position = 0;
-                }
-                // nodeIdPosAdjArc.put(currentNode.id, position);
-              }
+//              position = nodeIdPosAdjArc.get(currentNode.getId());
+//              // If node doesn't exist in adjacentArcs, then add it
+//              if (position == null) {
+//                // addNodeToGraph(currentNode); regresar!!!
+//                if (adjacentArcs.size() > 1) {
+//                  position = adjacentArcs.size() - 1;
+//                } else {
+//                  position = 0;
+//                }
+//                // nodeIdPosAdjArc.put(currentNode.id, position);
+//              }
               //First element doesn't have previous node
               if (i != 0) {
                 // add arcs to adjacentArcs
@@ -286,9 +285,9 @@ public class RoadNetwork {
                   //+ " currentNode: " + currentNode.id);
                 //System.out.println("dist: " 
                   //+ getDistance2(prevNode,currentNode));                
-                int cost = computeCost(roadType, getDistance(
+                int cost = computeCost(roadType, getDistance2(
                     prevNode, currentNode));
-                if (cost > 0) {
+                if (cost != -1) {
                   //System.out.println("timeTravel in min: " + cost);
                   Arc arc1 = new Arc(prevNode, cost);
                   Arc arc2 = new Arc(currentNode, cost);
@@ -315,7 +314,7 @@ public class RoadNetwork {
       System.out.println("TOTAL Num of nodes: " + getAllNodeIds().size());
       System.out.println("Num of nodes with arcs: " + getNodeIds().size());
       // System.out.println(nodes.size());
-      System.out.println("Number of arcs: " + getNumberOfArcs() / 2);
+      System.out.println("Number of arcs: " + getNumberOfArcs());
       // System.out.println("adjacentArcs Size: " + this.adjacentArcs.size());
       System.out.println("Finish: " + Calendar.getInstance().getTime());
 
@@ -474,10 +473,9 @@ public class RoadNetwork {
       remainingNodes.remove(new Integer(nextNodeId));
       
       List<Integer> connectedNodes = new ArrayList<Integer>();
-      List<List<Arc>> arcsOfComp = new ArrayList<List<Arc>>();
+      //List<List<Arc>> arcsOfComp = new ArrayList<List<Arc>>();
 
       connectedNodes.add(nextNodeId);
-      arcsOfComp.add(getNodeAdjacentArcs(nextNodeId));
       
       DijkstraAlgorithm dij = new DijkstraAlgorithm(this);
       dij.computeShortestPath(nextNodeId, -1);
@@ -488,14 +486,12 @@ public class RoadNetwork {
         if (costOfCurrentNode != null) { //added
           if (costOfCurrentNode > 0) {
             connectedNodes.add(nodeIds.get(i));
-            arcsOfComp.add(adjacentArcs.get(i));
             remainingNodes.remove(new Integer(nodeIds.get(i)));
           }
         }
       }
       if (connectedNodes.size() > bConnectedCompNodes.size()) {
         bConnectedCompNodes = connectedNodes;
-        arcsOfConnectedComp = arcsOfComp;
       }
       if (remainingNodes.size() > 0) {
         nextNodeId = remainingNodes.get(0);
@@ -503,7 +499,17 @@ public class RoadNetwork {
     }
     biggestConnectedComponent.setNodes(bConnectedCompNodes);
     biggestConnectedComponent.setAllNodes(bConnectedCompNodes);
-    biggestConnectedComponent.setAdjacentArcs(arcsOfConnectedComp);
+    
+    List<Integer> nodeIds = biggestConnectedComponent.getNodeIds();
+    
+    for (int i = 0; i < nodeIds.size(); i++) {
+      Integer nodeId = nodeIds.get(i);
+      List<Arc> arcs = getNodeAdjacentArcs(nodeId);
+      biggestConnectedComponent.getAdjacentArcs().add(arcs);
+      if (arcs == null) {
+        System.out.println("DU BIST DOOF");
+      }
+    }
     
     return biggestConnectedComponent;
   }
@@ -513,7 +519,7 @@ public class RoadNetwork {
    * Compute cost (travel time). If the type of road is not valid, 
    * the method returns -1 to indicate that we should ignore this road.
    * @param roadType 
-   * @param distance Distance in Meters.
+   * @param distance Distance in Kilometers.
    * @return Time needed for the given distance  
    */ 
   //TODO time needed unit might be wrong
@@ -527,7 +533,6 @@ public class RoadNetwork {
      * Travel time.
      */
     Double cost;
-    int costMin = 0;
     if (roadType.equals("motorway") || roadType.equals("trunk")) {
       speed = 110;
     } else if (roadType.equals("primary")) {
@@ -554,8 +559,7 @@ public class RoadNetwork {
     }
     cost = distance / speed;
     cost = cost * 60 * 60;
-    costMin = cost.intValue();
-    return costMin;
+    return (int) Math.round(cost);
   }
   
   
@@ -566,45 +570,45 @@ public class RoadNetwork {
    * @param node2 Node at position two
    * @return Distance in KMs
    */
-  public double getDistance(Node node1, Node node2) {
-    double lat1 = node1.latitude;
-    double lat2 = node2.latitude;
-    double lon1 = node1.longitude;
-    double lon2 = node1.longitude;
-    double earthRadius = 3958.75;
-    double dLat = Math.toRadians(lat2 - lat1);
-    double dLng = Math.toRadians(lon2 - lon1);
-    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-        + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-        * Math.sin(dLng / 2) * Math.sin(dLng / 2);
-    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    double dist = earthRadius * c;
-
-    int meterConversion = 1609;
-
-    return new Float(dist * meterConversion).floatValue();
-  }
-  
-  /**
-   * Compute and return distance in Meters from node1 to node2.
-   * 
-   * @param node1 Node at position one
-   * @param node2 Node at position two
-   * @return Distance in KMs
-   */
-//  public int getDistance2(Node node1, Node node2) { 
-//    int distance;
-//    Double tmpdist;
-//    Integer diffLat, diffLon;
-//    tmpdist = (node1.latitude * 111229) - (node2.latitude * 111229);
-//    diffLat = tmpdist.intValue();
-//    tmpdist = (node1.longitude * 71695) - (node2.longitude * 71695);
-//    diffLon = tmpdist.intValue();
-//    
-//    tmpdist = Math.sqrt(Math.pow(diffLat, 2) + Math.pow(diffLon, 2));
-//    distance = tmpdist.intValue();
-//    return distance; 
+//  public double getDistance(Node node1, Node node2) {
+//    double lat1 = node1.latitude;
+//    double lat2 = node2.latitude;
+//    double lon1 = node1.longitude;
+//    double lon2 = node1.longitude;
+//    double earthRadius = 3958.75;
+//    double dLat = Math.toRadians(lat2 - lat1);
+//    double dLng = Math.toRadians(lon2 - lon1);
+//    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+//        + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+//        * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+//    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+//    double dist = earthRadius * c;
+//
+//    int meterConversion = 1609;
+//
+//    return new Float(dist * meterConversion).floatValue();
 //  }
+  
+  /**
+   * Compute and return distance in Meters from node1 to node2.
+   * 
+   * @param node1 Node at position one
+   * @param node2 Node at position two
+   * @return Distance in KMs
+   */
+  public double getDistance2(Node node1, Node node2) { 
+    double distance;
+    Double tmpdist;
+    Integer diffLat, diffLon;
+    tmpdist = (node1.latitude * 111229) - (node2.latitude * 111229);
+    diffLat = tmpdist.intValue();
+    tmpdist = (node1.longitude * 71695) - (node2.longitude * 71695);
+    diffLon = tmpdist.intValue();
+    
+    tmpdist = Math.sqrt(Math.pow(diffLat, 2) + Math.pow(diffLon, 2));
+    distance = tmpdist.intValue();
+    return distance / 1000; 
+  }
   
   /**
    * Get RoadNetwork as a list of lists.
