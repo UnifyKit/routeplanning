@@ -13,29 +13,33 @@ public class MainClass {
    * @param network the original road network extracted from the osm file.
    */
   public static void try100Dijkstras(RoadNetwork network) {
+    System.out.println("Start from Largest Connected Component...");
     RoadNetwork largestComponent = 
       network.reduceToLargestConnectedComponent();
+    System.out.println("End from Largest Connected Component..."); 
     
     //Exercise Sheet 2 - ex. 3
-    double totalCost = 0.0;
+    Integer totalCost = 0;
     long totalExecutionTime = 0;
     int totalSettledNodes = 0;
     int lccArcs = 0;
     DecimalFormat twoDForm = new DecimalFormat("#.##");
     
     DijkstraAlgorithm dijAlg = new DijkstraAlgorithm(largestComponent);
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 10; i++) {
       long start = System.currentTimeMillis();
       Integer sourceNodeId = largestComponent.getRandomNodeId();
       Integer targetNodeId = largestComponent.getRandomNodeId();
       while (sourceNodeId == targetNodeId) {
         targetNodeId = largestComponent.getRandomNodeId();
       }
-      double cost = dijAlg.computeShortestPath(sourceNodeId, targetNodeId);
+      Integer cost = dijAlg.computeShortestPath(sourceNodeId, targetNodeId);
       List<Integer> settledNodeCosts = dijAlg.getVisitedNodes();
       for (int k = 0; k < settledNodeCosts.size(); k++) {
-        if (settledNodeCosts.get(k) > 0) {
-          totalSettledNodes++;
+        if (settledNodeCosts.get(k) != null) {
+          if (settledNodeCosts.get(k) > 0) {
+            totalSettledNodes++;
+          }
         }
       }
       totalSettledNodes = totalSettledNodes + 1;
@@ -43,8 +47,8 @@ public class MainClass {
       long end = System.currentTimeMillis();
       totalExecutionTime = totalExecutionTime + (end - start);
       
-//      System.out.println("SHORTEST PATH FROM NODE: " + sourceNodeId 
-//          + " TO NODE: " + targetNodeId + " :::: " + cost);
+      System.out.println("SHORTEST PATH FROM NODE: " + sourceNodeId 
+          + " TO NODE: " + targetNodeId + " :::: " + cost);
 
     }
     System.out.println("1. NUMBER OF NODES OF LCC: "
@@ -71,17 +75,17 @@ public class MainClass {
    * @param args
    */
   public static void main(String[] args) {
-    /*ReduceFileSize rfs = new ReduceFileSize(
+    //If one wants to reduce the file size.
+    ReduceFileSize rfs = new ReduceFileSize(
         "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
-          + "src/routeplanning/resources/osm-sample.osm",
+          + "src/routeplanning/resources/saarland.osm",
         "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
-          +  "src/routeplanning/resources/osm-sample_reduced.osm");
-    rfs.process();*/
+          +  "src/routeplanning/resources/saarland_reduced.osm");
+    rfs.process();
     RoadNetwork roadNet = new RoadNetwork();
     roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
       + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
-    //System.out.println("ROAD NETWORK: " + roadNet.asString());
     
-    //MainClass.try100Dijkstras(roadNet);
+    MainClass.try100Dijkstras(roadNet);
   }
 }

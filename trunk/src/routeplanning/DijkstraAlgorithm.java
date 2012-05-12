@@ -6,6 +6,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
+/**
+ * Class implementing the Dijkstra algorithm.
+ */
 public class DijkstraAlgorithm {
   /**
    * Indicator which node was visited by a particular run of Dijkstra. Useful
@@ -16,19 +19,22 @@ public class DijkstraAlgorithm {
    * Reference to graph on which this object is supposed to work.
    */
   private RoadNetwork graph;
+  
   /**
-   * 
+   *TODO.
    */
-  private final Comparator<ActiveNode> travelTimeComparator = new Comparator<ActiveNode>() {
-    public int compare(ActiveNode n1, ActiveNode n2) {
-      double dist = n1.dist - n2.dist;
-      if (dist < 0) {
-        return -1;
-      } else {
-        return 1;
+  private final Comparator<ActiveNode> travelTimeComparator =
+    new Comparator<ActiveNode>() {
+      public int compare(ActiveNode n1, ActiveNode n2) {
+        double dist = n1.dist - n2.dist;
+        if (dist < 0) {
+          return -1;
+        } else {
+          return 1;
+        }
       }
-    }
-  };
+    };
+  
   /**
    * Create instance of this class for a given (road) graph.
    * @param graph
@@ -36,7 +42,7 @@ public class DijkstraAlgorithm {
   public DijkstraAlgorithm(RoadNetwork graph) {
     this.graph = graph;
     visitedNodeMarks = new ArrayList<Integer>();
-    for (int i = 0; i < this.graph.nodeIds.size(); i++) {
+    for (int i = 0; i < this.graph.getNodeIds().size(); i++) {
       visitedNodeMarks.add(null);
     }
   }
@@ -53,35 +59,38 @@ public class DijkstraAlgorithm {
     List<Arc> adjArcsCurrentNode;
     int pos;
     int minDist = Integer.MAX_VALUE;
-    int distToAdjNode=0;
+    int distToAdjNode = 0;
     ActiveNode activeNode;
-    Boolean noAdjacentNodes=false;
+    Boolean noAdjacentNodes = false;
     
     
-    System.out.println("Compute Shortest Path Start: " + Calendar.getInstance().getTime());
+    System.out.println("Compute Shortest Path Start: " 
+      + Calendar.getInstance().getTime());
     ActiveNode sourceNode = new ActiveNode(sourceNodeId, 0);
     
-    PriorityQueue<ActiveNode> pq = new PriorityQueue<ActiveNode>(1, travelTimeComparator);
+    PriorityQueue<ActiveNode> pq = new PriorityQueue<ActiveNode>(
+        1, travelTimeComparator);
     pq.add(sourceNode);
     
     
-    while(!pq.isEmpty()) {
+    while (!pq.isEmpty()) {
       ActiveNode currentNode = pq.poll();
       
-      if(isVisited(currentNode.id)) {
+      if (isVisited(currentNode.id)) {
         continue;
       }
-      pos = this.graph.nodeIds.indexOf(currentNode.id);
+      pos = this.graph.getNodeIds().indexOf(currentNode.id);
       //settled the node
       visitedNodeMarks.set(pos, currentNode.dist);
       
       
-      if(currentNode.id == targetNodeId) {
+      if (currentNode.id == targetNodeId) {
         shortestPathCost = currentNode.dist;
         break;
       }
       
-      //System.out.println("currentNode: " + currentNode.id + " dist: " + currentNode.dist);
+      //System.out.println("currentNode: " + currentNode.id 
+      //+ " dist: " + currentNode.dist);
       //pqAsString(pq);
        
       //search adjacent node with shortest distance
@@ -104,31 +113,37 @@ public class DijkstraAlgorithm {
           pq.add(activeNode);
         }
       }
-      if(!noAdjacentNodes) {
-        //System.out.println(currentNode.id);
-      }
+//      if (!noAdjacentNodes) {
+//        System.out.println(currentNode.id);
+//      }
       
     }
     System.out.println("shortestPathCost: " + shortestPathCost);
     //System.out.println("visitedNodeMarks: " + visitedNodeMarks.toString());
-    System.out.println("Compute Shortest Path End: " + Calendar.getInstance().getTime());
+    System.out.println("Compute Shortest Path End: " 
+      + Calendar.getInstance().getTime());
     return shortestPathCost;
   }
-  private Boolean isVisited(int nodeId){
-    if (visitedNodeMarks.get(this.graph.nodeIds.indexOf(nodeId)) == null) {
-      return false;
-    } else {
+  
+  /**
+   *Says if the given node was already visited.
+   * @param nodeId 
+   */
+  private Boolean isVisited(int nodeId) {
+    if (visitedNodeMarks.get(this.graph.getNodeIds().indexOf(nodeId)) != null) {
       return true;
     }
+    return false;
   }
   /**
    * Mark all nodes visited by the next call to computeShortestPath with this
    * number.
    * @param mark
    */
-  private void setVisitedNodeMark(int mark) {
-
-  }
+//  private void setVisitedNodeMark(int mark) {
+//
+//  }
+  
   /**
    * Returns visitedNodeMarks.
    * @return visitedNodeMarks
@@ -136,13 +151,18 @@ public class DijkstraAlgorithm {
   public List<Integer> getVisitedNodes() {
     return visitedNodeMarks;
   }
-  private void pqAsString(PriorityQueue pq){
+  
+  /**
+   *TODO.
+   * @param pq priority queue
+   */
+  private void pqAsString(PriorityQueue pq) {
     String pqString;
     ActiveNode node;
     PriorityQueue<ActiveNode> queue = new PriorityQueue<ActiveNode>();
     System.out.println("-------------------------------------");
     queue = pq;     
-    while(!pq.isEmpty()){
+    while (!pq.isEmpty()) {
       node = queue.peek();
       System.out.println("id: " + node.id + "value: " + node.dist);
     }
