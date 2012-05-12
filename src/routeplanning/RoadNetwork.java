@@ -42,7 +42,7 @@ public class RoadNetwork {
   /**
    * Keeps track of the number of arcs.
    */
-  private Integer numberOfArcs = 0;
+  //private Integer numberOfArcs = 0;
 
 
   /**
@@ -119,6 +119,13 @@ public class RoadNetwork {
    * Getter for numberOfArcs.
    */
   public Integer getNumberOfArcs() {
+    int numberOfArcs = 0;
+    
+    for (int i = 0; i < adjacentArcs.size(); i++) {
+      List<Arc> arcs = adjacentArcs.get(i);
+      numberOfArcs = numberOfArcs + arcs.size();
+    }
+    
     return numberOfArcs;
   }
 
@@ -157,7 +164,6 @@ public class RoadNetwork {
           arcs.add(arc);
           nodeIdPosAdjArc.put(tailNodeId, adjacentArcs.size() - 1);
           nodeIds.add(tailNodeId);
-          numberOfArcs++;
         } else {
           Integer position = nodeIdPosAdjArc.get(tailNodeId);
           boolean alreadyInserted  = 
@@ -165,7 +171,6 @@ public class RoadNetwork {
           if (!alreadyInserted) {
             List<Arc> arcs = getAdjacentArcs().get(position);
             arcs.add(arc); 
-            numberOfArcs++;
           }
         }
       }
@@ -310,7 +315,7 @@ public class RoadNetwork {
       System.out.println("TOTAL Num of nodes: " + getAllNodeIds().size());
       System.out.println("Num of nodes with arcs: " + getNodeIds().size());
       // System.out.println(nodes.size());
-      System.out.println("Number of arcs: " + numberOfArcs / 2);
+      System.out.println("Number of arcs: " + getNumberOfArcs() / 2);
       // System.out.println("adjacentArcs Size: " + this.adjacentArcs.size());
       System.out.println("Finish: " + Calendar.getInstance().getTime());
 
