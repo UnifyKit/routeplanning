@@ -404,7 +404,7 @@ public class RoadNetworkTest {
 //        rn.getAllNodeIds().size() == 11);
 //    Assert.assertTrue("Number of nodes with arcs failed", 
 //        rn.getNodeIds().size() == 8);
-//    Assert.assertTrue("Number of arcs failed", rn.getNumberOfArcs() / 2 == 10);
+//    Assert.assertTrue("Number of arcs failed", rn.getNumberOfArcs() == 10);
 //  }
   
   /**
@@ -420,6 +420,26 @@ public class RoadNetworkTest {
 //    
 //    Assert.assertEquals(lc.asString(), expectedRep);
 //  }
+  
+  /**
+   * Tests thes distance between two nodes.
+   */
+  @Test
+  public void testDistance() {
+    
+    RoadNetwork rn = new RoadNetwork();
+    
+    Node node0 = new Node(0, 49.3705278, 7.3613889);
+    Node node1 = new Node(1, 49.3705278, 7.3611944);
+    
+    double distanceInKMeters = rn.getDistance2(node0, node1);
+    System.out.println("ERRWREWLKRWLEKRWEKRWEKLRKWERKWELRWEKRLWEKRWELEKRKW");
+    System.out.println(distanceInKMeters);
+    
+    int cost = rn.computeCost("motorway_link", distanceInKMeters);
+    System.out.println(cost);
+    
+  }
   
 //
 //  @Test
