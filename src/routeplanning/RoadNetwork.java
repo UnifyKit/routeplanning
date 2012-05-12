@@ -18,7 +18,12 @@ public class RoadNetwork {
   /**
    * List of all Nodes IDs.
    */
-  public List<Integer> nodeIds;
+  private List<Integer> allNodeIds;
+ 
+  /**
+   * List of all Nodes that have adjacent arcs.
+   */
+  private List<Integer> nodeIds;
   /**
    * List of adjacent Arcs. First element of a each list is the head node.
    */
@@ -27,12 +32,17 @@ public class RoadNetwork {
   /**
    * Map nodeId->Node. Contains all nodes
    */
-  public Map<Integer, Node> mapNodeId;
+  private Map<Integer, Node> mapNodeId;
   /**
    * Map nodeid -> position of node as tail node in adjacentArcs used to avoid
    * search by id of the node in adjacentArcs, when adding a new arc.
    */
-  Map<Integer, Integer> nodeIdPosAdjArc;
+  private Map<Integer, Integer> nodeIdPosAdjArc;
+
+  /**
+   * Keeps track of the number of arcs.
+   */
+  private Integer numberOfArcs = 0;
 
 
   /**
@@ -41,6 +51,7 @@ public class RoadNetwork {
   public RoadNetwork() {
     adjacentArcs = new ArrayList<List<Arc>>();
     mapNodeId = new HashMap<Integer, Node>();
+    allNodeIds = new ArrayList<Integer>();
     nodeIds = new ArrayList<Integer>();
     nodeIdPosAdjArc = new HashMap<Integer, Integer>();
   }
@@ -52,12 +63,27 @@ public class RoadNetwork {
   public void setNodes(List<Integer> nodeIds) {
     this.nodeIds = nodeIds;
   }
+  
+  /**
+   *Setter method for allNodes.
+   */
+  //TODO
+  public void setAllNodes(List<Integer> allNodeIds) {
+    this.allNodeIds = allNodeIds;
+  }
 
   /**
    * Getter method for nodes.
    */
   public List<Integer> getNodeIds() {
     return nodeIds;
+  }
+  
+  /**
+   * Getter method for allNodesIds.
+   */
+  public List<Integer> getAllNodeIds() {
+    return allNodeIds;
   }
   
   /**
@@ -74,6 +100,27 @@ public class RoadNetwork {
   public List<List<Arc>> getAdjacentArcs() {
     return adjacentArcs;
   }
+  
+  /**
+   * Getter method for nodeIdPosAdjArc.
+   */
+  public Map<Integer, Node> getNodeIdPosAdjArc() {
+    return mapNodeId;
+  }
+  
+  /**
+   * Getter method for mapNodeId.
+   */
+  public Map<Integer, Integer> getMapNodeId() {
+    return nodeIdPosAdjArc;
+  }
+  
+  /**
+   * Getter for numberOfArcs.
+   */
+  public Integer getNumberOfArcs() {
+    return numberOfArcs;
+  }
 
   /**
    * Add an ArrayList<Arc> for the arcs of tail node.
@@ -85,11 +132,8 @@ public class RoadNetwork {
       //Is the node already there?
       boolean alreadyInNetwork = mapNodeId.containsKey(nodeId);
       if (!alreadyInNetwork) {
-        List<Arc> arcs = new ArrayList<Arc>();
-        nodeIds.add(nodeId);
+        allNodeIds.add(nodeId);
         mapNodeId.put(nodeId, tailNode);
-        adjacentArcs.add(arcs);
-        nodeIdPosAdjArc.put(nodeId, adjacentArcs.size() - 1);
       }
     }
   }
@@ -103,13 +147,26 @@ public class RoadNetwork {
     if (tailNode != null && arc != null) {
       if (arc.getHeadNode() != null) {
         Integer tailNodeId = tailNode.getId();
-        if (mapNodeId.containsKey(tailNodeId)) {
-          Integer position = nodeIdPosAdjArc.get(tailNodeId);
-          List<Arc> arcs = getAdjacentArcs().get(position);
+        if (!mapNodeId.containsKey(tailNodeId)) {
+          allNodeIds.add(tailNodeId);
+          mapNodeId.put(tailNodeId, tailNode);
+        }
+        if (!nodeIdPosAdjArc.containsKey(tailNodeId)) {
+          List<Arc> arcs = new ArrayList<Arc>();
+          adjacentArcs.add(arcs);
           arcs.add(arc);
+          nodeIdPosAdjArc.put(tailNodeId, adjacentArcs.size() - 1);
+          nodeIds.add(tailNodeId);
+          numberOfArcs++;
         } else {
-          addNodeToGraph(tailNode);
-          addAdjacentArc(tailNode, arc);
+          Integer position = nodeIdPosAdjArc.get(tailNodeId);
+          boolean alreadyInserted  = 
+              arcAlreadyInserted(position, arc.getHeadNode().getId());
+          if (!alreadyInserted) {
+            List<Arc> arcs = getAdjacentArcs().get(position);
+            arcs.add(arc); 
+            numberOfArcs++;
+          }
         }
       }
     }  
@@ -140,9 +197,11 @@ public class RoadNetwork {
     * @param nodeid ID of head node
     */   
   public Boolean arcAlreadyInserted(int tailNodePos, int nodeid) {
-    for (int k = 0; k < adjacentArcs.get(tailNodePos).size(); k++) {
-      if (nodeid == adjacentArcs.get(tailNodePos).get(k).headNode.id) {
-        return true;
+    if (adjacentArcs.size() > 0) {
+      for (int k = 0; k < adjacentArcs.get(tailNodePos).size(); k++) {
+        if (nodeid == adjacentArcs.get(tailNodePos).get(k).headNode.getId()) {
+          return true;
+        }
       }
     }
     return false;
@@ -162,11 +221,9 @@ public class RoadNetwork {
     String lineIn = "";
     Node newNode;
     Boolean readingWay = false;
-    int numNodes = 0;
     List<String> tmpWay = new ArrayList<String>();
     String roadType = new String();
     Integer position;
-    int countArcs = 0;
     try {
       // Read data from osm file
       System.out.println("Start: " + Calendar.getInstance().getTime());
@@ -176,7 +233,6 @@ public class RoadNetwork {
       while ((lineIn = inBuff.readLine()) != null) {
         // System.out.println(lineIn);
         if (lineIn.contains("<node")) {
-          numNodes++;
           tmpNodeID = Integer.valueOf(lineIn.substring(
               lineIn.indexOf("id=") + 4, lineIn.indexOf("\" lat")));
           tmpLatitude = Double.valueOf(lineIn.substring(
@@ -185,12 +241,8 @@ public class RoadNetwork {
               lineIn.indexOf("lon=") + 5, lineIn.indexOf("\">")));
 
           newNode = new Node(tmpNodeID, tmpLatitude, tmpLongitude);
-          mapNodeId.put(tmpNodeID, newNode);
-          nodeIds.add(tmpNodeID);
-          adjacentArcs.add(new ArrayList<Arc>()); // probar y luego quitar!
-          nodeIdPosAdjArc.put(newNode.id, adjacentArcs.size() - 1); // probar y
-                                                                    // quitar!
-                                                                    // tailnode
+          addNodeToGraph(newNode);
+          
         } else if (lineIn.contains("<way")) {
           readingWay = true;
           tmpWay = new ArrayList<String>();
@@ -208,11 +260,15 @@ public class RoadNetwork {
             // System.out.println(tmpWay.toString());
             for (int i = 0; i < tmpWay.size(); i++) {
               currentNode = mapNodeId.get(Integer.valueOf(tmpWay.get(i)));
-              position = nodeIdPosAdjArc.get(currentNode.id);
+              position = nodeIdPosAdjArc.get(currentNode.getId());
               // If node doesn't exist in adjacentArcs, then add it
               if (position == null) {
                 // addNodeToGraph(currentNode); regresar!!!
-                position = adjacentArcs.size() - 1;
+                if (adjacentArcs.size() > 1) {
+                  position = adjacentArcs.size() - 1;
+                } else {
+                  position = 0;
+                }
                 // nodeIdPosAdjArc.put(currentNode.id, position);
               }
               //First element doesn't have previous node
@@ -233,17 +289,9 @@ public class RoadNetwork {
                   Arc arc2 = new Arc(currentNode, cost);
 
                   // currentNode -> prevNode
-                  // Check if the arc already exist.
-                  if (!arcAlreadyInserted(position, arc1.headNode.id)) {
-                    this.adjacentArcs.get(position).add(arc1);
-                    countArcs++;
-                  }
+                  addAdjacentArc(currentNode, arc1);
                   // prevNode -> currentNode
-                  position = nodeIdPosAdjArc.get(prevNode.id);
-                  if (!arcAlreadyInserted(position, arc2.headNode.id)) {
-                    this.adjacentArcs.get(position).add(arc2);
-                    countArcs++;
-                  }
+                  addAdjacentArc(prevNode, arc2);
                 }
               }
               prevNode = currentNode;
@@ -259,9 +307,10 @@ public class RoadNetwork {
         }
       }
 
-      System.out.println("Num nodes: " + numNodes);
+      System.out.println("TOTAL Num of nodes: " + getAllNodeIds().size());
+      System.out.println("Num of nodes with arcs: " + getNodeIds().size());
       // System.out.println(nodes.size());
-      System.out.println("Number of arcs: " + countArcs / 2);
+      System.out.println("Number of arcs: " + numberOfArcs / 2);
       // System.out.println("adjacentArcs Size: " + this.adjacentArcs.size());
       System.out.println("Finish: " + Calendar.getInstance().getTime());
 
@@ -271,7 +320,134 @@ public class RoadNetwork {
     } catch (Exception e) {
       e.printStackTrace();
     }
-  }  
+  } 
+  
+  
+  
+  /**
+   * Read OSM file (in XML format) and construct the corresponding road network.
+   */
+//  public void readFromOsmFile2(String pathIn) {
+//    // List <String> nodesIDs = new ArrayList<String>();
+//    // String strFile = new String();
+//    int tmpNodeID = 0;
+//    Double tmpLatitude = 0.0;
+//    Double tmpLongitude = 0.0;
+//    Node currentNode;
+//    Node prevNode;
+//    String lineIn = "";
+//    Node newNode;
+//    Boolean readingWay = false;
+//    int numNodes = 0;
+//    List<String> tmpWay = new ArrayList<String>();
+//    String roadType = new String();
+//    Integer position;
+//    int countArcs = 0;
+//    try {
+//      // Read data from osm file
+//      System.out.println("Start: " + Calendar.getInstance().getTime());
+//
+//      File in = new File(pathIn);
+//      BufferedReader inBuff = new BufferedReader(new FileReader(in));
+//      while ((lineIn = inBuff.readLine()) != null) {
+//        // System.out.println(lineIn);
+//        if (lineIn.contains("<node")) {
+//          numNodes++;
+//          tmpNodeID = Integer.valueOf(lineIn.substring(
+//              lineIn.indexOf("id=") + 4, lineIn.indexOf("\" lat")));
+//          tmpLatitude = Double.valueOf(lineIn.substring(
+//              lineIn.indexOf("lat=") + 5, lineIn.indexOf("\" lon")));
+//          tmpLongitude = Double.valueOf(lineIn.substring(
+//              lineIn.indexOf("lon=") + 5, lineIn.indexOf("\">")));
+//
+//          newNode = new Node(tmpNodeID, tmpLatitude, tmpLongitude);
+//          mapNodeId.put(tmpNodeID, newNode);
+//          nodeIds.add(tmpNodeID);
+//          adjacentArcs.add(new ArrayList<Arc>()); // probar y luego quitar!
+//          nodeIdPosAdjArc.put(newNode.id, adjacentArcs.size() - 1);
+//        } else if (lineIn.contains("<way")) {
+//          readingWay = true;
+//          tmpWay = new ArrayList<String>();
+//        } else if (lineIn.contains("</way")) {
+//          readingWay = false;
+//        } else if (lineIn.contains("<tag k=\"highway\"") && readingWay) {
+//          // last pos of each list contains roadType, we use it to compute
+//          // travel time (cost)
+//          // from pos 2 nodes that are in the way
+//          roadType = String.valueOf(lineIn.substring(lineIn.indexOf("v=") + 3,
+//              lineIn.indexOf("\" />")));
+//          // tmpWay.add(roadType);
+//          prevNode = null;
+//          if (tmpWay.size() > 1) { // To avoid arcs without head nodes.
+//            // System.out.println(tmpWay.toString());
+//            for (int i = 0; i < tmpWay.size(); i++) {
+//              currentNode = mapNodeId.get(Integer.valueOf(tmpWay.get(i)));
+//              position = nodeIdPosAdjArc.get(currentNode.id);
+//              // If node doesn't exist in adjacentArcs, then add it
+//              if (position == null) {
+//                // addNodeToGraph(currentNode); regresar!!!
+//                position = adjacentArcs.size() - 1;
+//                // nodeIdPosAdjArc.put(currentNode.id, position);
+//              }
+//              //First element doesn't have previous node
+//              if (i != 0) {
+//                // add arcs to adjacentArcs
+//                // prev -> current and current -> prev because is undirected
+//                // graph
+//                // Compute cost and create new arcs
+//                //System.out.println("prevNode: " + prevNode.id 
+//                  //+ " currentNode: " + currentNode.id);
+//                //System.out.println("dist: " 
+//                  //+ getDistance2(prevNode,currentNode));                
+//                int cost = computeCost(roadType, getDistance(
+//                    prevNode, currentNode));
+//                if (cost > 0) {
+//                  //System.out.println("timeTravel in min: " + cost);
+//                  Arc arc1 = new Arc(prevNode, cost);
+//                  Arc arc2 = new Arc(currentNode, cost);
+//
+//                  // currentNode -> prevNode
+//                  // Check if the arc already exist.
+//                  if (!arcAlreadyInserted(position, arc1.headNode.getId())) {
+//                    this.adjacentArcs.get(position).add(arc1);
+//                    countArcs++;
+//                  }
+//                  // prevNode -> currentNode
+//                  position = nodeIdPosAdjArc.get(prevNode.getId());
+//                  if (!arcAlreadyInserted(position, arc2.headNode.getId())) {
+//                    this.adjacentArcs.get(position).add(arc2);
+//                    countArcs++;
+//                  }
+//                }
+//              }
+//              prevNode = currentNode;
+//            }
+//
+//          }
+//        } else if (lineIn.contains("<nd ref=") && readingWay) {
+//          // current node id in way
+//
+//          tmpWay.add(String.valueOf(lineIn.substring(
+//              lineIn.indexOf("<nd ref=") + 9, lineIn.indexOf("\"/>"))));
+//          // System.out.println(tmpWay.toString());
+//        }
+//      }
+//
+//      System.out.println("TOTAL Num of nodes: " + getAllNodeIds().size());
+//      System.out.println("Num of nodes with arcs: " + getNodeIds().size());
+//      // System.out.println(nodes.size());
+//      System.out.println("Number of arcs: " + countArcs / 2);
+//      // System.out.println("adjacentArcs Size: " + this.adjacentArcs.size());
+//      System.out.println("Finish: " + Calendar.getInstance().getTime());
+//
+//      // System.out.println(printArcsFromNode(10467200));
+//      //checkArcs();
+//
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
+//  }  
+//  
 
   /**
    * Method to reduce the graph (already read from an OSM file) 
@@ -321,6 +497,7 @@ public class RoadNetwork {
       }
     }
     biggestConnectedComponent.setNodes(bConnectedCompNodes);
+    biggestConnectedComponent.setAllNodes(bConnectedCompNodes);
     biggestConnectedComponent.setAdjacentArcs(arcsOfConnectedComp);
     
     return biggestConnectedComponent;
@@ -410,20 +587,19 @@ public class RoadNetwork {
    * @param node2 Node at position two
    * @return Distance in KMs
    */
-  //TODO Check distance
-  public int getDistance2(Node node1, Node node2) { 
-    int distance;
-    Double tmpdist;
-    Integer diffLat, diffLon;
-    tmpdist = (node1.latitude * 111229) - (node2.latitude * 111229);
-    diffLat = tmpdist.intValue();
-    tmpdist = (node1.longitude * 71695) - (node2.longitude * 71695);
-    diffLon = tmpdist.intValue();
-    
-    tmpdist = Math.sqrt(Math.pow(diffLat, 2) + Math.pow(diffLon, 2));
-    distance = tmpdist.intValue();
-    return distance; 
-  }
+//  public int getDistance2(Node node1, Node node2) { 
+//    int distance;
+//    Double tmpdist;
+//    Integer diffLat, diffLon;
+//    tmpdist = (node1.latitude * 111229) - (node2.latitude * 111229);
+//    diffLat = tmpdist.intValue();
+//    tmpdist = (node1.longitude * 71695) - (node2.longitude * 71695);
+//    diffLon = tmpdist.intValue();
+//    
+//    tmpdist = Math.sqrt(Math.pow(diffLat, 2) + Math.pow(diffLon, 2));
+//    distance = tmpdist.intValue();
+//    return distance; 
+//  }
   
   /**
    * Get RoadNetwork as a list of lists.
