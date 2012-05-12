@@ -11,6 +11,15 @@ import org.junit.Test;
  * @author AAA
  */
 public class RoadNetworkTest {
+  /**
+   * Generic method which reads from file and builds a road network.
+   */
+//  public RoadNetwork buildGraphFromOsm() {
+//    RoadNetwork rn = new RoadNetwork();
+//    rn.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
+//      + "groupRepository/src/routeplanning/resources/osmTest_reduced.osm");
+//    return rn;
+//  }
   
   /**
    * Tests constructor and string representation of object.
@@ -150,6 +159,15 @@ public class RoadNetworkTest {
     rn.addAdjacentArc(node5, newArc55);   
     rn.addAdjacentArc(node5, newArc52);       
     rn.addAdjacentArc(node5, newArc54);
+    
+    //Adding irrelevant nodes:
+    Node nodex = new Node(100, 1.0, 1.0);
+    Node nodey = new Node(101, 1.0, 1.0);
+    Node nodez = new Node(105, 1.0, 1.0);
+    
+    rn.addNodeToGraph(nodex);
+    rn.addNodeToGraph(nodey);
+    rn.addNodeToGraph(nodez);
         
     String stringRep = rn.asString();
     String expectedRep = new String("0|0-1-2-3-4-\n1|1-0-3-"
@@ -159,7 +177,7 @@ public class RoadNetworkTest {
 
   
   /**
-   * This method tests addNodeToGraph().
+   * This method tests if nodes added are saved in the structure allNodesIds.
    */
   @Test
   public void testAddNodeToGraph() {
@@ -180,12 +198,19 @@ public class RoadNetworkTest {
     rn.addNodeToGraph(node3);
     rn.addNodeToGraph(node4);
     rn.addNodeToGraph(node5);
-    String expectedOutput = new String("0|\n1|\n2|\n3|\n4|\n5|\n");
-    Assert.assertEquals(expectedOutput, rn.asString());
+    
+    List<Integer> expectedNodeIds = new ArrayList<Integer>();
+    expectedNodeIds.add(0);
+    expectedNodeIds.add(1);
+    expectedNodeIds.add(2);
+    expectedNodeIds.add(3);
+    expectedNodeIds.add(4);
+    expectedNodeIds.add(5);    
+    
+    Assert.assertEquals(expectedNodeIds, rn.getAllNodeIds());
     
     rn.addNodeToGraph(nullNode);
-    Assert.assertEquals(expectedOutput, rn.asString());
-    
+    Assert.assertEquals(expectedNodeIds, rn.getAllNodeIds());
   }
 
   /**
@@ -218,6 +243,15 @@ public class RoadNetworkTest {
     rn.addAdjacentArc(node0, arc0null);
     rn.addAdjacentArc(nullNode, arcnull0);
     rn.addAdjacentArc(ghostNode, arcGhost0);
+    
+    //Adding irrelevant nodes:
+    Node nodex = new Node(100, 1.0, 1.0);
+    Node nodey = new Node(101, 1.0, 1.0);
+    Node nodez = new Node(1055, 1.0, 1.0);
+    
+    rn.addNodeToGraph(nodex);
+    rn.addNodeToGraph(nodey);
+    rn.addNodeToGraph(nodez);
     
     String expectedString = new String("0|0-1-\n1|0-1-\n5|0-\n");
     Assert.assertEquals(expectedString, rn.asString());
@@ -336,7 +370,16 @@ public class RoadNetworkTest {
     rn.addNodeToGraph(node9);
     rn.addAdjacentArc(node8, arc88);
     rn.addAdjacentArc(node8, arc89);
-    rn.addAdjacentArc(node9, arc98); 
+    rn.addAdjacentArc(node9, arc98);
+    
+    //Adding irrelevant nodes:
+    Node nodex = new Node(100, 1.0, 1.0);
+    Node nodey = new Node(101, 1.0, 1.0);
+    Node nodez = new Node(105, 1.0, 1.0);
+    
+    rn.addNodeToGraph(nodex);
+    rn.addNodeToGraph(nodey);
+    rn.addNodeToGraph(nodez);
     
     RoadNetwork lcc = rn.reduceToLargestConnectedComponent();
     String stringRep = lcc.asString();
@@ -344,6 +387,39 @@ public class RoadNetworkTest {
       + "\n2|2-0-3-5-\n3|3-0-1-2-4-\n4|4-0-3-5-\n5|5-2-4-\n");
     Assert.assertEquals(stringRep, expectedRep);
   }
+  
+//We test the same methods using an OSM File:
+  /**
+   * Tests if the correct graph is build from OSM.
+   */
+//  @Test
+//  public void testGraphFromOsm() {
+//    RoadNetwork rn = buildGraphFromOsm();
+//        
+//    String expectedRep = new String("3|0-4-2-1-\n0|3-2-1-4-\n4|3-5-0-\n5"
+//      + "|4-2-\n2|5-0-3-\n1|0-3-\n7|6-\n6|7-\n");
+//    Assert.assertEquals(rn.asString(), expectedRep);
+//    System.out.println();
+//    Assert.assertTrue("Number of overall nodes failed", 
+//        rn.getAllNodeIds().size() == 11);
+//    Assert.assertTrue("Number of nodes with arcs failed", 
+//        rn.getNodeIds().size() == 8);
+//    Assert.assertTrue("Number of arcs failed", rn.getNumberOfArcs() / 2 == 10);
+//  }
+  
+  /**
+   * Tests if the reduction to the largest component works from OSM.
+   */
+//  @Test
+//  public void testReduceGraphFromOsm() {
+//    RoadNetwork rn = buildGraphFromOsm();
+//    RoadNetwork lc = rn.reduceToLargestConnectedComponent();
+//        
+//    String expectedRep = new String("3|0-4-2-1-\n0|3-2-1-4-\n4|3-5-0-\n5"
+//      + "|4-2-\n2|5-0-3-\n1|0-3-\n");
+//    
+//    Assert.assertEquals(lc.asString(), expectedRep);
+//  }
   
 //
 //  @Test
