@@ -193,23 +193,23 @@ public class DijkstraAlgorithmTest {
 ////    Node node4 = new Node(4, 49.3401466, 7.3997222);
 ////    Node node5 = new Node(5, 49.3401942, 7.2998333);
 ////    
-////    int cost01 = rn.computeCost("motorway", rn.getDistance(node0, node1));
-////    int cost02 = rn.computeCost("motorway", rn.getDistance(node0, node2));
-////    int cost03 = rn.computeCost("motorway", rn.getDistance(node0, node3));
-////    int cost04 = rn.computeCost("motorway", rn.getDistance(node0, node4));
+////    int cost01 = rn.computeCost("motorway", rn.getDistance2(node0, node1));
+////    int cost02 = rn.computeCost("motorway", rn.getDistance2(node0, node2));
+////    int cost03 = rn.computeCost("motorway", rn.getDistance2(node0, node3));
+////    int cost04 = rn.computeCost("motorway", rn.getDistance2(node0, node4));
 ////    
-////    int cost34 = rn.computeCost("motorway", rn.getDistance(node3, node4));
-////    int cost13 = rn.computeCost("motorway", rn.getDistance(node1, node3));
-////    int cost25 = rn.computeCost("motorway", rn.getDistance(node2, node5));
-////    int cost23 = rn.computeCost("motorway", rn.getDistance(node2, node3));
-////    int cost54 = rn.computeCost("motorway", rn.getDistance(node5, node4));
+////    int cost34 = rn.computeCost("motorway", rn.getDistance2(node3, node4));
+////    int cost13 = rn.computeCost("motorway", rn.getDistance2(node1, node3));
+////    int cost25 = rn.computeCost("motorway", rn.getDistance2(node2, node5));
+////    int cost23 = rn.computeCost("motorway", rn.getDistance2(node2, node3));
+////    int cost54 = rn.computeCost("motorway", rn.getDistance2(node5, node4));
 ////    
 ////    System.out.println("==================================");
-////    System.out.println(cost01);
-////    System.out.println(cost02);
-////    System.out.println(cost03);
-////    System.out.println(cost04);
-////    System.out.println(cost34);
+////    System.out.println("0-1::: " + cost01);
+////    System.out.println("0-2::: " + cost02);
+////    System.out.println("0-3::: " + cost03);
+////    System.out.println("0-4::: " + cost04);
+////    System.out.println("3-4::: " + cost34);
 ////    System.out.println("1-3::: " + cost13);
 ////    System.out.println("2-5::: " + cost25);
 ////    System.out.println("2-3::: " + cost23); 
@@ -218,14 +218,14 @@ public class DijkstraAlgorithmTest {
 //    List<Integer> visitedNodes = alg.getVisitedNodes();
 //    List<Integer> nodeIds = rn.getNodeIds();
 //    
-//    for (int i = 0; i < visitedNodes.size(); i++) {
-//      if (visitedNodes.get(i) != null && visitedNodes.get(i) != 0) {
-//        System.out.println("Node: " + nodeIds.get(i) 
-//            + " - Cost: " + visitedNodes.get(i));
-//      }
-//    }
+////    for (int i = 0; i < visitedNodes.size(); i++) {
+////      if (visitedNodes.get(i) != null && visitedNodes.get(i) != 0) {
+////        System.out.println("Node: " + nodeIds.get(i) 
+////            + " - Cost: " + visitedNodes.get(i));
+////      }
+////    }
 //    
-//    Integer expectedValue = 4505;
+//    Integer expectedValue = 230;
 //    Assert.assertEquals(cost, expectedValue);
 //  }
 }
