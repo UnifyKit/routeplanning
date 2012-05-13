@@ -433,8 +433,6 @@ public class RoadNetworkTest {
     Node node1 = new Node(1, 49.3705278, 7.3611944);
     
     double distanceInKMeters = rn.getDistance2(node0, node1);
-    System.out.println("ERRWREWLKRWLEKRWEKRWEKLRKWERKWELRWEKRLWEKRWELEKRKW");
-    System.out.println(distanceInKMeters);
     
     int cost = rn.computeCost("motorway_link", distanceInKMeters);
     System.out.println(cost);
