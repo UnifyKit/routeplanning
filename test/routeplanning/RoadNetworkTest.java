@@ -1,5 +1,7 @@
 package routeplanning;
 
+import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,12 +16,12 @@ public class RoadNetworkTest {
   /**
    * Generic method which reads from file and builds a road network.
    */
-//  public RoadNetwork buildGraphFromOsm() {
-//    RoadNetwork rn = new RoadNetwork();
-//    rn.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
-//      + "groupRepository/src/routeplanning/resources/osmTest_reduced.osm");
-//    return rn;
-//  }
+  public RoadNetwork buildGraphFromOsm() {
+    RoadNetwork rn = new RoadNetwork();
+    URL url = this.getClass().getClassLoader().getResource("routeplanning/resources/osmTest_reduced.osm");
+    rn.readFromOsmFile(url.getPath().replace("%20", " "));
+    return rn;
+  }
   
   /**
    * Tests constructor and string representation of object.
@@ -392,34 +394,34 @@ public class RoadNetworkTest {
   /**
    * Tests if the correct graph is build from OSM.
    */
-//  @Test
-//  public void testGraphFromOsm() {
-//    RoadNetwork rn = buildGraphFromOsm();
-//        
-//    String expectedRep = new String("3|0-4-2-1-\n0|3-2-1-4-\n4|3-5-0-\n5"
-//      + "|4-2-\n2|5-0-3-\n1|0-3-\n7|6-\n6|7-\n");
-//    Assert.assertEquals(rn.asString(), expectedRep);
-//    System.out.println();
-//    Assert.assertTrue("Number of overall nodes failed", 
-//        rn.getAllNodeIds().size() == 11);
-//    Assert.assertTrue("Number of nodes with arcs failed", 
-//        rn.getNodeIds().size() == 8);
-//    Assert.assertTrue("Number of arcs failed", rn.getNumberOfArcs() == 10);
-//  }
+  @Test
+  public void testGraphFromOsm() {
+    RoadNetwork rn = buildGraphFromOsm();
+        
+    String expectedRep = new String("3|0-4-2-1-\n0|3-2-1-4-\n4|3-5-0-\n5"
+      + "|4-2-\n2|5-0-3-\n1|0-3-\n7|6-\n6|7-\n");
+    Assert.assertEquals(rn.asString(), expectedRep);
+    System.out.println();
+    Assert.assertTrue("Number of overall nodes failed", 
+        rn.getAllNodeIds().size() == 11);
+    Assert.assertTrue("Number of nodes with arcs failed", 
+        rn.getNodeIds().size() == 8);
+    Assert.assertTrue("Number of arcs failed", rn.getNumberOfArcs() == 10);
+  }
   
   /**
    * Tests if the reduction to the largest component works from OSM.
    */
-//  @Test
-//  public void testReduceGraphFromOsm() {
-//    RoadNetwork rn = buildGraphFromOsm();
-//    RoadNetwork lc = rn.reduceToLargestConnectedComponent();
-//        
-//    String expectedRep = new String("3|0-4-2-1-\n0|3-2-1-4-\n4|3-5-0-\n5"
-//      + "|4-2-\n2|5-0-3-\n1|0-3-\n");
-//    
-//    Assert.assertEquals(lc.asString(), expectedRep);
-//  }
+  @Test
+  public void testReduceGraphFromOsm() {
+    RoadNetwork rn = buildGraphFromOsm();
+    RoadNetwork lc = rn.reduceToLargestConnectedComponent();
+        
+    String expectedRep = new String("3|0-4-2-1-\n0|3-2-1-4-\n4|3-5-0-\n5"
+      + "|4-2-\n2|5-0-3-\n1|0-3-\n");
+    
+    Assert.assertEquals(lc.asString(), expectedRep);
+  }
   
   /**
    * Tests thes distance between two nodes.
@@ -438,37 +440,4 @@ public class RoadNetworkTest {
     System.out.println(cost);
     
   }
-  
-//
-//  @Test
-//  public void testGetNodeAdjacentArcs() {
-//    fail("Not yet implemented");
-//  }
-//
-//  @Test
-//  public void testReadFromOsmFile() {
-//    fail("Not yet implemented");
-//  }
-//
-//
-//  @Test
-//  public void testGetDistance() {
-//    fail("Not yet implemented");
-//  }
-//
-//  @Test
-//  public void testAsString() {
-//    fail("Not yet implemented");
-//  }
-//
-//  @Test
-//  public void testGetRandomNodeId() {
-//    fail("Not yet implemented");
-//  }
-//
-//  @Test
-//  public void testPrintArcsFromNode() {
-//    fail("Not yet implemented");
-//  }
-
 }
