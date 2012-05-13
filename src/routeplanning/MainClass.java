@@ -45,7 +45,7 @@ public class MainClass {
       long start = System.currentTimeMillis();
       Integer cost = newDijAlg.computeShortestPath(sourceNodeId, targetNodeId);
       long end = System.currentTimeMillis();      
-      List<Integer> settledNodeCosts = dijAlg.getVisitedNodes();
+      List<Integer> settledNodeCosts = newDijAlg.getVisitedNodes();
       for (int k = 0; k < settledNodeCosts.size(); k++) {
         if (settledNodeCosts.get(k) != null) {
           if (settledNodeCosts.get(k) > 0) {
