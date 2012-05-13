@@ -34,7 +34,6 @@ public class MainClass {
     
     for (int i = 0; i < numberOfExecutions; i++) {
 
-      long start = System.currentTimeMillis();
       Integer sourceNodeId = largestComponent.getRandomNodeId();
       Integer targetNodeId = largestComponent.getRandomNodeId();
       while (sourceNodeId == targetNodeId) {
@@ -42,7 +41,10 @@ public class MainClass {
       }
       System.out.println("CALCULATING shortest path from Node " 
           + sourceNodeId + " TO Node " + targetNodeId);
-      Integer cost = dijAlg.computeShortestPath(sourceNodeId, targetNodeId);
+      DijkstraAlgorithm newDijAlg = new DijkstraAlgorithm(largestComponent);
+      long start = System.currentTimeMillis();
+      Integer cost = newDijAlg.computeShortestPath(sourceNodeId, targetNodeId);
+      long end = System.currentTimeMillis();      
       List<Integer> settledNodeCosts = dijAlg.getVisitedNodes();
       for (int k = 0; k < settledNodeCosts.size(); k++) {
         if (settledNodeCosts.get(k) != null) {
@@ -53,7 +55,6 @@ public class MainClass {
       }
       totalSettledNodes = totalSettledNodes + 1;
       totalCost = totalCost + cost;
-      long end = System.currentTimeMillis();
       totalExecutionTime = totalExecutionTime + (end - start);
       
       System.out.println("SHORTEST PATH FROM NODE: " + sourceNodeId 
@@ -62,7 +63,7 @@ public class MainClass {
     }
     
     System.out.println("AVERAGE RUNNING TIME: " 
-        + Double.valueOf(twoDForm.format((totalExecutionTime * 1000) 
+        + Double.valueOf(twoDForm.format((totalExecutionTime / 1000) 
             / numberOfExecutions)) + " seconds");
     System.out.println("AVERAGE SETTLED NODES: " + totalSettledNodes 
         / numberOfExecutions);
@@ -86,6 +87,6 @@ public class MainClass {
     roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
       + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
     
-    MainClass.tryDijkstras(roadNet, 1);
+    MainClass.tryDijkstras(roadNet, 100);
   }
 }
