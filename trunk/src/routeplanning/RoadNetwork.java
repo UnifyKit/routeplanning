@@ -287,6 +287,7 @@ public class RoadNetwork {
                   //+ getDistance2(prevNode,currentNode));                
                 int cost = computeCost(roadType, getDistance2(
                     prevNode, currentNode));
+
                 if (cost != -1) {
                   //System.out.println("timeTravel in min: " + cost);
                   Arc arc1 = new Arc(prevNode, cost);
@@ -558,8 +559,9 @@ public class RoadNetwork {
       return -1;
     }
     cost = distance / speed;
-    cost = cost * 60 * 60;
-    return (int) Math.round(cost);
+    cost = cost * 60 *60;
+    costMin = (int)Math.round(cost);
+    return costMin;
   }
   
   
@@ -568,7 +570,7 @@ public class RoadNetwork {
    * 
    * @param node1 Node at position one
    * @param node2 Node at position two
-   * @return Distance in KMs
+   * @return Distance in Meters
    */
 //  public double getDistance(Node node1, Node node2) {
 //    double lat1 = node1.latitude;
