@@ -96,7 +96,7 @@ public class DijkstraAlgorithm {
       //search adjacent node with shortest distance
       adjArcsCurrentNode = this.graph.getAdjacentArcs().get(pos);
       
-      minDist = Integer.MAX_VALUE;
+      //minDist = Integer.MAX_VALUE;
       noAdjacentNodes = false;
       for (int i = 0; i < adjArcsCurrentNode.size(); i++) {
         Arc arc;  
@@ -104,19 +104,18 @@ public class DijkstraAlgorithm {
         if (!isVisited(arc.headNode.id)) {
           noAdjacentNodes = true;
           distToAdjNode = currentNode.dist + arc.cost;
-          if (minDist > distToAdjNode) {
-            minDist = distToAdjNode;
+          //if (minDist > distToAdjNode) {
+            //minDist = distToAdjNode;
             //minDistNodeId = arc.headNode.id;
             //minDistNodeCost = currentNode.dist + arc.cost;
-          }
+          //}
           activeNode = new ActiveNode(arc.headNode.id, distToAdjNode);
           pq.add(activeNode);
         }
       }
-//      if (!noAdjacentNodes) {
-//        System.out.println(currentNode.id);
-//      }
-      
+      //if (!noAdjacentNodes) {
+        //System.out.println(currentNode.id);
+      //}      
     }
     System.out.println("shortestPathCost: " + shortestPathCost);
     //System.out.println("visitedNodeMarks: " + visitedNodeMarks.toString());
