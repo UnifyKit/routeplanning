@@ -2,7 +2,9 @@ package routeplanning;
 
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * RoutePlanning.
@@ -22,15 +24,23 @@ public class MainClass {
     RoadNetwork rn2 = new RoadNetwork();
     rn2.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/resources/saarland_reduced.osm");
     //System.out.println("ROAD NETWORK: " + rn.asString());
-    DijkstraAlgorithm2 dij2 = new DijkstraAlgorithm2(rn2);
-    //System.out.println(dij2.computeShortestPath(1, 2));
-    System.out.println(dij2.computeShortestPath(385925420, 259000790));
-    //System.out.println(dij.computeShortestPath(338820305, 835615364));
+    DijkstraAlgorithm dij2 = new DijkstraAlgorithm(rn2);
+    //System.out.println(dij2.computeShortestPath(0, 4));
+    List<Integer> heuristic;
+    heuristic = rn2.computeStraightLineHeuristic(259000790);
+    dij2.setHeuristic(heuristic);
+    //System.out.println("heuristic: " + heuristic.get(rn2.getNodeIds().indexOf(385925420)) + " for node: 385925420");
+    //System.out.println(heuristic.toString());
+    //dij2.setHeuristic(heuristic);
+    //System.out.println(dij2.computeShortestPath(385925420, 259000790));
+    
+    System.out.println(dij.computeShortestPath(338820305, 835615364));
     //System.out.println(dij2.computeShortestPath(835615364, 835662040));
+    System.out.println("nodes settled: " + dij2.getVisitedNodes().size());
     //System.out.println(rn.nodes);
-	    //MainClass.try100Dijkstras(roadNet);
+	    //MainClass.tryDijkstras(rn2,10);
     //RoadNetwork lc;
-    //lc = rn.reduceToLargestConnectedComponent();
+    //lc = rn2.reduceToLargestConnectedComponent();
     //System.out.println("LCC: " + lc.asString());
     RoadNetwork rn = new RoadNetwork();
     
@@ -150,15 +160,8 @@ public class MainClass {
       long start = System.currentTimeMillis();
       Integer cost = newDijAlg.computeShortestPath(sourceNodeId, targetNodeId);
       long end = System.currentTimeMillis();      
-      List<Integer> settledNodeCosts = newDijAlg.getVisitedNodes();
-      for (int k = 0; k < settledNodeCosts.size(); k++) {
-        if (settledNodeCosts.get(k) != null) {
-          if (settledNodeCosts.get(k) > 0) {
-            totalSettledNodes++;
-          }
-        }
-      }
-      totalSettledNodes = totalSettledNodes + 1;
+      Map<Integer, Integer> settledNodeCosts = newDijAlg.getVisitedNodes();
+      totalSettledNodes = totalSettledNodes + settledNodeCosts.size();
       totalCost = totalCost + cost;
       totalExecutionTime = totalExecutionTime + (end - start);
       
@@ -174,23 +177,24 @@ public class MainClass {
         / numberOfExecutions);
     System.out.println("AVERAGE SP. COST: " + totalCost / numberOfExecutions);
   }
+  
 
   /**
    * Main method.
    * @param args
    */
-  public static void main(String[] args) {
-    //If one wants to reduce the file size.
-    ReduceFileSize rfs = new ReduceFileSize(
-        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
-          + "src/routeplanning/resources/saarland.osm",
-        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
-          +  "src/routeplanning/resources/saarland_reduced.osm");
-    rfs.process();
-    RoadNetwork roadNet = new RoadNetwork();
-    roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
-      + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
-    
-    MainClass.tryDijkstras(roadNet, 100);
-  }
+//  public static void main(String[] args) {
+//    //If one wants to reduce the file size.
+//    ReduceFileSize rfs = new ReduceFileSize(
+//        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
+//          + "src/routeplanning/resources/saarland.osm",
+//        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
+//          +  "src/routeplanning/resources/saarland_reduced.osm");
+//    rfs.process();
+//    RoadNetwork roadNet = new RoadNetwork();
+//    roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
+//      + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
+//    
+//    MainClass.tryDijkstras(roadNet, 100);
+//  }
 }
