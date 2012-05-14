@@ -661,6 +661,36 @@ public class RoadNetwork {
     int randomInt = randomGenerator.nextInt(nodeIds.size());
     return nodeIds.get(randomInt);
   }
+  /**
+   * Compute heuristic using Euclidean Distance / max speed
+   * Values in minutes.
+   * @param targetNodeId
+   * @return
+   */
+  public List<Integer> computeStraightLineHeuristic(int targetNodeId) {
+    List<Integer> heuristic = new ArrayList<Integer>();
+    Node targetNode = mapNodeId.get(targetNodeId);
+    /**
+     * Euclidean distance in meters.
+     */
+    double dist; 
+    /**
+     * Max speed according to roadType = motorway 110Km/hr 
+     */
+    int maxSpeed = 110; 
+    Double travelTime;
+    for (int i = 0; i < nodeIds.size(); i++) {
+      dist = getDistance2(mapNodeId.get(nodeIds.get(i)),targetNode);
+      travelTime = dist / maxSpeed; // hours
+      travelTime = travelTime * 3600;
+      if (nodeIds.get(i) == 385925420 ) {
+        System.out.println("distance: " + dist);
+        System.out.println("travelTime: " + travelTime);
+      }
+      heuristic.add((int)Math.round(travelTime));
+    }
+    return heuristic;
+  }
   
 //  //DEBUGGING PURPOSES  
 //  public List<String> printArcsFromNode(int nodeid) {
