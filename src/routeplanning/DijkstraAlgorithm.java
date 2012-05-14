@@ -28,7 +28,7 @@ public class DijkstraAlgorithm {
   private final Comparator<ActiveNode> travelTimeComparator =
     new Comparator<ActiveNode>() {
       public int compare(ActiveNode n1, ActiveNode n2) {
-        double dist = n1.dist - n2.dist;
+        double dist = (n1.dist + n2.heuristic) - (n2.dist + n2.heuristic);
         if (dist < 0) {
           return -1;
         } else {
@@ -36,6 +36,10 @@ public class DijkstraAlgorithm {
         }
       }
     };
+  /**
+   * Heuristic function if running in A* mode.  
+   */
+  private List<Integer> heuristic;  
   
   /**
    * Create instance of this class for a given (road) graph.
@@ -46,8 +50,10 @@ public class DijkstraAlgorithm {
   }
   /**
    * Compute the shortest paths from the given source to the given target node.
-   * Returns the cost of the shortest path. If called with target node -1,
-   * Dijkstra is run until all nodes reachable from the source are settled.
+   * NOTE 1: If called with target node -1, Dijkstra is run until all nodes
+   * reachable from the source are settled.
+   * NOTE 2: If member variable heuristic is not null, simply add h(u) to the
+   * value of node u in the priority queue.
    * @param sourceNodeId
    * @param targetNodeId
    * @return
@@ -64,8 +70,13 @@ public class DijkstraAlgorithm {
     
     System.out.println("Compute Shortest Path Start: " 
       + Calendar.getInstance().getTime());
-    System.out.println("Compute Shortest Path Start from Node: " + sourceNodeId + " to Node "+ targetNodeId);
-    ActiveNode sourceNode = new ActiveNode(sourceNodeId, 0);
+    System.out.println("From Node: " + sourceNodeId + " to Node "+ targetNodeId);
+    ActiveNode sourceNode;
+    if(heuristic == null) {
+      sourceNode = new ActiveNode(sourceNodeId, 0, 0);
+    } else {
+      sourceNode = new ActiveNode(sourceNodeId, 0 , heuristic.get(this.graph.getNodeIds().indexOf(sourceNodeId)));
+    }
     
     PriorityQueue<ActiveNode> pq = new PriorityQueue<ActiveNode>(
         1, travelTimeComparator);
@@ -87,10 +98,6 @@ public class DijkstraAlgorithm {
         shortestPathCost = currentNode.dist;
         break;
       }
-      
-      //System.out.println("currentNode: " + currentNode.id 
-      //+ " dist: " + currentNode.dist);
-      //pqAsString(pq);
        
       //search adjacent node with shortest distance
       adjArcsCurrentNode = this.graph.getNodeAdjacentArcs(currentNode.id);
@@ -102,7 +109,11 @@ public class DijkstraAlgorithm {
         if (!isVisited(arc.headNode.id)) {
           noAdjacentNodes = true;
           distToAdjNode = currentNode.dist + arc.cost;
-          activeNode = new ActiveNode(arc.headNode.id, distToAdjNode);
+          if(heuristic == null) {
+            activeNode = new ActiveNode(arc.headNode.id, distToAdjNode, 0);
+          } else {
+            activeNode = new ActiveNode(arc.headNode.id, distToAdjNode, heuristic.get(this.graph.getNodeIds().indexOf(arc.headNode.id)));
+          }
           pq.add(activeNode);
         }
       }
@@ -151,6 +162,9 @@ public class DijkstraAlgorithm {
    */  
   public Map<Integer,Integer> getVisitedNodes() {
     return visitedNodeMarks;
+  }
+  public void setHeuristic(List<Integer> heuristic) {
+    this.heuristic = heuristic;
   }
   
   /**
