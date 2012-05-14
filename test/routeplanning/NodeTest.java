@@ -9,8 +9,6 @@ import org.junit.Test;
  * @author AAA
  */
 public class NodeTest {
-
-
   /**
    * Tests constructor and string representation of object.
    */
