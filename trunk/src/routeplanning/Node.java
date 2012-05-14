@@ -18,7 +18,6 @@ public class Node {
    * Longitude of the node.
    */
   Double longitude;
-  int index;
   /**
    * Constructor.
    * 
