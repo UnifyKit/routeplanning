@@ -1,6 +1,5 @@
 package routeplanning;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,7 +15,7 @@ public class DijkstraAlgorithm {
    * Indicator which node was visited by a particular run of Dijkstra. Useful
    * for computing the connected components; 
    */
-  private Map<Integer,Integer> visitedNodeMarks;
+  private Map<Integer, Integer> visitedNodeMarks;
   /**
    * Reference to graph on which this object is supposed to work.
    */
@@ -70,6 +69,11 @@ public class DijkstraAlgorithm {
     
     System.out.println("Compute Shortest Path Start: " 
       + Calendar.getInstance().getTime());
+<<<<<<< .mine
+    System.out.println("Compute Shortest Path Start from Node: " 
+      + sourceNodeId + " to Node " + targetNodeId);
+    ActiveNode sourceNode = new ActiveNode(sourceNodeId, 0);
+=======
     System.out.println("From Node: " + sourceNodeId + " to Node "+ targetNodeId);
     ActiveNode sourceNode;
     if(heuristic == null) {
@@ -77,11 +81,11 @@ public class DijkstraAlgorithm {
     } else {
       sourceNode = new ActiveNode(sourceNodeId, 0 , heuristic.get(this.graph.getNodeIds().indexOf(sourceNodeId)));
     }
+>>>>>>> .r121
     
     PriorityQueue<ActiveNode> pq = new PriorityQueue<ActiveNode>(
         1, travelTimeComparator);
     pq.add(sourceNode);
-    
     
     while (!pq.isEmpty()) {
       ActiveNode currentNode = pq.poll();
@@ -121,15 +125,7 @@ public class DijkstraAlgorithm {
         //System.out.println(currentNode.id);
       //}      
     }
-//    System.out.println("=========================================================");
-//    System.out.println("=========================================================");
-//    System.out.println("=========================================================");
-//    System.out.println("=========================================================");
-//
-//    System.out.println(visitedNodeMarks.toString());
-    
-    
-    
+
     System.out.println("shortestPathCost: " + shortestPathCost);
     //System.out.println("visitedNodeMarks: " + visitedNodeMarks.toString());
     System.out.println("Compute Shortest Path End: " 
@@ -160,7 +156,7 @@ public class DijkstraAlgorithm {
    * Returns visitedNodeMarks.
    * @return visitedNodeMarks
    */  
-  public Map<Integer,Integer> getVisitedNodes() {
+  public Map<Integer, Integer> getVisitedNodes() {
     return visitedNodeMarks;
   }
   public void setHeuristic(List<Integer> heuristic) {

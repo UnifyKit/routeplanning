@@ -2,8 +2,7 @@ package routeplanning;
 
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Map;
 
 /**
@@ -97,31 +96,7 @@ public class MainClass {
     //rn.addAdjacentArc(node1, newArc11);
     rn.addAdjacentArc(node1, newArc10);
     rn.addAdjacentArc(node1, newArc13);
-
-    //rn.addAdjacentArc(node2, newArc22);
-    rn.addAdjacentArc(node2, newArc20);
-    rn.addAdjacentArc(node2, newArc23);
-    rn.addAdjacentArc(node2, newArc25);
-    
-    //rn.addAdjacentArc(node3, newArc33);
-    rn.addAdjacentArc(node3, newArc30);
-    rn.addAdjacentArc(node3, newArc31);
-    rn.addAdjacentArc(node3, newArc32);
-    rn.addAdjacentArc(node3, newArc34);
-
-    //rn.addAdjacentArc(node4, newArc44);
-    rn.addAdjacentArc(node4, newArc40);
-    rn.addAdjacentArc(node4, newArc43);
-    rn.addAdjacentArc(node4, newArc45);
-
-    //rn.addAdjacentArc(node5, newArc55);   
-    rn.addAdjacentArc(node5, newArc52);       
-    rn.addAdjacentArc(node5, newArc54);  
-
-    //DijkstraAlgorithm2 dijx = new DijkstraAlgorithm2(rn);
-    //int cost = dijx.computeShortestPath(0, 5);
-    
-  }
+>>>>>>> .r121
 
   /**
    * As requested in Exercise Sheet 2 - ex. 3.
@@ -183,18 +158,18 @@ public class MainClass {
    * Main method.
    * @param args
    */
-//  public static void main(String[] args) {
-//    //If one wants to reduce the file size.
-//    ReduceFileSize rfs = new ReduceFileSize(
-//        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
-//          + "src/routeplanning/resources/saarland.osm",
-//        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
-//          +  "src/routeplanning/resources/saarland_reduced.osm");
-//    rfs.process();
-//    RoadNetwork roadNet = new RoadNetwork();
-//    roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
-//      + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
-//    
-//    MainClass.tryDijkstras(roadNet, 100);
-//  }
+  public static void main(String[] args) {
+    //If one wants to reduce the file size.
+    ReduceFileSize rfs = new ReduceFileSize(
+        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
+          + "src/routeplanning/resources/saarland.osm",
+        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
+          +  "src/routeplanning/resources/saarland_reduced.osm");
+    rfs.process();
+    RoadNetwork roadNet = new RoadNetwork();
+    roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
+      + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
+    
+    MainClass.tryDijkstras(roadNet, 10);
+  }
 }
