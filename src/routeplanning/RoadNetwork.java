@@ -72,7 +72,29 @@ public class RoadNetwork {
   public void setAllNodes(List<Integer> allNodeIds) {
     this.allNodeIds = allNodeIds;
   }
+  
+  /**
+   * Setter method for adjacentArcs.
+   */
+  //TODO
+  public void setAdjacentArcs(List<List<Arc>> adjacentArcs) {
+    this.adjacentArcs = adjacentArcs;
+  }
 
+  /**
+   * Setter method for mapNodeId.
+   */
+  public void setMapNodeId(Map<Integer, Node> mapNodeId) {
+    this.mapNodeId = mapNodeId;
+  }
+  
+  /**
+   * Setter method for nodeIdPosAdjArc.
+   */
+  public void setNodeIdPosAdjArc(Map<Integer, Integer> nodeIdPosAdjArc) {
+    this.nodeIdPosAdjArc = nodeIdPosAdjArc;
+  }
+  
   /**
    * Getter method for nodes.
    */
@@ -86,15 +108,7 @@ public class RoadNetwork {
   public List<Integer> getAllNodeIds() {
     return allNodeIds;
   }
-  
-  /**
-   * Setter method for adjacentArcs.
-   */
-  //TODO
-  public void setAdjacentArcs(List<List<Arc>> adjacentArcs) {
-    this.adjacentArcs = adjacentArcs;
-  }
-  
+
   /**
    * Getter method for adjacentArcs.
    */
@@ -105,14 +119,14 @@ public class RoadNetwork {
   /**
    * Getter method for mapNodeId.
    */
-  public Map<Integer, Node> getNodeIdPosAdjArc() {
+  public Map<Integer, Node> getMapNodeId() {
     return mapNodeId;
   }
   
   /**
    * Getter method for nodeIdPosAdjArc.
    */
-  public Map<Integer, Integer> getMapNodeId() {
+  public Map<Integer, Integer> getNodeIdPosAdjArc() {
     return nodeIdPosAdjArc;
   }
   
@@ -228,7 +242,6 @@ public class RoadNetwork {
     Boolean readingWay = false;
     List<String> tmpWay = new ArrayList<String>();
     String roadType = new String();
-    Integer position;
     try {
       // Read data from osm file
       System.out.println("Start: " + Calendar.getInstance().getTime());
@@ -464,7 +477,6 @@ public class RoadNetwork {
   public RoadNetwork reduceToLargestConnectedComponent() {
     RoadNetwork biggestConnectedComponent = new RoadNetwork();
     List<Integer> bConnectedCompNodes = new ArrayList<Integer>();
-    List<List<Arc>> arcsOfConnectedComp = new ArrayList<List<Arc>>();
     List<Integer> remainingNodes = new ArrayList<Integer>();
     for (int i = 0; i < nodeIds.size(); i++) {
       remainingNodes.add(nodeIds.get(i));
@@ -476,40 +488,42 @@ public class RoadNetwork {
       
       List<Integer> connectedNodes = new ArrayList<Integer>();
       //List<List<Arc>> arcsOfComp = new ArrayList<List<Arc>>();
-
-      connectedNodes.add(nextNodeId);
-      
+    
       DijkstraAlgorithm dij = new DijkstraAlgorithm(this);
       dij.computeShortestPath(nextNodeId, -1);
       Map<Integer, Integer> costs = dij.getVisitedNodes();
       
       Iterator<Integer> it = costs.keySet().iterator();
       while (it.hasNext()) {
-
-          Integer nodeId = (Integer) it.next();
-          System.out.println("?????????????????????????????????????");
-          System.out.println(nodeId);
-          connectedNodes.add(nodeId);
-          remainingNodes.remove(new Integer(nodeId));
+        Integer nodeId = (Integer) it.next();
+        connectedNodes.add(nodeId);
+        remainingNodes.remove(new Integer(nodeId));
       }
       if (connectedNodes.size() > bConnectedCompNodes.size()) {
         bConnectedCompNodes = connectedNodes;
       }
       if (remainingNodes.size() > 0) {
         nextNodeId = remainingNodes.get(0);
-      }
+      }      
+    }
+        
+    List<List<Arc>> listOfArcs = new ArrayList<List<Arc>>();
+    Map<Integer, Node> lccMapIdNode = new HashMap<Integer, Node>();
+    Map<Integer, Integer> lccMapIdList = new HashMap<Integer, Integer>();
+       
+    for (int i = 0; i < bConnectedCompNodes.size(); i++) {
+      Integer nodeId = bConnectedCompNodes.get(i);
+      lccMapIdNode.put(nodeId, (Node) mapNodeId.get(nodeId));
+      List<Arc> arcs = getNodeAdjacentArcs(nodeId);
+      listOfArcs.add(arcs);
+      lccMapIdList.put(nodeId, listOfArcs.size() - 1);
     }
     biggestConnectedComponent.setNodes(bConnectedCompNodes);
     biggestConnectedComponent.setAllNodes(bConnectedCompNodes);
-        
-    for (int i = 0; i < bConnectedCompNodes.size(); i++) {
-      Integer nodeId = bConnectedCompNodes.get(i);
-      List<Arc> arcs = getNodeAdjacentArcs(nodeId);
-      biggestConnectedComponent.getAdjacentArcs().add(arcs);
-      if (arcs == null) {
-        System.out.println("DU BIST DOOF");
-      }
-    }
+    biggestConnectedComponent.setAdjacentArcs(listOfArcs);
+    biggestConnectedComponent.setMapNodeId(lccMapIdNode);
+    biggestConnectedComponent.setNodeIdPosAdjArc(lccMapIdList);
+
     
     return biggestConnectedComponent;
   }
@@ -524,7 +538,7 @@ public class RoadNetwork {
    */ 
   //TODO time needed unit might be wrong
   public int computeCost(String roadType, double distance) {
-    int costMin=0;
+    int costMin = 0;
     /**
      * Speed in km/h.
      */
@@ -558,8 +572,8 @@ public class RoadNetwork {
       return -1;
     }
     cost = distance / speed;
-    cost = cost * 60 *60;
-    costMin = (int)Math.round(cost);
+    cost = cost * 60 * 60;
+    costMin = (int) Math.round(cost);
     return costMin;
   }
   
@@ -591,7 +605,7 @@ public class RoadNetwork {
 //  }
   
   /**
-   * Compute and return distance in Meters from node1 to node2.
+   * Compute and return distance in Kilometers from node1 to node2.
    * 
    * @param node1 Node at position one
    * @param node2 Node at position two
