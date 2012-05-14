@@ -3,7 +3,9 @@ package routeplanning;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 /**
@@ -14,7 +16,7 @@ public class DijkstraAlgorithm {
    * Indicator which node was visited by a particular run of Dijkstra. Useful
    * for computing the connected components; 
    */
-  private List<Integer> visitedNodeMarks;
+  private Map<Integer,Integer> visitedNodeMarks;
   /**
    * Reference to graph on which this object is supposed to work.
    */
@@ -41,10 +43,6 @@ public class DijkstraAlgorithm {
    */
   public DijkstraAlgorithm(RoadNetwork graph) {
     this.graph = graph;
-    visitedNodeMarks = new ArrayList<Integer>();
-    for (int i = 0; i < this.graph.getNodeIds().size(); i++) {
-      visitedNodeMarks.add(null);
-    }
   }
   /**
    * Compute the shortest paths from the given source to the given target node.
@@ -55,10 +53,10 @@ public class DijkstraAlgorithm {
    * @return
    */
   public int computeShortestPath(int sourceNodeId, int targetNodeId) {
+    visitedNodeMarks = new HashMap<Integer, Integer>();
     int shortestPathCost = 0;
     List<Arc> adjArcsCurrentNode;
     int pos;
-    int minDist = Integer.MAX_VALUE;
     int distToAdjNode = 0;
     ActiveNode activeNode;
     Boolean noAdjacentNodes = false;
@@ -66,6 +64,7 @@ public class DijkstraAlgorithm {
     
     System.out.println("Compute Shortest Path Start: " 
       + Calendar.getInstance().getTime());
+    System.out.println("Compute Shortest Path Start from Node: " + sourceNodeId + " to Node "+ targetNodeId);
     ActiveNode sourceNode = new ActiveNode(sourceNodeId, 0);
     
     PriorityQueue<ActiveNode> pq = new PriorityQueue<ActiveNode>(
@@ -81,7 +80,7 @@ public class DijkstraAlgorithm {
       }
       pos = this.graph.getNodeIds().indexOf(currentNode.id);
       //settled the node
-      visitedNodeMarks.set(pos, currentNode.dist);
+      visitedNodeMarks.put(currentNode.id, currentNode.dist);
       
       
       if (currentNode.id == targetNodeId) {
@@ -94,9 +93,8 @@ public class DijkstraAlgorithm {
       //pqAsString(pq);
        
       //search adjacent node with shortest distance
-      adjArcsCurrentNode = this.graph.getAdjacentArcs().get(pos);
+      adjArcsCurrentNode = this.graph.getNodeAdjacentArcs(currentNode.id);
       
-      //minDist = Integer.MAX_VALUE;
       noAdjacentNodes = false;
       for (int i = 0; i < adjArcsCurrentNode.size(); i++) {
         Arc arc;  
@@ -104,11 +102,6 @@ public class DijkstraAlgorithm {
         if (!isVisited(arc.headNode.id)) {
           noAdjacentNodes = true;
           distToAdjNode = currentNode.dist + arc.cost;
-          //if (minDist > distToAdjNode) {
-            //minDist = distToAdjNode;
-            //minDistNodeId = arc.headNode.id;
-            //minDistNodeCost = currentNode.dist + arc.cost;
-          //}
           activeNode = new ActiveNode(arc.headNode.id, distToAdjNode);
           pq.add(activeNode);
         }
@@ -117,6 +110,15 @@ public class DijkstraAlgorithm {
         //System.out.println(currentNode.id);
       //}      
     }
+//    System.out.println("=========================================================");
+//    System.out.println("=========================================================");
+//    System.out.println("=========================================================");
+//    System.out.println("=========================================================");
+//
+//    System.out.println(visitedNodeMarks.toString());
+    
+    
+    
     System.out.println("shortestPathCost: " + shortestPathCost);
     //System.out.println("visitedNodeMarks: " + visitedNodeMarks.toString());
     System.out.println("Compute Shortest Path End: " 
@@ -128,8 +130,8 @@ public class DijkstraAlgorithm {
    *Says if the given node was already visited.
    * @param nodeId 
    */
-  private Boolean isVisited(int nodeId) {
-    if (visitedNodeMarks.get(this.graph.getNodeIds().indexOf(nodeId)) != null) {
+  public Boolean isVisited(int nodeId) {
+    if (visitedNodeMarks.containsKey(nodeId)) {
       return true;
     }
     return false;
@@ -147,7 +149,7 @@ public class DijkstraAlgorithm {
    * Returns visitedNodeMarks.
    * @return visitedNodeMarks
    */  
-  public List<Integer> getVisitedNodes() {
+  public Map<Integer,Integer> getVisitedNodes() {
     return visitedNodeMarks;
   }
   

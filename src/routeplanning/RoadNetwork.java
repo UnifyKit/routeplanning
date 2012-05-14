@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -480,16 +481,16 @@ public class RoadNetwork {
       
       DijkstraAlgorithm dij = new DijkstraAlgorithm(this);
       dij.computeShortestPath(nextNodeId, -1);
-      List<Integer> costs = dij.getVisitedNodes();
+      Map<Integer, Integer> costs = dij.getVisitedNodes();
       
-      for (int i = 0; i < costs.size(); i++) {
-        Integer costOfCurrentNode = costs.get(i);
-        if (costOfCurrentNode != null) { //added
-          if (costOfCurrentNode > 0) {
-            connectedNodes.add(nodeIds.get(i));
-            remainingNodes.remove(new Integer(nodeIds.get(i)));
-          }
-        }
+      Iterator<Integer> it = costs.keySet().iterator();
+      while (it.hasNext()) {
+
+          Integer nodeId = (Integer) it.next();
+          System.out.println("?????????????????????????????????????");
+          System.out.println(nodeId);
+          connectedNodes.add(nodeId);
+          remainingNodes.remove(new Integer(nodeId));
       }
       if (connectedNodes.size() > bConnectedCompNodes.size()) {
         bConnectedCompNodes = connectedNodes;
@@ -500,11 +501,9 @@ public class RoadNetwork {
     }
     biggestConnectedComponent.setNodes(bConnectedCompNodes);
     biggestConnectedComponent.setAllNodes(bConnectedCompNodes);
-    
-    List<Integer> nodeIds = biggestConnectedComponent.getNodeIds();
-    
-    for (int i = 0; i < nodeIds.size(); i++) {
-      Integer nodeId = nodeIds.get(i);
+        
+    for (int i = 0; i < bConnectedCompNodes.size(); i++) {
+      Integer nodeId = bConnectedCompNodes.get(i);
       List<Arc> arcs = getNodeAdjacentArcs(nodeId);
       biggestConnectedComponent.getAdjacentArcs().add(arcs);
       if (arcs == null) {
@@ -525,7 +524,7 @@ public class RoadNetwork {
    */ 
   //TODO time needed unit might be wrong
   public int computeCost(String roadType, double distance) {
-    
+    int costMin=0;
     /**
      * Speed in km/h.
      */
