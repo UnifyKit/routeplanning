@@ -111,9 +111,10 @@ public class DijkstraAlgorithm {
             activeNode = new ActiveNode(arc.headNode.id, distToAdjNode, 0);
           } else {
             //activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
-            //    heuristic.get(this.graph.getNodeIds().indexOf(arc.headNode.id)));
+            //heuristic.get(this.graph.getNodeIds().indexOf(arc.headNode.id)));
             activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
-                    heuristic.get(this.graph.getNodeIdPosAdjArc().get(arc.headNode.id)));
+              heuristic.get(this.graph.getNodeIdPosAdjArc().get(
+                arc.headNode.id)));
           }
           pq.add(activeNode);
         }
