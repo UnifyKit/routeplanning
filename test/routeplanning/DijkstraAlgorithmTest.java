@@ -342,7 +342,7 @@ public class DijkstraAlgorithmTest {
 
     String stringRep = rn.asString();
     System.out
-        .println("--------------ShortestPahtWithHeuristic----------------");
+        .println("--------------HeuristicTest----------------");
     System.out.println(rn.asString());
     DijkstraAlgorithm dij = new DijkstraAlgorithm(rn);
     dij.setHeuristic(heuristic);
@@ -355,7 +355,7 @@ public class DijkstraAlgorithmTest {
     Assert.assertEquals(expectedVisitedNodes, visitedNodes);
 
     System.out
-        .println("--------------ShortestPahtWithHeuristic----------------");
+        .println("--------------HeuristicTest----------------");
 
   }
   /**
