@@ -85,6 +85,7 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
    * @return
    */
   public int computeShortestPath(int sourceNodeId, int targetNodeId) {
+    precomputeLandmarkDistances();
     List<Integer> heuristic = calculateHeuristicList(targetNodeId);
     setHeuristic(heuristic);
     int spcost = super.computeShortestPath(sourceNodeId, targetNodeId);
