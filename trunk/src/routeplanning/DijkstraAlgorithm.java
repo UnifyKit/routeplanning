@@ -62,7 +62,7 @@ public class DijkstraAlgorithm {
     visitedNodeMarks = new HashMap<Integer, Integer>();
     int shortestPathCost = 0;
     List<Arc> adjArcsCurrentNode;
-    int pos;
+    //int pos;
     int distToAdjNode = 0;
     ActiveNode activeNode;
 
