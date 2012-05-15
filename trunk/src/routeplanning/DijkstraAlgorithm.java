@@ -76,7 +76,7 @@ public class DijkstraAlgorithm {
       sourceNode = new ActiveNode(sourceNodeId, 0, 0);
     } else {
       sourceNode = new ActiveNode(sourceNodeId, 0, heuristic.get(this.graph
-          .getNodeIds().indexOf(sourceNodeId)));
+          .getNodeIdPosAdjArc().get(sourceNodeId)));
     }
 
     PriorityQueue<ActiveNode> pq = new PriorityQueue<ActiveNode>(1,
@@ -109,8 +109,10 @@ public class DijkstraAlgorithm {
           if (heuristic == null) {
             activeNode = new ActiveNode(arc.headNode.id, distToAdjNode, 0);
           } else {
+            //activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
+            //    heuristic.get(this.graph.getNodeIds().indexOf(arc.headNode.id)));
             activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
-                heuristic.get(this.graph.getNodeIds().indexOf(arc.headNode.id)));
+                    heuristic.get(this.graph.getNodeIdPosAdjArc().get(arc.headNode.id)));
           }
           pq.add(activeNode);
         }
