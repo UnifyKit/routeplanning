@@ -2,7 +2,10 @@ package routeplanning;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -200,18 +203,18 @@ public class RoadNetworkTest {
     rn.addNodeToGraph(node4);
     rn.addNodeToGraph(node5);
     
-    List<Integer> expectedNodeIds = new ArrayList<Integer>();
-    expectedNodeIds.add(0);
-    expectedNodeIds.add(1);
-    expectedNodeIds.add(2);
-    expectedNodeIds.add(3);
-    expectedNodeIds.add(4);
-    expectedNodeIds.add(5);    
+    Map<Integer, Node> expectedNodeMap = new HashMap<Integer, Node>();
+    expectedNodeMap.put(0, node0);
+    expectedNodeMap.put(1, node1);
+    expectedNodeMap.put(2, node2);
+    expectedNodeMap.put(3, node3);
+    expectedNodeMap.put(4, node4);
+    expectedNodeMap.put(5, node5);    
     
-    Assert.assertEquals(expectedNodeIds, rn.getAllNodeIds());
+    Assert.assertEquals(expectedNodeMap, rn.getMapNodeId());
     
     rn.addNodeToGraph(nullNode);
-    Assert.assertEquals(expectedNodeIds, rn.getAllNodeIds());
+    Assert.assertEquals(expectedNodeMap, rn.getMapNodeId());
   }
 
   /**
@@ -403,7 +406,7 @@ public class RoadNetworkTest {
     Assert.assertEquals(rn.asString(), expectedRep);
     System.out.println();
     Assert.assertTrue("Number of overall nodes failed", 
-        rn.getAllNodeIds().size() == 11);
+        rn.getMapNodeId().size() == 11);
     Assert.assertTrue("Number of nodes with arcs failed", 
         rn.getNodeIds().size() == 8);
     Assert.assertTrue("Number of arcs failed", rn.getNumberOfArcs() == 10);
