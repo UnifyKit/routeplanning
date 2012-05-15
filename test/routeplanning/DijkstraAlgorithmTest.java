@@ -372,4 +372,41 @@ public class DijkstraAlgorithmTest {
     cost = alg.computeShortestPath(0, 4);
     Assert.assertEquals(cost, expectedValue);
   }
+  /**
+   * Test of heuristic to see if it is admissable using a random value 
+   * h(u) <= dist(u,v) 
+   */
+  @Test
+  public void heuristicAdmissableTest() {
+    RoadNetwork rn = new RoadNetwork();
+    RoadNetwork lc;
+    List<Integer> heuristic;
+    boolean admissableTest = true;
+    int sourceNodeId;
+    int targetNodeId;
+    int distUT;
+    int hu;
+    System.out.println("-----------------HeuristicAdmissableTest---------------------");
+    rn.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/resources/saarland_reduced.osm");
+    //rn.computeStraightLineHeuristic(259000790);
+    DijkstraAlgorithm dij = new DijkstraAlgorithm(rn);
+    
+    for (int i = 0; i < 10; i++) {
+      sourceNodeId = rn.getRandomNodeId();
+      targetNodeId = rn.getRandomNodeId();
+      distUT = dij.computeShortestPath(sourceNodeId, targetNodeId);
+      heuristic = rn.computeStraightLineHeuristic(targetNodeId);
+      hu = heuristic.get(rn.getNodeIdPosAdjArc().get(sourceNodeId));
+      if (hu > distUT) {
+        System.out.println("Error h(u) is not admissable from: " + sourceNodeId + " to: " + targetNodeId);
+        admissableTest = false;
+      }
+      System.out.println("h(u): " + hu);
+      System.out.println("dist(u,t): " + distUT);
+      System.out.println("************************");
+    }
+    boolean expectedValue = true;
+    Assert.assertEquals(expectedValue, admissableTest);
+    System.out.println("-----------------HeuristicAdmissableTest---------------------");
+  }
 }
