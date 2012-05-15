@@ -15,29 +15,32 @@ public class DijkstraAlgorithm {
    * Indicator which node was visited by a particular run of Dijkstra. Useful
    * for computing the connected components;
    */
-  private Map<Integer, Integer> visitedNodeMarks;
+  protected Map<Integer, Integer> visitedNodeMarks;
   /**
    * Reference to graph on which this object is supposed to work.
    */
-  private RoadNetwork graph;
+  protected RoadNetwork graph;
 
   /**
-   * TODO.
+   * Class needed to compare the current values of two nodes.
+   * This is required to implement the priority queue.
    */
-  private final Comparator<ActiveNode> travelTimeComparator = new Comparator<ActiveNode>() {
-    public int compare(ActiveNode n1, ActiveNode n2) {
-      double dist = (n1.dist + n1.heuristic) - (n2.dist + n2.heuristic);
-      if (dist < 0) {
-        return -1;
-      } else {
-        return 1;
+  protected final Comparator<ActiveNode> travelTimeComparator 
+    = new Comparator<ActiveNode>() {
+      public int compare(ActiveNode n1, ActiveNode n2) {
+        double dist = (n1.dist + n1.heuristic) - (n2.dist + n2.heuristic);
+        if (dist < 0) {
+          return -1;
+        } else {
+          return 1;
+        }
       }
-    }
-  };
+    };
+    
   /**
    * Heuristic function if running in A* mode.
    */
-  private List<Integer> heuristic;
+  protected List<Integer> heuristic;
 
   /**
    * Create instance of this class for a given (road) graph.
@@ -65,7 +68,6 @@ public class DijkstraAlgorithm {
     //int pos;
     int distToAdjNode = 0;
     ActiveNode activeNode;
-
     System.out.println("Compute Shortest Path Start: "
         + Calendar.getInstance().getTime());
 
@@ -78,7 +80,6 @@ public class DijkstraAlgorithm {
       sourceNode = new ActiveNode(sourceNodeId, 0, heuristic.get(this.graph
           .getNodeIdPosAdjArc().get(sourceNodeId)));
     }
-
     PriorityQueue<ActiveNode> pq = new PriorityQueue<ActiveNode>(1,
         travelTimeComparator);
     pq.add(sourceNode);
