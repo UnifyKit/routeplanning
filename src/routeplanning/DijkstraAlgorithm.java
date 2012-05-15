@@ -65,7 +65,6 @@ public class DijkstraAlgorithm {
     int pos;
     int distToAdjNode = 0;
     ActiveNode activeNode;
-    Boolean noAdjacentNodes = false;
 
     System.out.println("Compute Shortest Path Start: "
         + Calendar.getInstance().getTime());
@@ -90,7 +89,7 @@ public class DijkstraAlgorithm {
       if (isVisited(currentNode.id)) {
         continue;
       }
-      pos = this.graph.getNodeIds().indexOf(currentNode.id);
+      //pos = this.graph.getNodeIds().indexOf(currentNode.id);
       // settled the node
       visitedNodeMarks.put(currentNode.id, currentNode.dist);
 
@@ -102,12 +101,10 @@ public class DijkstraAlgorithm {
       // search adjacent node with shortest distance
       adjArcsCurrentNode = this.graph.getNodeAdjacentArcs(currentNode.id);
 
-      noAdjacentNodes = false;
       for (int i = 0; i < adjArcsCurrentNode.size(); i++) {
         Arc arc;
         arc = adjArcsCurrentNode.get(i);
         if (!isVisited(arc.headNode.id)) {
-          noAdjacentNodes = true;
           distToAdjNode = currentNode.dist + arc.cost;
           if (heuristic == null) {
             activeNode = new ActiveNode(arc.headNode.id, distToAdjNode, 0);
@@ -118,9 +115,6 @@ public class DijkstraAlgorithm {
           pq.add(activeNode);
         }
       }
-      // if (!noAdjacentNodes) {
-      // System.out.println(currentNode.id);
-      // }
     }
 
     System.out.println("shortestPathCost: " + shortestPathCost);
