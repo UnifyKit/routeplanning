@@ -15,12 +15,7 @@ import java.util.Random;
  * 
  * @author CJC | AAA
  */
-public class RoadNetwork {
-  /**
-   * List of all Nodes IDs.
-   */
-  private List<Integer> allNodeIds;
- 
+public class RoadNetwork { 
   /**
    * List of all Nodes that have adjacent arcs.
    */
@@ -52,7 +47,6 @@ public class RoadNetwork {
   public RoadNetwork() {
     adjacentArcs = new ArrayList<List<Arc>>();
     mapNodeId = new HashMap<Integer, Node>();
-    allNodeIds = new ArrayList<Integer>();
     nodeIds = new ArrayList<Integer>();
     nodeIdPosAdjArc = new HashMap<Integer, Integer>();
   }
@@ -63,14 +57,6 @@ public class RoadNetwork {
   //TODO
   public void setNodes(List<Integer> nodeIds) {
     this.nodeIds = nodeIds;
-  }
-  
-  /**
-   *Setter method for allNodes.
-   */
-  //TODO
-  public void setAllNodes(List<Integer> allNodeIds) {
-    this.allNodeIds = allNodeIds;
   }
   
   /**
@@ -100,13 +86,6 @@ public class RoadNetwork {
    */
   public List<Integer> getNodeIds() {
     return nodeIds;
-  }
-  
-  /**
-   * Getter method for allNodesIds.
-   */
-  public List<Integer> getAllNodeIds() {
-    return allNodeIds;
   }
 
   /**
@@ -154,7 +133,6 @@ public class RoadNetwork {
       //Is the node already there?
       boolean alreadyInNetwork = mapNodeId.containsKey(nodeId);
       if (!alreadyInNetwork) {
-        allNodeIds.add(nodeId);
         mapNodeId.put(nodeId, tailNode);
       }
     }
@@ -170,7 +148,6 @@ public class RoadNetwork {
       if (arc.getHeadNode() != null) {
         Integer tailNodeId = tailNode.getId();
         if (!mapNodeId.containsKey(tailNodeId)) {
-          allNodeIds.add(tailNodeId);
           mapNodeId.put(tailNodeId, tailNode);
         }
         if (!nodeIdPosAdjArc.containsKey(tailNodeId)) {
@@ -326,7 +303,6 @@ public class RoadNetwork {
         }
       }
 
-      System.out.println("TOTAL Num of nodes: " + getAllNodeIds().size());
       System.out.println("Num of nodes with arcs: " + getNodeIds().size());
       // System.out.println(nodes.size());
       System.out.println("Number of arcs: " + getNumberOfArcs());
@@ -519,7 +495,6 @@ public class RoadNetwork {
       lccMapIdList.put(nodeId, listOfArcs.size() - 1);
     }
     biggestConnectedComponent.setNodes(bConnectedCompNodes);
-    biggestConnectedComponent.setAllNodes(bConnectedCompNodes);
     biggestConnectedComponent.setAdjacentArcs(listOfArcs);
     biggestConnectedComponent.setMapNodeId(lccMapIdNode);
     biggestConnectedComponent.setNodeIdPosAdjArc(lccMapIdList);
@@ -536,7 +511,6 @@ public class RoadNetwork {
    * @param distance Distance in Kilometers.
    * @return Time needed for the given distance  
    */ 
-  //TODO time needed unit might be wrong
   public int computeCost(String roadType, double distance) {
     int costMin = 0;
     /**
