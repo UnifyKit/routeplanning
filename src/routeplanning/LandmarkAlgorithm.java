@@ -54,6 +54,7 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
       Integer landmarkId = graph.getRandomNodeId();
       landmarkIds.add(landmarkId);
     }
+    precomputeLandmarkDistances();
   }
 
   
@@ -62,16 +63,19 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
    * Dijkstra execution.
    */ 
   public void precomputeLandmarkDistances() {
+    System.out.println("==================================");
+    System.out.println("PRECOMPUTING DISTANCES FROM LANDMARKS");
     DijkstraAlgorithm dijAlg = new DijkstraAlgorithm(graph);
     
     for (int i = 0; i < landmarkIds.size(); i++) {
       Integer currentLandMarkId = landmarkIds.get(i);
-      System.out.println("PRECOMPUTING heuristic values for landmark " 
-        + landmarkIds);
       //DijkstraAlgorithm with target -1
       dijAlg.computeShortestPath(currentLandMarkId, -1);
       costMaps.add(dijAlg.getVisitedNodes());
-    }    
+    } 
+    System.out.println("END OF PRECOMPUTING DISTANCES");
+    System.out.println("==================================");
+
   }
   
   /**
@@ -85,7 +89,6 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
    * @return
    */
   public int computeShortestPath(int sourceNodeId, int targetNodeId) {
-    precomputeLandmarkDistances();
     List<Integer> heuristic = calculateHeuristicList(targetNodeId);
     setHeuristic(heuristic);
     int spcost = super.computeShortestPath(sourceNodeId, targetNodeId);
