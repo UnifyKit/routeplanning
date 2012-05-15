@@ -44,15 +44,34 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
   public LandmarkAlgorithm(RoadNetwork graph) {
     super(graph);
   }
+  
+  /**
+   * Getter for landmarkIds.
+   */
+  public List<Integer> getLandmarkIds() {
+    return landmarkIds;
+  }
+  
+  /**
+   * Getter for costMaps.
+   */
+  public List<Map<Integer, Integer>> getCostMaps() {
+    return costMaps;
+  }
 
   /**
    * Set the number of landmarks.
    */  
   public void selectLandmarks(int numberOfLandmarks) {
-    this.numberOfLandmarks = numberOfLandmarks;
-    for (int i = 0; i < numberOfLandmarks; i++) {
-      Integer landmarkId = graph.getRandomNodeId();
-      landmarkIds.add(landmarkId);
+    if (numberOfLandmarks < graph.getNodeIds().size()) {
+      this.numberOfLandmarks = numberOfLandmarks;
+      for (int i = 0; i < numberOfLandmarks; i++) {
+        Integer landmarkId = graph.getRandomNodeId();
+        while (landmarkIds.contains(landmarkId)) {
+          landmarkId = graph.getRandomNodeId();
+        }
+        landmarkIds.add(landmarkId);
+      }
     }
     precomputeLandmarkDistances();
   }
