@@ -85,19 +85,26 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
    * @return
    */
   public int computeShortestPath(int sourceNodeId, int targetNodeId) {
-    List<Integer> heuristic = calculateHeuristicList();
+    List<Integer> heuristic = calculateHeuristicList(targetNodeId);
     setHeuristic(heuristic);
     int spcost = super.computeShortestPath(sourceNodeId, targetNodeId);
     return spcost;
   }
+
   
-  private List<Integer> calculateHeuristicList() {
+  /**
+   * Calculates h(u) for each node of the graph. 
+   */ 
+  private List<Integer> calculateHeuristicList(int targetNodeId) {
     List<Integer> heuristic = new ArrayList<Integer>();
-    //TODO
+    List<Integer> nodeIds = graph.getNodeIds();
+    for (int i = 0; i < nodeIds.size(); i++) {
+      Integer sourceNodeId = nodeIds.get(i);
+      int nodeHeuristic = calculateHeuristic(sourceNodeId, targetNodeId);
+      heuristic.add(nodeHeuristic);
+    }
     return heuristic;
   }
- 
-
  
   /**
    * Calculates max (h(u)) where each h(u) is given by one landmark.
