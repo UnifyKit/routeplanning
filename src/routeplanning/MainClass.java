@@ -144,6 +144,7 @@ public class MainClass {
    
     Integer totalCost = 0;
     long totalExecutionTime = 0;
+    long heuristicTime = 0;
     int totalSettledNodes = 0;
     DecimalFormat twoDForm = new DecimalFormat("#.##");
     
@@ -171,6 +172,7 @@ public class MainClass {
       totalCost = totalCost + cost;
       totalExecutionTime = totalExecutionTime + (end - start) 
           - landAlg.getHeuristicTimeExection();
+      heuristicTime = heuristicTime + landAlg.getHeuristicTimeExection();
       
       System.out.println("SHORTEST PATH FROM NODE: " + sourceNodeId 
           + " TO NODE: " + targetNodeId + " :::: " + cost + " seconds");
@@ -178,7 +180,7 @@ public class MainClass {
       System.out.println("------------------------------------------------");
     }
     System.out.println("RUNNING TIME FOR PRECOMPUTATION OF LANDMARKS: " 
-        + Double.valueOf(twoDForm.format(preComputationTime)) 
+        + Double.valueOf(twoDForm.format(preComputationTime + heuristicTime)) 
         + " milliseconds");
     System.out.println("AVERAGE RUNNING TIME: " 
         + Double.valueOf(twoDForm.format((totalExecutionTime) 
@@ -206,10 +208,10 @@ public class MainClass {
     
     System.out.println("****************************"
         + "*****************************");
-    MainClass.tryDijkstrasWithSimpleHeuristic(roadNet, 10);
+    MainClass.tryDijkstrasWithSimpleHeuristic(roadNet, 100);
     System.out.println("****************************"
       + "*****************************");
-    MainClass.tryDijkstrasWithLandmarks(roadNet, 10);
+    MainClass.tryDijkstrasWithLandmarks(roadNet, 100);
     System.out.println("****************************"
         + "*****************************");
   }
