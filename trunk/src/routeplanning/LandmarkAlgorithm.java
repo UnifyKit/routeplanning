@@ -8,15 +8,14 @@ import java.util.Map;
  * Class implementing A*-Landmarks.
  */
 public class LandmarkAlgorithm extends DijkstraAlgorithm {
+  
   /**
    * Keeps the number of landmarks implementing A*-Landmarks.
-   * Default is 16 as requested in the exercise sheet.
    */  
   private int numberOfLandmarks = 0;
   
   /**
    * List of the nodes used as landmarks.
-   * If we see we don't need this, we can remove this information.
    */
   // The set of landmarks. Each entry in the array is a node id.
   private List<Integer> landmarkIds =  new ArrayList<Integer>();
@@ -25,7 +24,7 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
    * Each entry of the list represent the values dist(l,u) calculated
    * for each landmark.
    * We simply save the map returned by the getVisitedNodes() method
-   * in constant time.
+   * for each landmark to allow access in constant time.
    */
   // Precomputed distances (shorted path costs in seconds) to and from these
   // landmarks. This is one array of size #nodes per landmark.
@@ -58,9 +57,23 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
   public List<Map<Integer, Integer>> getCostMaps() {
     return costMaps;
   }
+  
+  /**
+   * Setter for landmarkIds.
+   */
+  public void setLandmarkIds(List<Integer> landmarkIds) {
+    this.landmarkIds = landmarkIds;
+  }
 
   /**
-   * Set the number of landmarks.
+   * Setter for costMaps.
+   */
+  public void setCostMaps(List<Map<Integer, Integer>> costMaps) {
+    this.costMaps = costMaps;
+  }
+
+  /**
+   * Sets the number of landmarks and precomputes distances.
    */  
   public void selectLandmarks(int numberOfLandmarks) {
     if (numberOfLandmarks < graph.getNodeIds().size()) {
@@ -78,7 +91,7 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
 
   
   /**
-   * Pre-computes the distances from the selected landmarks with a single
+   * Precomputes the distances from the selected landmarks with a single
    * Dijkstra execution.
    */ 
   public void precomputeLandmarkDistances() {
@@ -118,7 +131,7 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
   /**
    * Calculates h(u) for each node of the graph. 
    */ 
-  private List<Integer> calculateHeuristicList(int targetNodeId) {
+  public List<Integer> calculateHeuristicList(int targetNodeId) {
     List<Integer> heuristic = new ArrayList<Integer>();
     List<Integer> nodeIds = graph.getNodeIds();
     for (int i = 0; i < nodeIds.size(); i++) {
@@ -147,5 +160,4 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
     }
     return heuristic;
   }
-
 }

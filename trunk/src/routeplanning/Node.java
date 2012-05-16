@@ -6,21 +6,24 @@ package routeplanning;
  * @author CJC
  */
 public class Node {
+  
   /**
    * id Node.
    */
   int id;
+  
   /**
    * Latitude of the node.
    */
   Double latitude;
+  
   /**
    * Longitude of the node.
    */
   Double longitude;
+  
   /**
    * Constructor.
-   * 
    * @param id
    * @param latitude
    * @param longitude
