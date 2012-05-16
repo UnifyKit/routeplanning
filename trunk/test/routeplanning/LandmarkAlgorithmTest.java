@@ -1,5 +1,7 @@
 package routeplanning;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -104,28 +106,28 @@ public class LandmarkAlgorithmTest {
     return rn;
   }
   
-//  /**
-//   * TODO.
-//   * @param graph
-//   */
-//  @Test
-//  public void testHeuristic() {
-//    // Source node0, Target node4
-//    RoadNetwork rn = new RoadNetwork();
-//    LandmarkAlgorithm landAlg = new LandmarkAlgorithm(rn);
-//    landAlg.selectLandmarks(2);
-//    int cost = landAlg.computeShortestPath(0, 4);
-//    int expectedCost = 8;
-//    System.out.println("VisitedNodes:" + landAlg.getVisitedNodes().toString());
-//    String visitedNodes = landAlg.getVisitedNodes().toString();
-//    String expectedVisitedNodes = "{0=0, 1=2, 2=4, 3=6, 4=8}";
-//    Assert.assertEquals(expectedCost, cost);
-//    Assert.assertEquals(expectedVisitedNodes, visitedNodes);
-//  }
+  /**
+   * TODO.
+   * @param graph
+   */
+  @Test
+  public void testVisitedNodes() {
+    // Source node0, Target node4
+    RoadNetwork rn = createSampleGraph();
+    LandmarkAlgorithm landAlg = new LandmarkAlgorithm(rn);
+    landAlg.selectLandmarks(2);
+    int cost = landAlg.computeShortestPath(0, 4);
+    int expectedCost = 8;
+    System.out.println("VisitedNodes:" + landAlg.getVisitedNodes().toString());
+    String visitedNodes = landAlg.getVisitedNodes().toString();
+    String expectedVisitedNodes = "{0=0, 1=2, 2=4, 3=6, 4=8}";
+    System.out.println("Selected nodes: " + landAlg.getLandmarkIds());
+    Assert.assertEquals(expectedCost, cost);
+    Assert.assertEquals(expectedVisitedNodes, visitedNodes);
+  }
   
   /**
    * Tests the behavior of the selection of landmarks.
-   * @param graph
    */
   @Test
   public void testNumberOfLandmarks() {
@@ -150,7 +152,6 @@ public class LandmarkAlgorithmTest {
   
   /**
    * Tests if the dist(l, u) calculated for the landmarks are ok.
-   * @param graph
    */
   @Test
   public void testPrecomputation() {
@@ -175,4 +176,96 @@ public class LandmarkAlgorithmTest {
     
     Assert.assertTrue("The precomputed values of landmarks are wrong", allOk);
   }
+  
+  /**
+   * Tests if the heuristics are correctly calculated.
+   */
+  @Test
+  public void checkHeuristics() {
+    RoadNetwork rn = createSampleGraph();
+    LandmarkAlgorithm landAlg = new LandmarkAlgorithm(rn);
+    List<Integer> nodeIds = new ArrayList<Integer>();
+    nodeIds.add(5);
+    nodeIds.add(2);
+    nodeIds.add(8);
+    landAlg.setLandmarkIds(nodeIds);
+    landAlg.precomputeLandmarkDistances();
+    //dist(l,u) for landmark 5
+    Map<Integer, Integer> costsOf5 = new HashMap<Integer, Integer>();
+    costsOf5.put(5, 0);
+    costsOf5.put(6, 1);
+    costsOf5.put(7, 1);
+    costsOf5.put(8, 1);
+    costsOf5.put(0, 1);
+    costsOf5.put(1, 3);
+    costsOf5.put(2, 5);
+    costsOf5.put(3, 7);
+    costsOf5.put(4, 9);
+    System.out.println(costsOf5);
+    
+    Map<Integer, Integer> generatedCostsOf5 = landAlg.getCostMaps().get(0);
+    System.out.println(generatedCostsOf5);
+    
+    Assert.assertEquals(costsOf5, generatedCostsOf5);
+    
+    Map<Integer, Integer> costsOf2 = new HashMap<Integer, Integer>();
+    costsOf2.put(5, 5);
+    costsOf2.put(6, 6);
+    costsOf2.put(7, 6);
+    costsOf2.put(8, 6);
+    costsOf2.put(0, 4);
+    costsOf2.put(1, 2);
+    costsOf2.put(2, 0);
+    costsOf2.put(3, 2);
+    costsOf2.put(4, 4);
+    System.out.println(costsOf2);
+    Map<Integer, Integer> generatedCostsOf2 = landAlg.getCostMaps().get(1);
+    System.out.println(generatedCostsOf2);
+    
+    Assert.assertEquals(costsOf2, generatedCostsOf2);
+    
+    Map<Integer, Integer> costsOf8 = new HashMap<Integer, Integer>();
+    costsOf8.put(5, 1);
+    costsOf8.put(6, 2);
+    costsOf8.put(7, 2);
+    costsOf8.put(8, 0);
+    costsOf8.put(0, 2);
+    costsOf8.put(1, 4);
+    costsOf8.put(2, 6);
+    costsOf8.put(3, 8);
+    costsOf8.put(4, 10);
+    System.out.println(costsOf8);
+    
+    Map<Integer, Integer> generatedCostsOf8 = landAlg.getCostMaps().get(2);
+    System.out.println(generatedCostsOf8);
+    
+    Assert.assertEquals(costsOf8, generatedCostsOf8);
+    
+    Assert.assertTrue("The Precomputation works", 
+        landAlg.getCostMaps().size() == 3);
+    
+    List<Integer> expectedHeuristics = new ArrayList<Integer>();
+    expectedHeuristics.add(8);
+    expectedHeuristics.add(6);
+    expectedHeuristics.add(4);
+    expectedHeuristics.add(2);
+    expectedHeuristics.add(0);
+    expectedHeuristics.add(9);
+    expectedHeuristics.add(8);
+    expectedHeuristics.add(8);
+    expectedHeuristics.add(10);
+    
+    List<Integer> calculatedHeuristics = landAlg.calculateHeuristicList(4);
+    
+    System.out.println(expectedHeuristics);
+    System.out.println(calculatedHeuristics);
+    
+    Assert.assertEquals(calculatedHeuristics, expectedHeuristics);
+    
+    landAlg.computeShortestPath(0, 4);
+    System.out.println(landAlg.getVisitedNodes());
+    
+  }
+  
+  
 }
