@@ -10,6 +10,13 @@ import java.util.Map;
 public class LandmarkAlgorithm extends DijkstraAlgorithm {
   
   /**
+   * Keeps the time needed to calculate the heuristic function
+   * for all nodes.
+   */  
+  private long heuristicTimeExection = 0; 
+  
+  
+  /**
    * Keeps the number of landmarks implementing A*-Landmarks.
    */  
   private int numberOfLandmarks = 0;
@@ -56,6 +63,13 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
    */
   public List<Map<Integer, Integer>> getCostMaps() {
     return costMaps;
+  }
+  
+  /**
+   * Getter for heuristicTimeExection.
+   */
+  public long getHeuristicTimeExection() {
+    return heuristicTimeExection;
   }
   
   /**
@@ -121,9 +135,11 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
    * @return
    */
   public int computeShortestPath(int sourceNodeId, int targetNodeId) {
-    selectLandmarks(42);
+    long startHeuristic = System.currentTimeMillis();
     List<Integer> heuristic = calculateHeuristicList(targetNodeId);
     setHeuristic(heuristic);
+    long endHeuristic = System.currentTimeMillis();
+    heuristicTimeExection = endHeuristic - startHeuristic;
     int spcost = super.computeShortestPath(sourceNodeId, targetNodeId);
     return spcost;
   }
@@ -152,7 +168,7 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
     //we check the maximum value for all the landmarks
     for (int i = 0; i < this.costMaps.size(); i++) {
       Map<Integer, Integer > cost = this.costMaps.get(i);
-      if(cost.containsKey(sourceNodeId)) {
+      if (cost.containsKey(sourceNodeId)) {
         int distFromLtoU = cost.get(sourceNodeId);
         int distFromLtoT = cost.get(targetNodeId);
         int currentHeuristic = Math.abs(distFromLtoU - distFromLtoT);

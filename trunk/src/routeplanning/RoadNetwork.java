@@ -517,10 +517,10 @@ public class RoadNetwork {
       dist = getDistance2(mapNodeId.get(nodeIds.get(i)), targetNode);
       travelTime = dist / maxSpeed; // hours
       travelTime = travelTime * 3600;
-      if (nodeIds.get(i) == 385925420) {
-        System.out.println("distance: " + dist);
-        System.out.println("travelTime: " + travelTime);
-      }
+//      if (nodeIds.get(i) == 385925420) {
+//        System.out.println("distance: " + dist);
+//        System.out.println("travelTime: " + travelTime);
+//      }
       heuristic.add((int) Math.round(travelTime));
     }
     return heuristic;
