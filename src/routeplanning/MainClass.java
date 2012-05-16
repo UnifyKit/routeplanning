@@ -208,10 +208,10 @@ public class MainClass {
     
     System.out.println("****************************"
         + "*****************************");
-    MainClass.tryDijkstrasWithSimpleHeuristic(roadNet, 100);
+    MainClass.tryDijkstrasWithSimpleHeuristic(roadNet, 10);
     System.out.println("****************************"
       + "*****************************");
-    MainClass.tryDijkstrasWithLandmarks(roadNet, 100);
+    MainClass.tryDijkstrasWithLandmarks(roadNet, 10);
     System.out.println("****************************"
         + "*****************************");
   }
