@@ -169,7 +169,8 @@ public class MainClass {
       Map<Integer, Integer> settledNodeCosts = landAlg.getVisitedNodes();
       totalSettledNodes = totalSettledNodes + settledNodeCosts.size();
       totalCost = totalCost + cost;
-      totalExecutionTime = totalExecutionTime + (end - start);
+      totalExecutionTime = totalExecutionTime + (end - start) 
+          - landAlg.getHeuristicTimeExection();
       
       System.out.println("SHORTEST PATH FROM NODE: " + sourceNodeId 
           + " TO NODE: " + targetNodeId + " :::: " + cost + " seconds");
@@ -204,11 +205,11 @@ public class MainClass {
       + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
     
     System.out.println("****************************"
-      + "*****************************");
-    MainClass.tryDijkstrasWithLandmarks(roadNet, 100);
-    System.out.println("****************************"
         + "*****************************");
-    MainClass.tryDijkstrasWithSimpleHeuristic(roadNet, 100);
+    MainClass.tryDijkstrasWithSimpleHeuristic(roadNet, 10);
+    System.out.println("****************************"
+      + "*****************************");
+    MainClass.tryDijkstrasWithLandmarks(roadNet, 10);
     System.out.println("****************************"
         + "*****************************");
   }
