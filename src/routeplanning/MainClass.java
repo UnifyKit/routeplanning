@@ -202,6 +202,13 @@ public class MainClass {
     roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
       + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
     
+    System.out.println("****************************"
+      + "*****************************");
     MainClass.tryDijkstrasWithLandmarks(roadNet, 2);
+    System.out.println("****************************"
+        + "*****************************");
+    MainClass.tryDijkstrasWithSimpleHeuristic(roadNet, 2);
+    System.out.println("****************************"
+        + "*****************************");
   }
 }
