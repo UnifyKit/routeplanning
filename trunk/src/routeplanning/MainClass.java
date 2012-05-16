@@ -10,6 +10,7 @@ import java.util.Map;
  * @author CJC | AAA
  */
 public class MainClass {
+  
   /**
    * As requested in Exercise Sheet 2 - ex. 3.
    * @param network the original road network extracted from the osm file.
@@ -204,10 +205,10 @@ public class MainClass {
     
     System.out.println("****************************"
       + "*****************************");
-    MainClass.tryDijkstrasWithLandmarks(roadNet, 2);
+    MainClass.tryDijkstrasWithLandmarks(roadNet, 100);
     System.out.println("****************************"
         + "*****************************");
-    MainClass.tryDijkstrasWithSimpleHeuristic(roadNet, 2);
+    MainClass.tryDijkstrasWithSimpleHeuristic(roadNet, 100);
     System.out.println("****************************"
         + "*****************************");
   }
