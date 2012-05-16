@@ -99,11 +99,11 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
     System.out.println("PRECOMPUTING DISTANCES FROM LANDMARKS");
     DijkstraAlgorithm dijAlg = new DijkstraAlgorithm(graph);
     
-    for (int i = 0; i < landmarkIds.size(); i++) {
-      Integer currentLandMarkId = landmarkIds.get(i);
+    for (int i = 0; i < this.landmarkIds.size(); i++) {
+      Integer currentLandMarkId = this.landmarkIds.get(i);
       //DijkstraAlgorithm with target -1
       dijAlg.computeShortestPath(currentLandMarkId, -1);
-      costMaps.add(dijAlg.getVisitedNodes());
+      this.costMaps.add(dijAlg.getVisitedNodes());
     } 
     System.out.println("END OF PRECOMPUTING DISTANCES");
     System.out.println("==================================");
@@ -121,6 +121,7 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
    * @return
    */
   public int computeShortestPath(int sourceNodeId, int targetNodeId) {
+    selectLandmarks(42);
     List<Integer> heuristic = calculateHeuristicList(targetNodeId);
     setHeuristic(heuristic);
     int spcost = super.computeShortestPath(sourceNodeId, targetNodeId);
@@ -149,13 +150,15 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
   private int calculateHeuristic(int sourceNodeId, int targetNodeId) {
     int heuristic = 0;
     //we check the maximum value for all the landmarks
-    for (int i = 0; i < costMaps.size(); i++) {
-      Map<Integer, Integer > cost = costMaps.get(i);
-      int distFromLtoU = cost.get(sourceNodeId);
-      int distFromLtoT = cost.get(targetNodeId);
-      int currentHeuristic = Math.abs(distFromLtoU - distFromLtoT);
-      if (currentHeuristic > heuristic) {
-        heuristic = currentHeuristic;
+    for (int i = 0; i < this.costMaps.size(); i++) {
+      Map<Integer, Integer > cost = this.costMaps.get(i);
+      if(cost.containsKey(sourceNodeId)) {
+        int distFromLtoU = cost.get(sourceNodeId);
+        int distFromLtoT = cost.get(targetNodeId);
+        int currentHeuristic = Math.abs(distFromLtoU - distFromLtoT);
+        if (currentHeuristic > heuristic) {
+          heuristic = currentHeuristic;
+        }  
       }
     }
     return heuristic;
