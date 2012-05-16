@@ -1,6 +1,5 @@
 package routeplanning;
 
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -11,11 +10,13 @@ import java.util.PriorityQueue;
  * Class implementing the Dijkstra algorithm.
  */
 public class DijkstraAlgorithm {
+  
   /**
    * Indicator which node was visited by a particular run of Dijkstra. Useful
    * for computing the connected components;
    */
   protected Map<Integer, Integer> visitedNodeMarks;
+  
   /**
    * Reference to graph on which this object is supposed to work.
    */
@@ -68,11 +69,11 @@ public class DijkstraAlgorithm {
     //int pos;
     int distToAdjNode = 0;
     ActiveNode activeNode;
-    System.out.println("Compute Shortest Path Start: "
-        + Calendar.getInstance().getTime());
-
-    System.out.println("From Node: " + sourceNodeId + " to Node "
-        + targetNodeId);
+//    System.out.println("Compute Shortest Path Start: "
+//        + Calendar.getInstance().getTime());
+//
+//    System.out.println("From Node: " + sourceNodeId + " to Node "
+//        + targetNodeId);
     ActiveNode sourceNode;
     if (heuristic == null) {
       sourceNode = new ActiveNode(sourceNodeId, 0, 0);
@@ -120,17 +121,15 @@ public class DijkstraAlgorithm {
         }
       }
     }
-
-    System.out.println("shortestPathCost: " + shortestPathCost);
-    // System.out.println("visitedNodeMarks: " + visitedNodeMarks.toString());
-    System.out.println("Compute Shortest Path End: "
-        + Calendar.getInstance().getTime());
+//    System.out.println("shortestPathCost: " + shortestPathCost);
+//    // System.out.println("visitedNodeMarks: " + visitedNodeMarks.toString());
+//    System.out.println("Compute Shortest Path End: "
+//        + Calendar.getInstance().getTime());
     return shortestPathCost;
   }
 
   /**
    * Says if the given node was already visited.
-   * 
    * @param nodeId
    */
   public Boolean isVisited(int nodeId) {
@@ -141,18 +140,7 @@ public class DijkstraAlgorithm {
   }
 
   /**
-   * Mark all nodes visited by the next call to computeShortestPath with this
-   * number.
-   * 
-   * @param mark
-   */
-  // private void setVisitedNodeMark(int mark) {
-  //
-  // }
-
-  /**
    * Returns visitedNodeMarks.
-   * 
    * @return visitedNodeMarks
    */
   public Map<Integer, Integer> getVisitedNodes() {
@@ -169,10 +157,8 @@ public class DijkstraAlgorithm {
   }
 
   /**
-   * TODO.
-   * 
+   * Prints the priority queue (for debugging purposes).
    * @param pq
-   *          priority queue
    */
   private void pqAsString(PriorityQueue pq) {
     String pqString;

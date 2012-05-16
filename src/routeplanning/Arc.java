@@ -5,14 +5,17 @@ package routeplanning;
  * @author CJC
  */
 public class Arc {
+  
   /**
    * Variable for headNode of Arc.
    */
   public Node headNode;
+  
   /**
    * Variable for cost of Arc.
    */
   public int cost;
+  
   /**
    * Constructor Arc.  
    * @param headNode
@@ -22,6 +25,7 @@ public class Arc {
     this.headNode = headNode;
     this.cost = cost;
   }
+  
   /**
    * Method to output Arc as a String.
    * @return
@@ -35,9 +39,10 @@ public class Arc {
     }
     return res;
   }
+  
   /**
    * Get headNode of Arc.
-   * @return
+   * @return head node
    */
   public Node getHeadNode() {
     return headNode;
