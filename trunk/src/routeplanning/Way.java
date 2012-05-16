@@ -8,16 +8,19 @@ import java.util.List;
  * @author CJC
  */
 public class Way {
+  
   /**
    * List of arcs in a way.
    */
   List<Arc> arcs;
+  
   /**
    * Constructor.
    */
   public Way() {
     arcs = new ArrayList<Arc>();
   }
+  
   /**
    * Add arc to way.
    * @param arc
@@ -25,6 +28,7 @@ public class Way {
   public void addArc(Arc arc) {
     arcs.add(arc);
   }
+  
   /**
    * Get arc as a String.
    * @return
