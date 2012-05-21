@@ -349,6 +349,7 @@ public class DijkstraAlgorithmTest {
     int cost = dij.computeShortestPath(0, 4);
     int expectedCost = 8;
     System.out.println("VisitedNodes:" + dij.getVisitedNodes().toString());
+    System.out.println("Paths: " + dij.parents.toString());
     String visitedNodes = dij.getVisitedNodes().toString();
     String expectedVisitedNodes = "{0=0, 1=2, 2=4, 3=6, 4=8}";
     Assert.assertEquals(expectedCost, cost);
@@ -422,4 +423,17 @@ public class DijkstraAlgorithmTest {
 //    System.out.println("-----------------HeuristicAdmissableTest--"
 //        + "-------------------");
 //  }
+  @Test
+  public void pathTest() {
+    RoadNetwork rn;
+    rn = createSampleGraph();
+    DijkstraAlgorithm dij = new DijkstraAlgorithm(rn);
+    dij.computeShortestPath(0, -1);
+    System.out.println("----------------PathTest-----------------------");
+    System.out.println("SPs: " + dij.visitedNodeMarks.toString());
+    System.out.println("Paths: " + dij.parents.toString());
+    String expectedValue = "{0=-1, 1=0, 2=0, 3=1, 4=3, 5=4}";
+    Assert.assertEquals(expectedValue, dij.parents.toString());
+    System.out.println("----------------PathTest-----------------------");
+  }
 }
