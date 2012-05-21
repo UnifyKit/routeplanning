@@ -16,6 +16,8 @@ public class Arc {
    */
   public int cost;
   
+  public boolean arcFlag;
+
   /**
    * Constructor Arc.  
    * @param headNode
