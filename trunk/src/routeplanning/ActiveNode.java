@@ -17,12 +17,14 @@ public class ActiveNode {
    * heuristic value for node.
    */
   public int heuristic;
+  public int parent;
   /**
    *Constructor.
   */
-  public ActiveNode(int id, int dist, int heuristic) {
+  public ActiveNode(int id, int dist, int heuristic, int parent) {
     this.id = id;
     this.dist = dist;
     this.heuristic = heuristic;
+    this.parent = parent;
   }
 }
