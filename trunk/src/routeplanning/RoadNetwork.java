@@ -180,10 +180,6 @@ public class RoadNetwork {
     if (nodeIdPosAdjArc.containsKey(nodeId)) {
       arcs = adjacentArcs.get(nodeIdPosAdjArc.get(nodeId));
     }
-//    int index = nodeIds.indexOf(nodeId);
-//    if (index != -1) {
-//      arcs = adjacentArcs.get(index);
-//    }
     return arcs;
   }
   
@@ -495,6 +491,32 @@ public class RoadNetwork {
     int randomInt = randomGenerator.nextInt(nodeIds.size());
     return nodeIds.get(randomInt);
   }
+  
+  /**
+   * It returns a random node ID within a region.
+   * @return 
+   */
+  public int getRandomNodeIdWithinRegion(double latMin, double latMax, 
+      double longMin, double longMax) {
+    Random randomGenerator = new Random();
+    int randomInt = randomGenerator.nextInt(nodeIds.size());
+    Integer nodeId = nodeIds.get(randomInt);
+    boolean inRegion = false;
+    while (!inRegion) {
+      Node currentNode = mapNodeId.get(nodeId);
+      if (currentNode.getLatitude() > latMin
+         && currentNode.getLatitude() < latMax
+         && currentNode.getLongitude() > longMin
+         && currentNode.getLongitude() < longMax) {
+        inRegion = true;
+      } else {
+        randomInt = randomGenerator.nextInt(nodeIds.size());
+        nodeId = nodeIds.get(randomInt);
+      }
+    }
+    return nodeId;
+  }  
+  
   /**
    * Compute heuristic using Euclidean Distance / max speed
    * Values in minutes.

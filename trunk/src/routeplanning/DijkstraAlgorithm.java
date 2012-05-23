@@ -42,12 +42,18 @@ public class DijkstraAlgorithm {
    * Heuristic function if running in A* mode.
    */
   protected List<Integer> heuristic;
+  
+  /**
+   * Parent pointers computed by the last call to computeShortestPath.
+   */  
   protected Map<Integer, Integer> parents;
+  
   /**
    * Whether computeShortestPath should consider  
    * the arcFlag from each Arc or not.
+   * It is FALSE by default.
    */
-  protected boolean considerArcFlags;
+  protected boolean considerArcFlags = false;
   /**
    * Create instance of this class for a given (road) graph.
    * 
@@ -55,6 +61,13 @@ public class DijkstraAlgorithm {
    */
   public DijkstraAlgorithm(RoadNetwork graph) {
     this.graph = graph;
+  }
+  
+  /**
+   * Sets the boolean considerArcFlags to true or false.
+   */
+  public void setConsiderArcFlags(boolean considerArcFlags) {
+    this.considerArcFlags = considerArcFlags;
   }
 
   /**
@@ -82,10 +95,10 @@ public class DijkstraAlgorithm {
     //    + targetNodeId);
     ActiveNode sourceNode;
     if (heuristic == null) {
-      sourceNode = new ActiveNode(sourceNodeId, 0, 0,-1);
+      sourceNode = new ActiveNode(sourceNodeId, 0, 0, -1);
     } else {
       sourceNode = new ActiveNode(sourceNodeId, 0, heuristic.get(this.graph
-          .getNodeIdPosAdjArc().get(sourceNodeId)),-1);
+          .getNodeIdPosAdjArc().get(sourceNodeId)), -1);
     }
     PriorityQueue<ActiveNode> pq = new PriorityQueue<ActiveNode>(1,
         travelTimeComparator);
@@ -101,6 +114,9 @@ public class DijkstraAlgorithm {
       // settle node
       visitedNodeMarks.put(currentNode.id, currentNode.dist);
       parents.put((Integer) currentNode.id, (Integer) currentNode.parent);
+      
+/*      System.out.println("ADDED:" + (Integer) currentNode.id 
+          + " -> " +  (Integer) currentNode.parent);*/
 
       if (currentNode.id == targetNodeId) {
         shortestPathCost = currentNode.dist;
@@ -114,12 +130,14 @@ public class DijkstraAlgorithm {
         Arc arc;
         arc = adjArcsCurrentNode.get(i);
         if (this.considerArcFlags && !arc.arcFlag) {
+          System.out.println("SKIPPED ARC");
           continue;
         }
         if (!isVisited(arc.headNode.id)) {
           distToAdjNode = currentNode.dist + arc.cost;
           if (heuristic == null) {
-            activeNode = new ActiveNode(arc.headNode.id, distToAdjNode, 0, currentNode.id);
+            activeNode = new ActiveNode(arc.headNode.id, 
+                distToAdjNode, 0, currentNode.id);
           } else {
             //activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
             //heuristic.get(this.graph.getNodeIds().indexOf(arc.headNode.id)));
@@ -156,6 +174,15 @@ public class DijkstraAlgorithm {
   public Map<Integer, Integer> getVisitedNodes() {
     return visitedNodeMarks;
   }
+  
+  /**
+   * Returns visitedNodeMarks.
+   * @return visitedNodeMarks
+   */
+  public Map<Integer, Integer> getParents() {
+    return parents;
+  }
+
 
   /**
    * Set heuristic function to given array.
@@ -181,8 +208,5 @@ public class DijkstraAlgorithm {
       System.out.println("id: " + node.id + "value: " + node.dist);
     }
     System.out.println("-------------------------------------");
-  }
-  private void setConsiderArcFlags(boolean considerArcFlags) {
-    this.considerArcFlags = considerArcFlags;
   }
 }

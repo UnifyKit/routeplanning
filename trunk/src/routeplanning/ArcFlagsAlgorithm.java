@@ -1,29 +1,66 @@
 package routeplanning;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class ArcFlagsAlgorithm.
+ * @author CJC
+ */
 public class ArcFlagsAlgorithm {
+  /**
+   * Inner RoadNetwork object.
+   */
   RoadNetwork graph;
+  
+  /**
+   * Inner DijkstraAlgorithm object.
+   */
   DijkstraAlgorithm dijkstra;
+  
+  /**
+   * Latitude (upper border).
+   */
   int latMin;
+  
+  /**
+   * Latitude (lower border).
+   */
   int latMax;
+  
+  /**
+   * Longitude (left border).
+   */
   int lngMin;
+  
+  /**
+   * Longitude (right border).
+   */
   int lngMax;
+  
+  /**
+   * Constructor.
+   */
   public ArcFlagsAlgorithm(RoadNetwork rn) {
     this.graph = rn;
+    dijkstra = new DijkstraAlgorithm(graph);
+    dijkstra.setConsiderArcFlags(true);
   }
-  public void precomputeArcFlags(double latMin, double latMax, double lngMin, double lngMax) {
+  
+  /**
+   * Precomputation.
+   */  
+  public void precomputeArcFlags(double latMin, double latMax, 
+      double lngMin, double lngMax) {
     List<Arc> arcs;
     List<Integer> boundaryNodes = new ArrayList<Integer>();
     Arc arc0;
     Node headNode;
     Node tailNode;
-    List<Map<Integer, Integer>> parents = new ArrayList<Map<Integer, Integer>>();  
+    List<Map<Integer, Integer>> parentsOfBoundaryNodes = 
+        new ArrayList<Map<Integer, Integer>>();  
     
    //compute boundary nodes
     for (int i = 0; i < graph.getAdjacentArcs().size(); i++) {
@@ -35,7 +72,9 @@ public class ArcFlagsAlgorithm {
           arc0 = arcs.get(j);
           headNode = arc0.headNode;
           if (!isInRegion(latMin, latMax, lngMin, lngMax, headNode)) {
-            boundaryNodes.add(tailNode.id);
+            if (!boundaryNodes.contains(tailNode.id)) {
+              boundaryNodes.add(tailNode.id);
+            }
             //break;
           } else {
             //set arcFlag to true for arcs inside the region
@@ -44,15 +83,70 @@ public class ArcFlagsAlgorithm {
         }
       }
     }
+    
+    System.out.println("---All boundary nodes found---");
+    System.out.println("#Of Boundary nodes: " + boundaryNodes.size());
+    
+    //compute Dijkstra for each of the boundary nodes
+    //saves the map parents into a list
+    for (int i = 0; i < boundaryNodes.size(); i++) {
+      int boundaryNodeId  = boundaryNodes.get(i);
+      DijkstraAlgorithm dijAlg = new DijkstraAlgorithm(graph);
+      dijAlg.computeShortestPath(boundaryNodeId, -1);
+      
+      //we set flags
+      Map<Integer, Integer> parents = dijAlg.getParents();
+      Iterator<Integer> it = parents.keySet().iterator();
+      while (it.hasNext()) {
+        Integer currentNodeId = (Integer) it.next();
+        Integer parentNodeId = parents.get(currentNodeId);
+        
+        //System.out.println(currentNodeId + "-" +  parentNodeId);
+        
+        if (parentNodeId != -1) {
+          List<Arc> allArcs = graph.getNodeAdjacentArcs(parentNodeId);
+        
+          for (int k = 0; k < allArcs.size(); k++) {
+            Arc arc = allArcs.get(k);
+            if (arc.getHeadNode().getId().equals(currentNodeId)) {
+              arc.arcFlag = true;
+            }
+          }
+        }
+      }
+      System.out.print(i + " - ");
+    }
+    System.out.println("---Dijkstra for all boundary node completed---");
+    
+/*    for (int i = 0; i < parentsOfBoundaryNodes.size(); i++) {
+      Map<Integer, Integer> parents = parentsOfBoundaryNodes.get(i);
+      Iterator<Integer> it = parents.keySet().iterator();
+      while (it.hasNext()) {
+        Integer currentNode = (Integer) it.next();
+        Integer parentNode = parents.get(currentNode);
+        List<Arc> allArcs = graph.getNodeAdjacentArcs(parentNode);
+        
+        for (int k = 0; k < allArcs.size(); k++) {
+          Arc arc = allArcs.get(k);
+          if (arc.getHeadNode().getId() == currentNode) {
+            arc.arcFlag = true;
+          }
+        }
+      }
+    }*/
+    
     //exportToFile(boundaryNodes);
     System.out.println("Finish boundary nodes!");
     
-   //TODO:run dijkstra for each boundary node
    //TODO: mark arcFlags to arcs in shortest paths to boundary nodes. 
-   
-     
   }
-  public boolean isInRegion(double latMin, double latMax, double lngMin, double lngMax, Node node) {
+  
+  /**
+   * Returns true if a given node is in the region described by the 
+   * first four parameters.
+   */ 
+  public boolean isInRegion(double latMin, double latMax, double lngMin,
+      double lngMax, Node node) {
     boolean isInRegion = false;
     if (node.latitude > latMin && node.latitude < latMax 
         && node.longitude > lngMin && node.longitude < lngMax) {
@@ -60,17 +154,35 @@ public class ArcFlagsAlgorithm {
     }
     return isInRegion;
   }
-  public void computeShortestPath(int sourceNodeId, int targetNodeId) {
-    
+
+  
+  /**
+   * Invokes Dijkstra algorithm.
+   */  
+  public int computeShortestPath(int sourceNodeId, int targetNodeId) {
+    return dijkstra.computeShortestPath(sourceNodeId, targetNodeId);
   }
+  
+  /**
+   * Returns the settled nodes from the inner Dijkstra Algorithm.
+   */ 
+  public Map<Integer, Integer> getVisitedNodes() {
+    return dijkstra.getVisitedNodes();
+  }
+  
+  
+  
+  
 //  public void exportToFile(List<Node> nodes, String pathOut) {
-//    //String pathOut = "D:/workspace/routeplanning/src/routeplanning/resources/boundaryNodes.txt";
+//    //String pathOut = "D:/workspace/routeplanning/src/routeplanning/
+//    //resources/boundaryNodes.txt";
 //    try {
 //      BufferedWriter outWriter = new BufferedWriter(new FileWriter(pathOut));
 //      for (int i = 0; i < nodes.size(); i++) {
 //        outWriter.newLine();
 //        outWriter.write(nodes.get(i).latitude + ";" + nodes.get(i).longitude);
-//        //System.out.println(nodes.get(i).latitude + ";" + nodes.get(i).longitude);
+//        //System.out.println(nodes.get(i).latitude + ";" 
+//        //+ nodes.get(i).longitude);
 //      }
 //    } catch (Exception e) {
 //      e.printStackTrace();

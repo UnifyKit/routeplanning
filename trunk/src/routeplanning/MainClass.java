@@ -20,18 +20,22 @@ public class MainClass {
    */
 //  public static void main(String[] args) {
 //     //ReduceFileSize rfs = new
-//     //ReduceFileSize("D:/workspace/routeplanning/src/routeplanning/resources/saarland.osm",
-//     //"D:/workspace/routeplanning/src/routeplanning/resources/test2_reduced.osm");
+//     //ReduceFileSize("D:/workspace/routeplanning/
+  //src/routeplanning/resources/saarland.osm",
+//     //"D:/workspace/routeplanning/src/routeplanning/
+  //resources/test2_reduced.osm");
 //     //rfs.process();
 //    RoadNetwork rn2 = new RoadNetwork();
-//    rn2.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/resources/saarland_reduced.osm");
+//    rn2.readFromOsmFile("D:/workspace/routeplanning/
+  //src/routeplanning/resources/saarland_reduced.osm");
 //    
 //    //tryDijkstrasWithSimpleHeuristic(rn2,100);
 //    //System.out.println("ROAD NETWORK: " + rn.asString());
 //    
 //    //System.out.println(dij2.computeShortestPath(0, 4));
 //    
-//    //System.out.println("heuristic: " + heuristic.get(rn2.getNodeIds().indexOf(385925420)) + " for node: 385925420");
+//    //System.out.println("heuristic: " + heuristic
+  //.get(rn2.getNodeIds().indexOf(385925420)) + " for node: 385925420");
 //    //System.out.println(heuristic.toString());
 //    //dij2.setHeuristic(heuristic);
 //    
@@ -42,24 +46,30 @@ public class MainClass {
 //    
 //    DijkstraAlgorithm dij2 = new DijkstraAlgorithm(rn2);
 //    
-//    System.out.println("A* without heuristic SP:" + dij2.computeShortestPath(385925420, 259000790));
-//    System.out.println("A* without heuristic nodes settled: " + dij2.getVisitedNodes().size());
+//    System.out.println("A* without heuristic SP:" 
+  //+ dij2.computeShortestPath(385925420, 259000790));
+//    System.out.println("A* without heuristic nodes settled: " 
+  //+ dij2.getVisitedNodes().size());
 //    
 //    List<Integer> heuristic;
 //    heuristic = rn2.computeStraightLineHeuristic(259000790);
 //    dij2.setHeuristic(heuristic);
 //    
-//    System.out.println("A* SL SP:" + dij2.computeShortestPath(385925420, 259000790));
-//    System.out.println("A* SL nodes settled: " + dij2.getVisitedNodes().size());
+//    System.out.println("A* SL SP:" + dij2
+  //.computeShortestPath(385925420, 259000790));
+//    System.out.println("A* SL nodes settled: " 
+  //+ dij2.getVisitedNodes().size());
 //    
 //    LandmarkAlgorithm lm = new LandmarkAlgorithm(rn2);
 //    lm.selectLandmarks(16);
-//    System.out.println("A* Landmark SP:" + lm.computeShortestPath(385925420, 259000790));
+//    System.out.println("A* Landmark SP:" 
+  //+ lm.computeShortestPath(385925420, 259000790));
 //    
 //    //System.out.println(lm.heuristic.toString());
-//    System.out.println("A* Landmark nodes settled:" + lm.getVisitedNodes().size());
+//    System.out.println("A* Landmark nodes settled:" 
+  //+ lm.getVisitedNodes().size());
 //    //System.out.println(rn.nodes);
-//	    //MainClass.tryDijkstras(rn2,10);
+  //MainClass.tryDijkstras(rn2,10);
 //    //RoadNetwork lc;
 //    //lc = rn2.reduceToLargestConnectedComponent();
 //    //System.out.println("LCC: " + lc.asString());
@@ -299,6 +309,76 @@ public class MainClass {
         / numberOfExecutions);
     System.out.println("AVERAGE SP. COST: " + totalCost / numberOfExecutions);
   }
+  
+  /**
+   * As requested in Exercise Sheet 4 - ex. 2.
+   * @param network the original road network extracted from the osm file.
+   */
+  public static void tryArcFlags(
+      RoadNetwork network, int numberOfExecutions) {
+    System.out.println("Start from Largest Connected Component...");
+    RoadNetwork largestComponent = 
+      network.reduceToLargestConnectedComponent();
+    System.out.println("End from Largest Connected Component..."); 
+    
+    System.out.println("1. NUMBER OF NODES OF LCC: "
+        +  largestComponent.getNodeIds().size());
+    
+    System.out.println("2. NUMBER OF ARCS OF LCC: " 
+        + largestComponent.getNumberOfArcs());
+   
+    Integer totalCost = 0;
+    long totalExecutionTime = 0;
+    int totalSettledNodes = 0;
+    DecimalFormat twoDForm = new DecimalFormat("#.##");
+    
+    ArcFlagsAlgorithm afg = new ArcFlagsAlgorithm(largestComponent);
+    long startPre = System.currentTimeMillis();
+    System.out.println("Start of precomputation...."); 
+    afg.precomputeArcFlags(49.20, 49.25, 6.95, 7.05);
+    System.out.println("End of precomputation....");
+    long endPre = System.currentTimeMillis();
+    long preComputationTime = endPre - startPre;
+
+        
+    for (int i = 0; i < numberOfExecutions; i++) {
+      //System.out.println("------------------------------------------------");
+      Integer sourceNodeId = largestComponent.getRandomNodeId();
+      Integer targetNodeId = largestComponent
+          .getRandomNodeIdWithinRegion(49.20, 49.25, 6.95, 7.05);
+      while (sourceNodeId == targetNodeId) {
+        targetNodeId = largestComponent.getRandomNodeId();
+      }
+      System.out.println("CALCULATING shortest path from Node " 
+          + sourceNodeId + " TO Node " + targetNodeId);
+      long start = System.currentTimeMillis();
+      Integer cost = afg.computeShortestPath(sourceNodeId, targetNodeId);
+      long end = System.currentTimeMillis();
+      
+      Map<Integer, Integer> settledNodeCosts = afg.getVisitedNodes();
+      totalSettledNodes = totalSettledNodes + settledNodeCosts.size();
+      totalCost = totalCost + cost;
+      
+      totalExecutionTime = totalExecutionTime + (end - start);
+      
+      System.out.println("SHORTEST PATH FROM NODE: " + sourceNodeId 
+          + " TO NODE: " + targetNodeId + " :::: " + cost + " seconds");
+
+      //System.out.println("------------------------------------------------");
+    }
+    System.out.println("RUNNING TIME FOR PRECOMPUTATION OF ARC FLAGS: " 
+        + Double.valueOf(twoDForm.format(preComputationTime)) 
+        + " milliseconds");
+    System.out.println("ARC FLAGS");
+    System.out.println("AVERAGE RUNNING TIME: " 
+        + Double.valueOf(twoDForm.format((totalExecutionTime) 
+            / numberOfExecutions)) + " milliseconds");
+    System.out.println("AVERAGE SETTLED NODES: " + totalSettledNodes 
+        / numberOfExecutions);
+    System.out.println("AVERAGE SP. COST: " + totalCost / numberOfExecutions);
+  }
+  
+  
 
   /**
    * Main method.
@@ -314,27 +394,41 @@ public class MainClass {
           +  "src/routeplanning/resources/saarland_reduced.osm");
     //rfs.process();
     RoadNetwork roadNet = new RoadNetwork();
-    roadNet.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/resources/saarland_reduced.osm");
+//    roadNet.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/"
+//      + "resources/saarland_reduced.osm");
+    roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
+      + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
     
-    System.out.println("****************************"
-        + "*****************************");
-    //MainClass.tryDijkstrasWithSimpleHeuristic(roadNet, 100);
-    System.out.println("****************************"
-      + "*****************************");
+//    System.out.println("****************************"
+//        + "*****************************");
+//    //MainClass.tryDijkstrasWithSimpleHeuristic(roadNet, 100);
+//    System.out.println("****************************"
+//      + "*****************************");
     //MainClass.tryDijkstrasWithLandmarks(roadNet, 100);
     System.out.println("****************************"
         + "*****************************");
+/*    MainClass.tryArcFlags(roadNet, 20);
+    System.out.println("****************************"
+        + "*****************************");*/
     
     DijkstraAlgorithm dij = new DijkstraAlgorithm(roadNet);
-    //dij.computeShortestPath(385925420, 259000790);
+    System.out.println("COST:" + dij.computeShortestPath(332103666, 1551996352));
     //MainClass.toTextFile(roadNet, dij.parents, 
-    //    "D:/workspace/routeplanning/src/routeplanning/resources/path.txt", 385925420, 259000790);
+    //"D:/workspace/routeplanning/src/routeplanning/resources/path.txt", 
+    //385925420, 259000790);
     ArcFlagsAlgorithm afg = new ArcFlagsAlgorithm(roadNet);
     afg.precomputeArcFlags(49.20, 49.25, 6.95, 7.05);
-    System.out.println("End");
+    System.out.println("COST:" + afg.computeShortestPath(332103666, 1551996352));
+    
     
   }
-  public static void pathToTextFile(RoadNetwork rn, Map<Integer, Integer> parent, String pathOut, int sourceNodeId, int targetNodeId) {
+  
+  /**
+   * TODO.
+   */  
+  public static void pathToTextFile(RoadNetwork rn, 
+      Map<Integer, Integer> parent, String pathOut, int sourceNodeId, 
+      int targetNodeId) {
     try {
       BufferedWriter outWriter = new BufferedWriter(new FileWriter(pathOut));
       Node currentNode, prevNode;
@@ -344,37 +438,40 @@ public class MainClass {
       currentNode = rn.getMapNodeId().get(targetNodeId);
       currentNodeId = targetNodeId;
       outWriter.newLine();
-      outWriter.write(currentNode.id + ";" + currentNode.latitude + ";" + currentNode.longitude);
+      outWriter.write(currentNode.id + ";" + currentNode.latitude 
+          + ";" + currentNode.longitude);
       
       while (currentNode.id != sourceNodeId) {
-       currentNodeId = parent.get(currentNodeId);
-       currentNode = rn.getMapNodeId().get(currentNodeId);
-       outWriter.newLine();
-       outWriter.write(currentNode.id + ";" + currentNode.latitude + ";" + currentNode.longitude);
+        currentNodeId = parent.get(currentNodeId);
+        currentNode = rn.getMapNodeId().get(currentNodeId);
+        outWriter.newLine();
+        outWriter.write(currentNode.id + ";" + currentNode.latitude + ";" 
+          + currentNode.longitude);
       }
       
       parent.get(targetNodeId);
       
-      
-      
     } catch (Exception e) {
       e.printStackTrace();
     }
-    
-    
   }
+
+  /**
+   * TODO.
+   */ 
   public void exportListNodesToFile(List<Node> nodes, String pathOut) {
-    //String pathOut = "D:/workspace/routeplanning/src/routeplanning/resources/boundaryNodes.txt";
+    //String pathOut = "D:/workspace/routeplanning/src/
+    //routeplanning/resources/boundaryNodes.txt";
     try {
       BufferedWriter outWriter = new BufferedWriter(new FileWriter(pathOut));
       for (int i = 0; i < nodes.size(); i++) {
         outWriter.newLine();
         outWriter.write(nodes.get(i).latitude + ";" + nodes.get(i).longitude);
-        //System.out.println(nodes.get(i).latitude + ";" + nodes.get(i).longitude);
+        //System.out.println(nodes.get(i).latitude + ";" 
+        //+ nodes.get(i).longitude);
       }
     } catch (Exception e) {
       e.printStackTrace();
     }
-    
   }
 }
