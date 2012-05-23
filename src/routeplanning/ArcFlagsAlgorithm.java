@@ -40,6 +40,11 @@ public class ArcFlagsAlgorithm {
    * Longitude (right border).
    */
   int lngMax;
+  
+  /**
+   * List of boundary nodes.
+   */
+  List<Integer> boundaryNodes = new ArrayList<Integer>();
 
   /**
    * Constructor.
@@ -49,6 +54,13 @@ public class ArcFlagsAlgorithm {
     dijkstra = new DijkstraAlgorithm(graph);
     dijkstra.setConsiderArcFlags(true);
   }
+  
+  /**
+   * Returns structure list of boundary nodes.
+   */
+  public List<Integer> getBoundaryNodes() {
+    return boundaryNodes;
+  }
 
   /**
    * Precomputation.
@@ -56,7 +68,6 @@ public class ArcFlagsAlgorithm {
   public void precomputeArcFlags(double latMin, double latMax, double lngMin,
       double lngMax) {
     List<Arc> arcs;
-    List<Integer> boundaryNodes = new ArrayList<Integer>();
     Arc arc0;
     Node headNode;
     Node tailNode;
@@ -94,7 +105,6 @@ public class ArcFlagsAlgorithm {
       dijAlg.computeShortestPath(boundaryNodeId, -1);
 
       // we set flags
-      int numberOfArcProBNode = 0;
       Map<Integer, Integer> parents = dijAlg.getParents();
       Iterator<Integer> it = parents.keySet().iterator();
       while (it.hasNext()) {
@@ -110,7 +120,6 @@ public class ArcFlagsAlgorithm {
             Arc arc = allArcs.get(k);
             if (arc.getHeadNode().getId().equals(parentNodeId)) {
               arc.arcFlag = true;
-              numberOfArcProBNode++;
             }
           }
         }

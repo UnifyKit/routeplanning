@@ -394,10 +394,10 @@ public class MainClass {
     // + "src/routeplanning/resources/saarland_reduced.osm");
     // rfs.process();
     RoadNetwork roadNet = new RoadNetwork();
-    roadNet.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/"
-        + "resources/saarland_reduced.osm");
-    // roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
-    // + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
+    //roadNet.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/"
+    //    + "resources/saarland_reduced.osm");
+    roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
+      + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
 
     // System.out.println("****************************"
     // + "*****************************");
@@ -407,25 +407,22 @@ public class MainClass {
     // MainClass.tryDijkstrasWithLandmarks(roadNet, 100);
     System.out.println("****************************"
         + "*****************************");
-    MainClass.tryArcFlags(roadNet, 20);
+    MainClass.tryArcFlags(roadNet, 100);
     System.out.println("****************************"
         + "*****************************");
-
-    // DijkstraAlgorithm dij = new DijkstraAlgorithm(roadNet);
-    // System.out.println("DIJ COST:" + dij.computeShortestPath(1451221340,
-    // 1580795284));
-    // System.out.println("Dij visited nodes: " + dij.getVisitedNodes().size());
-    // ArcFlagsAlgorithm afg = new ArcFlagsAlgorithm(roadNet);
-    // afg.precomputeArcFlags(49.20, 49.25, 6.95, 7.05);
-    // System.out.println("AFG COST:" + afg.computeShortestPath(1451221340,
-    // 1580795284));
-    // // MainClass.pathToTextFile(roadNet, afg.getParents(),
-    // // "D:/workspace/routeplanning/src/routeplanning/resources/path2.txt",
-    // // 385925420, 259000790);
-    // System.out.println("Arc Flags settled Nodes " +
-    // afg.dijkstra.getVisitedNodes().size());
-    // MainClass.settledNodesToFile(afg, roadNet);
-
+    
+/*    DijkstraAlgorithm dij = new DijkstraAlgorithm(roadNet);
+    System.out.println("COST:" + dij.computeShortestPath(385925420, 262172939));
+    //MainClass.toTextFile(roadNet, dij.parents, 
+    //"D:/workspace/routeplanning/src/routeplanning/resources/path.txt", 
+    //385925420, 259000790);
+    ArcFlagsAlgorithm afg = new ArcFlagsAlgorithm(roadNet);
+    afg.precomputeArcFlags(49.20, 49.25, 6.95, 7.05);
+    System.out.println("COST:" + afg.computeShortestPath(385925420, 262172939));
+    pathToTextFile(roadNet, afg.getParents(), 
+      "E:/Documents/UNI/SS12/Efficient Route Planning/"
+      + "groupRepository/src/routeplanning/resources/path.txt", 
+      385925420, 262172939);*/
   }
   /**
    * Export settled nodes to text file, used for tests.
@@ -469,6 +466,7 @@ public class MainClass {
           + currentNode.longitude);
 
       while (currentNode.id != sourceNodeId) {
+        System.out.println(currentNodeId);
         currentNodeId = parent.get(currentNodeId);
         currentNode = rn.getMapNodeId().get(currentNodeId);
         outWriter.newLine();
