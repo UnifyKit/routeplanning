@@ -377,10 +377,10 @@ public class DijkstraAlgorithmTest {
   
 //Commented because it uses saarland.osm as hardcoded test file
   
-//  /**
-//   * Test of heuristic to see if it is admissable using a random value 
-//   * h(u) <= dist(u,v).
-//   */
+  /**
+   * Test of heuristic to see if it is admissable using a random value 
+   * h(u) <= dist(u,v).
+   */
 //  @Test
 //  public void heuristicAdmissableTest() {
 //    RoadNetwork rn = new RoadNetwork();
@@ -423,6 +423,11 @@ public class DijkstraAlgorithmTest {
 //    System.out.println("-----------------HeuristicAdmissableTest--"
 //        + "-------------------");
 //  }
+  
+  /**
+   * Tests visited node marks and parents list after computation
+   * of shortest path.
+   */ 
   @Test
   public void pathTest() {
     RoadNetwork rn;
