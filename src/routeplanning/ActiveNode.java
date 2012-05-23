@@ -17,6 +17,10 @@ public class ActiveNode {
    * heuristic value for node.
    */
   public int heuristic;
+  
+  /**
+   * Parent.
+   */
   public int parent;
   /**
    *Constructor.

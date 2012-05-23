@@ -15,8 +15,11 @@ public class Arc {
    * Variable for cost of Arc.
    */
   public int cost;
-  
-  public boolean arcFlag;
+
+  /**
+   * To set an arc as an arc flag.
+   */
+  public boolean arcFlag = false;
 
   /**
    * Constructor Arc.  
