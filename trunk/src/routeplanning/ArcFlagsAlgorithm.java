@@ -94,6 +94,7 @@ public class ArcFlagsAlgorithm {
       dijAlg.computeShortestPath(boundaryNodeId, -1);
 
       // we set flags
+      int numberOfArcProBNode = 0;
       Map<Integer, Integer> parents = dijAlg.getParents();
       Iterator<Integer> it = parents.keySet().iterator();
       while (it.hasNext()) {
@@ -109,13 +110,15 @@ public class ArcFlagsAlgorithm {
             Arc arc = allArcs.get(k);
             if (arc.getHeadNode().getId().equals(parentNodeId)) {
               arc.arcFlag = true;
+              numberOfArcProBNode++;
             }
           }
         }
       }
+      //System.out.println(numberOfArcProBNode);
       System.out.print(i + " - ");
     }
-    System.out.println("---Dijkstra for all boundary node completed---");
+    System.out.println("\n---Dijkstra for all boundary node completed---");
 
     /*
      * for (int i = 0; i < parentsOfBoundaryNodes.size(); i++) { Map<Integer,
@@ -129,7 +132,7 @@ public class ArcFlagsAlgorithm {
      */
 
     // exportToFile(boundaryNodes);
-    System.out.println("Finish boundary nodes!");
+    System.out.println("---Finish boundary nodes!---");
 
     // TODO: mark arcFlags to arcs in shortest paths to boundary nodes.
   }
@@ -161,28 +164,28 @@ public class ArcFlagsAlgorithm {
   public Map<Integer, Integer> getVisitedNodes() {
     return dijkstra.getVisitedNodes();
   }
+  
   /**
-   * Return map structure from dijkstra parents.
-   * @return
-   */
+   * Returns the settled nodes from the inner Dijkstra Algorithm.
+   */ 
   public Map<Integer, Integer> getParents() {
-    return dijkstra.parents;
+    return dijkstra.getParents();
   }
-
-  // public void exportToFile(List<Node> nodes, String pathOut) {
-  // //String pathOut = "D:/workspace/routeplanning/src/routeplanning/
-  // //resources/boundaryNodes.txt";
-  // try {
-  // BufferedWriter outWriter = new BufferedWriter(new FileWriter(pathOut));
-  // for (int i = 0; i < nodes.size(); i++) {
-  // outWriter.newLine();
-  // outWriter.write(nodes.get(i).latitude + ";" + nodes.get(i).longitude);
-  // //System.out.println(nodes.get(i).latitude + ";"
-  // //+ nodes.get(i).longitude);
-  // }
-  // } catch (Exception e) {
-  // e.printStackTrace();
-  // }
-  //
-  // }
+  
+//  public void exportToFile(List<Node> nodes, String pathOut) {
+//    //String pathOut = "D:/workspace/routeplanning/src/routeplanning/
+//    //resources/boundaryNodes.txt";
+//    try {
+//      BufferedWriter outWriter = new BufferedWriter(new FileWriter(pathOut));
+//      for (int i = 0; i < nodes.size(); i++) {
+//        outWriter.newLine();
+//        outWriter.write(nodes.get(i).latitude + ";" + nodes.get(i).longitude);
+//        //System.out.println(nodes.get(i).latitude + ";" 
+//        //+ nodes.get(i).longitude);
+//      }
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
+//    
+//  }
 }
