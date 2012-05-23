@@ -412,13 +412,13 @@ public class MainClass {
         + "*****************************");*/
     
     DijkstraAlgorithm dij = new DijkstraAlgorithm(roadNet);
-    System.out.println("COST:" + dij.computeShortestPath(332103666, 1551996352));
+    System.out.println("COST:" + dij.computeShortestPath(385925420, 259000790));
     //MainClass.toTextFile(roadNet, dij.parents, 
     //"D:/workspace/routeplanning/src/routeplanning/resources/path.txt", 
     //385925420, 259000790);
     ArcFlagsAlgorithm afg = new ArcFlagsAlgorithm(roadNet);
     afg.precomputeArcFlags(49.20, 49.25, 6.95, 7.05);
-    System.out.println("COST:" + afg.computeShortestPath(332103666, 1551996352));
+    System.out.println("COST:" + afg.computeShortestPath(385925420, 259000790));
     
     
   }

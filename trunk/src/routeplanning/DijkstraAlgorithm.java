@@ -125,7 +125,6 @@ public class DijkstraAlgorithm {
 
       // search adjacent node with shortest distance
       adjArcsCurrentNode = this.graph.getNodeAdjacentArcs(currentNode.id);
-
       for (int i = 0; i < adjArcsCurrentNode.size(); i++) {
         Arc arc;
         arc = adjArcsCurrentNode.get(i);
