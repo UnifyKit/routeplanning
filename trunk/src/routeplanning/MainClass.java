@@ -4,6 +4,7 @@ package routeplanning;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.text.DecimalFormat;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -376,6 +377,8 @@ public class MainClass {
     System.out.println("AVERAGE SETTLED NODES: " + totalSettledNodes 
         / numberOfExecutions);
     System.out.println("AVERAGE SP. COST: " + totalCost / numberOfExecutions);
+    
+    
   }
   
   
@@ -387,17 +390,17 @@ public class MainClass {
 
   public static void main(String[] args) {
     //If one wants to reduce the file size.
-    ReduceFileSize rfs = new ReduceFileSize(
-        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
-          + "src/routeplanning/resources/saarland.osm",
-        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
-          +  "src/routeplanning/resources/saarland_reduced.osm");
+//    ReduceFileSize rfs = new ReduceFileSize(
+//        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
+//          + "src/routeplanning/resources/saarland.osm",
+//        "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
+//          +  "src/routeplanning/resources/saarland_reduced.osm");
     //rfs.process();
     RoadNetwork roadNet = new RoadNetwork();
-//    roadNet.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/"
-//      + "resources/saarland_reduced.osm");
-    roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
-      + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
+      roadNet.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/"
+        + "resources/saarland_reduced.osm");
+//    roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
+//      + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
     
 //    System.out.println("****************************"
 //        + "*****************************");
@@ -407,22 +410,41 @@ public class MainClass {
     //MainClass.tryDijkstrasWithLandmarks(roadNet, 100);
     System.out.println("****************************"
         + "*****************************");
-/*    MainClass.tryArcFlags(roadNet, 20);
+    MainClass.tryArcFlags(roadNet, 20);
     System.out.println("****************************"
-        + "*****************************");*/
+        + "*****************************");
     
-    DijkstraAlgorithm dij = new DijkstraAlgorithm(roadNet);
-    System.out.println("COST:" + dij.computeShortestPath(385925420, 259000790));
-    //MainClass.toTextFile(roadNet, dij.parents, 
-    //"D:/workspace/routeplanning/src/routeplanning/resources/path.txt", 
-    //385925420, 259000790);
-    ArcFlagsAlgorithm afg = new ArcFlagsAlgorithm(roadNet);
-    afg.precomputeArcFlags(49.20, 49.25, 6.95, 7.05);
-    System.out.println("COST:" + afg.computeShortestPath(385925420, 259000790));
+//    DijkstraAlgorithm dij = new DijkstraAlgorithm(roadNet);
+//    System.out.println("DIJ COST:" + dij.computeShortestPath(1451221340, 1580795284));
+//    System.out.println("Dij visited nodes: " + dij.getVisitedNodes().size());
+//    ArcFlagsAlgorithm afg = new ArcFlagsAlgorithm(roadNet);
+//    afg.precomputeArcFlags(49.20, 49.25, 6.95, 7.05);
+//    System.out.println("AFG COST:" + afg.computeShortestPath(1451221340, 1580795284));
+////    MainClass.pathToTextFile(roadNet, afg.getParents(), 
+////      "D:/workspace/routeplanning/src/routeplanning/resources/path2.txt", 
+////      385925420, 259000790);
+//    System.out.println("Arc Flags settled Nodes " + afg.dijkstra.getVisitedNodes().size());
+    //MainClass.settledNodesToFile(afg, roadNet);
     
     
   }
-  
+  public static void settledNodesToFile(ArcFlagsAlgorithm afg, RoadNetwork roadNet) {
+    Node node;
+    String pathOut = "D:/workspace/routeplanning/src/routeplanning/"
+        + "resources/afg_settled.txt";
+    try {
+      BufferedWriter outWriter = new BufferedWriter(new FileWriter(pathOut));
+      for (Object key: afg.getVisitedNodes().keySet()) {
+        node = roadNet.getMapNodeId().get((Integer)key);
+        System.out.println(node.latitude + "," + node.longitude);
+        outWriter.newLine();
+        outWriter.write(node.latitude + ";" + node.longitude);
+      }
+    }catch (Exception e) {
+      e.printStackTrace();
+    }
+    
+  }
   /**
    * TODO.
    */  
