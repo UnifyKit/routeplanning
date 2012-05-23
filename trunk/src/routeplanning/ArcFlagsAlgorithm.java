@@ -59,8 +59,6 @@ public class ArcFlagsAlgorithm {
     Arc arc0;
     Node headNode;
     Node tailNode;
-    List<Map<Integer, Integer>> parentsOfBoundaryNodes = 
-        new ArrayList<Map<Integer, Integer>>();  
     
    //compute boundary nodes
     for (int i = 0; i < graph.getAdjacentArcs().size(); i++) {
