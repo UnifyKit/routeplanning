@@ -102,11 +102,11 @@ public class ArcFlagsAlgorithm {
         //System.out.println(currentNodeId + "-" +  parentNodeId);
         
         if (parentNodeId != -1) {
-          List<Arc> allArcs = graph.getNodeAdjacentArcs(parentNodeId);
+          List<Arc> allArcs = graph.getNodeAdjacentArcs(currentNodeId);
         
           for (int k = 0; k < allArcs.size(); k++) {
             Arc arc = allArcs.get(k);
-            if (arc.getHeadNode().getId().equals(currentNodeId)) {
+            if (arc.getHeadNode().getId().equals(parentNodeId)) {
               arc.arcFlag = true;
             }
           }
@@ -168,7 +168,9 @@ public class ArcFlagsAlgorithm {
     return dijkstra.getVisitedNodes();
   }
   
-  
+  public Map<Integer, Integer> getParents() {
+    return dijkstra.parents;
+  }
   
   
 //  public void exportToFile(List<Node> nodes, String pathOut) {
