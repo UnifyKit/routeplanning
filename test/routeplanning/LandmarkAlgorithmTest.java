@@ -267,5 +267,40 @@ public class LandmarkAlgorithmTest {
     
   }
   
+  /**
+   * Tests if all the versions of Dijkstra return the same result.
+   */
   
+//  @Test
+//  public void testAllDijkstras() {
+//    RoadNetwork rn = new RoadNetwork();
+//    rn.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
+//      + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
+//  
+//    int sourceNodeId = 451965304;
+//    int targetNodeId = 1598221820;
+//    int expectedValue = 1492;
+//    
+//    DijkstraAlgorithm dij = new DijkstraAlgorithm(rn);
+//    int cost1 = dij.computeShortestPath(sourceNodeId, targetNodeId);
+//    
+//    System.out.println("Normal Dijkstra");
+//    System.out.println(cost1);
+//    
+//    DijkstraAlgorithm slDij = new DijkstraAlgorithm(rn);
+//    List<Integer> heuristic;
+//    heuristic = rn.computeStraightLineHeuristic(targetNodeId);
+//    slDij.setHeuristic(heuristic);
+//    int cost2 = slDij.computeShortestPath(sourceNodeId, targetNodeId);
+//    
+//    System.out.println("Dijkstra with Straightline heuristic");
+//    System.out.println(cost2);
+//    
+//    LandmarkAlgorithm landAlg = new LandmarkAlgorithm(rn);
+//    landAlg.selectLandmarks(16);
+//    int cost3 = landAlg.computeShortestPath(sourceNodeId, targetNodeId);
+//    
+//    System.out.println("Dijkstra with landmarks");
+//    System.out.println(cost3);
+//  }
 }
