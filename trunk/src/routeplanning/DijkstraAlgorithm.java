@@ -129,7 +129,6 @@ public class DijkstraAlgorithm {
         Arc arc;
         arc = adjArcsCurrentNode.get(i);
         if (this.considerArcFlags && !arc.arcFlag) {
-          System.out.println(arc.headNode.id);
           continue;
         }
         if (!isVisited(arc.headNode.id)) {
