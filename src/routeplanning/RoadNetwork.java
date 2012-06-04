@@ -548,6 +548,36 @@ public class RoadNetwork {
     return heuristic;
   }
   
+  public List<Integer> getNodeIdsFromCoordinates(double sourceLat, double sourceLng, double targetLat, double targetLng) {
+    List<Integer> nodeIdsSourceAndTarget = new ArrayList<Integer>();
+    int sourceNodeId = 0;
+    int targetNodeId = 0;
+    boolean sourceFound = false;
+    boolean targetFound = false;
+    Node node;
+    System.out.println("sourceLat: " + sourceLat + " sourceLng: " + sourceLng + " targetLat: " + targetLat + " targetLng: " + targetLng);
+    for(int i = 0; i < this.getNodeIds().size(); i++) {
+      node = mapNodeId.get(this.getNodeIds().get(i));
+      if (node.latitude == sourceLat && node.longitude == sourceLng) {
+        sourceNodeId = node.id;
+        sourceFound = true;
+      }
+      if(node.latitude == targetLat && node.longitude == targetLng) {
+        targetNodeId = node.id;
+        targetFound = true;
+      }
+    }
+    
+    if(sourceFound && targetFound) {
+      nodeIdsSourceAndTarget.add(sourceNodeId);
+      nodeIdsSourceAndTarget.add(targetNodeId);
+      System.out.println("Node id's: " + nodeIdsSourceAndTarget.get(0) + "," + nodeIdsSourceAndTarget.get(1));
+    } else {
+      System.out.println("Id's not found. Source: " + sourceFound + " Target: " + targetFound);
+    }
+    
+    return nodeIdsSourceAndTarget;
+  }
 //  //DEBUGGING PURPOSES  
 //  public List<String> printArcsFromNode(int nodeid) {
 //    List<String> list = new ArrayList<String>();

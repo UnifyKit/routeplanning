@@ -396,8 +396,7 @@ public class MainClass {
     RoadNetwork roadNet = new RoadNetwork();
     //roadNet.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/"
     //    + "resources/saarland_reduced.osm");
-    roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
-      + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
+    roadNet.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/resources/saarland_reduced.osm");
 
     // System.out.println("****************************"
     // + "*****************************");
@@ -410,6 +409,7 @@ public class MainClass {
     MainClass.tryArcFlags(roadNet, 100);
     System.out.println("****************************"
         + "*****************************");
+    
     
 /*    DijkstraAlgorithm dij = new DijkstraAlgorithm(roadNet);
     System.out.println("COST:" + dij.computeShortestPath(385925420, 262172939));

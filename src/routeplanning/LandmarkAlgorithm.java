@@ -115,6 +115,7 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
     
     for (int i = 0; i < this.landmarkIds.size(); i++) {
       Integer currentLandMarkId = this.landmarkIds.get(i);
+      System.out.println("currentLandMarkId: " + currentLandMarkId);
       //DijkstraAlgorithm with target -1
       dijAlg.computeShortestPath(currentLandMarkId, -1);
       this.costMaps.add(dijAlg.getVisitedNodes());
@@ -164,13 +165,14 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
    * h(u) = abs ( dist(l,u) - dist(l,t)). 
    */ 
   private int calculateHeuristic(int sourceNodeId, int targetNodeId) {
+    System.out.println("calculateHeuristic sourceNodeId: " + sourceNodeId + " targetNodeId: " + targetNodeId);
     int heuristic = 0;
     //we check the maximum value for all the landmarks
     for (int i = 0; i < this.costMaps.size(); i++) {
       Map<Integer, Integer > cost = this.costMaps.get(i);
       if (cost.containsKey(sourceNodeId)) {
         int distFromLtoU = cost.get(sourceNodeId);
-        int distFromLtoT = cost.get(targetNodeId);
+        int distFromLtoT = cost.get(targetNodeId);       
         int currentHeuristic = Math.abs(distFromLtoU - distFromLtoT);
         if (currentHeuristic > heuristic) {
           heuristic = currentHeuristic;

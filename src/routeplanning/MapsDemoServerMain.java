@@ -4,8 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Sample Server class.
@@ -21,8 +26,14 @@ public class MapsDemoServerMain {
     ServerSocket server = new ServerSocket(port);
     BufferedReader in = null;
     PrintWriter out = null;
-       
+    
+    RoadNetwork rn = new RoadNetwork();
+    rn.readFromOsmFile("D:/workspace/routeplanning/" +
+    		  "src/routeplanning/resources/saarland_reduced.osm");
+    rn = rn.reduceToLargestConnectedComponent();
+    
     int i = 0;
+    
     while (true) {
       System.out.println("\u001b[1m\u001b[34m[" + (++i) + "] "
           + "Waiting for query on port " + port + " ...\u001b[0m");
@@ -47,6 +58,22 @@ public class MapsDemoServerMain {
       float targetLat = Float.parseFloat(parts[2]);
       float targetLng = Float.parseFloat(parts[3]);
 
+      List<Integer> nodeIds = new ArrayList<Integer>();
+     // nodeIds = rn.getNodeIdsFromCoordinates(49.3139855, 6.8137583, 49.3135735, 6.8105003);
+      
+      nodeIds = rn.getNodeIdsFromCoordinates(
+          truncCoordinate(sourceLat, 7),
+          truncCoordinate(sourceLng, 7),
+          truncCoordinate(targetLat, 7),
+          truncCoordinate(targetLng, 7));
+      if (nodeIds.size() == 2) {
+        LandmarkAlgorithm lm = new LandmarkAlgorithm(rn);
+        lm.selectLandmarks(16);
+        System.out.println("A* Landmark SP:"
+         + lm.computeShortestPath(nodeIds.get(0), nodeIds.get(1)));
+      }
+      
+      
       // Send JSONP results string back to client.
       String jsonp = "redrawLineServerCallback({\n" +
           "  path: [" + sourceLat + "," + sourceLng + "," +
@@ -63,5 +90,10 @@ public class MapsDemoServerMain {
       in.close();
       client.close();
     }
+  }
+  
+  public static double truncCoordinate(double coordinate, int decimalPlace) {
+    String coord = (new Double(coordinate).toString()).substring(0, decimalPlace + 3);
+    return Double.parseDouble(coord);
   }
 }
