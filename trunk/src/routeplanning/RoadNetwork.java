@@ -548,33 +548,77 @@ public class RoadNetwork {
     return heuristic;
   }
   
-  public List<Integer> getNodeIdsFromCoordinates(double sourceLat, double sourceLng, double targetLat, double targetLng) {
+  /**
+   * Returns the id of the closest node from the given coordinates.
+   */
+  public List<Integer> getNodeIdsFromCoordinates(double sourceLat, 
+      double sourceLng, double targetLat, double targetLng) {
     List<Integer> nodeIdsSourceAndTarget = new ArrayList<Integer>();
     int sourceNodeId = 0;
     int targetNodeId = 0;
     boolean sourceFound = false;
     boolean targetFound = false;
-    Node node;
-    System.out.println("sourceLat: " + sourceLat + " sourceLng: " + sourceLng + " targetLat: " + targetLat + " targetLng: " + targetLng);
-    for(int i = 0; i < this.getNodeIds().size(); i++) {
-      node = mapNodeId.get(this.getNodeIds().get(i));
-      if (node.latitude == sourceLat && node.longitude == sourceLng) {
-        sourceNodeId = node.id;
+    Node currentNode;
+    
+    Node sourceNode = new Node(0, sourceLat, sourceLng);
+    Node targetNode = new Node(1, targetLat, targetLng);
+    
+    double bestDistanceToSourceNode = 50000.0;
+    double bestDistanceToTargetNode = 50000.0;
+    
+    Node bestSourceNodeCandidate = null; 
+    Node bestTargetNodeCandidate = null;
+    
+    for (int i = 0; i < this.getNodeIds().size(); i++) {
+      currentNode = mapNodeId.get(this.getNodeIds().get(i));      
+      double distanceToSourceNode = 
+          getDistance2(sourceNode, currentNode) * 1000;
+      double distanceToTargetNode = 
+          getDistance2(targetNode, currentNode) * 1000;
+      
+      if (currentNode.latitude == sourceLat 
+          && currentNode.longitude == sourceLng) {
+        sourceNodeId = currentNode.id;
         sourceFound = true;
+      } else if (bestDistanceToSourceNode > distanceToSourceNode) {
+        bestDistanceToSourceNode = distanceToSourceNode;
+        bestSourceNodeCandidate = currentNode;
       }
-      if(node.latitude == targetLat && node.longitude == targetLng) {
-        targetNodeId = node.id;
+      
+      if (currentNode.latitude == targetLat 
+          && currentNode.longitude == targetLng) {
+        targetNodeId = currentNode.id;
         targetFound = true;
+      } else if (bestDistanceToTargetNode > distanceToTargetNode) {
+        bestDistanceToTargetNode = distanceToTargetNode;
+        bestTargetNodeCandidate = currentNode;
       }
     }
     
-    if(sourceFound && targetFound) {
+    if (sourceFound) {
       nodeIdsSourceAndTarget.add(sourceNodeId);
-      nodeIdsSourceAndTarget.add(targetNodeId);
-      System.out.println("Node id's: " + nodeIdsSourceAndTarget.get(0) + "," + nodeIdsSourceAndTarget.get(1));
     } else {
-      System.out.println("Id's not found. Source: " + sourceFound + " Target: " + targetFound);
+      nodeIdsSourceAndTarget.add(bestSourceNodeCandidate.getId());
     }
+    
+    if (targetFound) {
+      nodeIdsSourceAndTarget.add(targetNodeId);
+    } else {
+      nodeIdsSourceAndTarget.add(bestTargetNodeCandidate.getId());
+    }
+    
+    
+    System.out.println("sourceLat: " + sourceLat + " sourceLng: " + sourceLng 
+        + " targetLat: " + targetLat + " targetLng: " + targetLng);
+    Node returnedSourceNode = mapNodeId.get(nodeIdsSourceAndTarget.get(0));
+    Node returnedTargetNode = mapNodeId.get(nodeIdsSourceAndTarget.get(1));
+    
+    System.out.println("RETURNED NODE:");
+    System.out.println(
+        "sourceLat: " + returnedSourceNode.getLatitude() 
+        + " sourceLng: " + returnedSourceNode.getLongitude() 
+        + " targetLat: " + returnedTargetNode.getLatitude() 
+        + " targetLng: " + returnedTargetNode.getLongitude());
     
     return nodeIdsSourceAndTarget;
   }
