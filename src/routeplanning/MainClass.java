@@ -394,9 +394,10 @@ public class MainClass {
     // + "src/routeplanning/resources/saarland_reduced.osm");
     // rfs.process();
     RoadNetwork roadNet = new RoadNetwork();
-    //roadNet.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/"
-    //    + "resources/saarland_reduced.osm");
-    roadNet.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/resources/saarland_reduced.osm");
+    // roadNet.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/"
+    // + "resources/saarland_reduced.osm");
+    roadNet.readFromOsmFile("D:/workspace/routeplanning/src"
+        + "/routeplanning/resources/saarland_reduced.osm");
 
     // System.out.println("****************************"
     // + "*****************************");
@@ -409,23 +410,25 @@ public class MainClass {
     MainClass.tryArcFlags(roadNet, 100);
     System.out.println("****************************"
         + "*****************************");
-    
-    
-/*    DijkstraAlgorithm dij = new DijkstraAlgorithm(roadNet);
-    System.out.println("COST:" + dij.computeShortestPath(385925420, 262172939));
-    //MainClass.toTextFile(roadNet, dij.parents, 
-    //"D:/workspace/routeplanning/src/routeplanning/resources/path.txt", 
-    //385925420, 259000790);
-    ArcFlagsAlgorithm afg = new ArcFlagsAlgorithm(roadNet);
-    afg.precomputeArcFlags(49.20, 49.25, 6.95, 7.05);
-    System.out.println("COST:" + afg.computeShortestPath(385925420, 262172939));
-    pathToTextFile(roadNet, afg.getParents(), 
-      "E:/Documents/UNI/SS12/Efficient Route Planning/"
-      + "groupRepository/src/routeplanning/resources/path.txt", 
-      385925420, 262172939);*/
+
+    /*
+     * DijkstraAlgorithm dij = new DijkstraAlgorithm(roadNet);
+     * System.out.println("COST:" + dij.computeShortestPath(385925420,
+     * 262172939)); //MainClass.toTextFile(roadNet, dij.parents,
+     * //"D:/workspace/routeplanning/src/routeplanning/resources/path.txt",
+     * //385925420, 259000790); ArcFlagsAlgorithm afg = new
+     * ArcFlagsAlgorithm(roadNet); afg.precomputeArcFlags(49.20, 49.25, 6.95,
+     * 7.05); System.out.println("COST:" + afg.computeShortestPath(385925420,
+     * 262172939)); pathToTextFile(roadNet, afg.getParents(),
+     * "E:/Documents/UNI/SS12/Efficient Route Planning/" +
+     * "groupRepository/src/routeplanning/resources/path.txt", 385925420,
+     * 262172939);
+     */
   }
+
   /**
    * Export settled nodes to text file, used for tests.
+   * 
    * @param afg
    * @param roadNet
    */
