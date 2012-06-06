@@ -447,7 +447,8 @@ public class RoadNetworkTest {
    * Tests the method which gives you approximated source and target nodes
    * given lat and long coordinates.
    */
-  @Test
+ 
+/*@Test
   public void testGetNodeIdsFromCoordinates() {
    
     RoadNetwork rn = new RoadNetwork();
@@ -487,6 +488,5 @@ public class RoadNetworkTest {
     Assert.assertEquals(new Integer(randomSourceId), nodes.get(0));
     Assert.assertEquals(new Integer(randomTargetId), nodes.get(1));    
   }
-  
-  
+*/
 }
