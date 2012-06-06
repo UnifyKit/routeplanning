@@ -442,4 +442,51 @@ public class RoadNetworkTest {
     System.out.println(cost);
     
   }
+  
+  /**
+   * Tests the method which gives you approximated source and target nodes
+   * given lat and long coordinates.
+   */
+  @Test
+  public void testGetNodeIdsFromCoordinates() {
+   
+    RoadNetwork rn = new RoadNetwork();
+    rn.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
+      + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
+    
+    RoadNetwork largestComponent = rn.reduceToLargestConnectedComponent();
+   
+    int randomSourceId = largestComponent.getRandomNodeId();
+    int randomTargetId = largestComponent.getRandomNodeId();
+    
+    Node randomSourceNode = largestComponent.getMapNodeId().get(randomSourceId);
+    Node randomTargetNode = largestComponent.getMapNodeId().get(randomTargetId);
+    
+    double sourceLat = randomSourceNode.getLatitude();
+    double sourceLong = randomSourceNode.getLongitude();
+    
+    double targetLat = randomTargetNode.getLatitude();
+    double targetLong = randomTargetNode.getLongitude();
+    
+    List<Integer> nodes = 
+        largestComponent.getNodeIdsFromCoordinates(
+            sourceLat, sourceLong, targetLat, targetLong);
+    
+    Assert.assertEquals(new Integer(randomSourceId), nodes.get(0));
+    Assert.assertEquals(new Integer(randomTargetId), nodes.get(1));
+    
+    sourceLat = randomSourceNode.getLatitude() + 0.00000075;
+    sourceLong = randomSourceNode.getLongitude() + 0.00000075;
+    
+    targetLat = randomTargetNode.getLatitude() + 0.00000075;
+    targetLong = randomTargetNode.getLongitude() + 0.00000075;
+    
+    nodes = largestComponent.getNodeIdsFromCoordinates(
+            sourceLat, sourceLong, targetLat, targetLong);
+    
+    Assert.assertEquals(new Integer(randomSourceId), nodes.get(0));
+    Assert.assertEquals(new Integer(randomTargetId), nodes.get(1));    
+  }
+  
+  
 }
