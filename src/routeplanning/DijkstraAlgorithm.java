@@ -1,6 +1,7 @@
 package routeplanning;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +55,17 @@ public class DijkstraAlgorithm {
    * not. It is FALSE by default.
    */
   protected boolean considerArcFlags = false;
-
+  
+  /**
+   * Stop Dijkstra when a node with cost greater than this cost is settled.
+   */
+  protected int costUpperBound;
+  
+  /**
+   * Stop Dijkstra after this many nodes are settled, to make
+   * sure that it never takes too long.
+   */
+  protected int maxNumSettledNodes;
   /**
    * Create instance of this class for a given (road) graph.
    * 
@@ -62,6 +73,8 @@ public class DijkstraAlgorithm {
    */
   public DijkstraAlgorithm(RoadNetwork graph) {
     this.graph = graph;
+    this.costUpperBound = Integer.MAX_VALUE;
+    this.maxNumSettledNodes = Integer.MAX_VALUE;
   }
 
   /**
@@ -69,6 +82,22 @@ public class DijkstraAlgorithm {
    */
   public void setConsiderArcFlags(boolean considerArcFlags) {
     this.considerArcFlags = considerArcFlags;
+  }
+  /**
+   * Set cost upper bound, see costUpperBound.
+   * Default (set in constructor) INT_MAX, then no effect.
+   * @param costUpperBound
+   */
+  public void setCostUpperBound(int costUpperBound) {
+    this.costUpperBound = costUpperBound;
+  }
+  /**
+   * Set maxNumSettledNodes, see below. Default (set in
+   * constructor) INT_MAX, then no effect.
+   * @param maxNumSettledNodes
+   */
+  public void setMaxNumSettledNodes(int maxNumSettledNodes) {
+    this.maxNumSettledNodes = maxNumSettledNodes;
   }
 
   /**
@@ -89,11 +118,12 @@ public class DijkstraAlgorithm {
     // int pos;
     int distToAdjNode = 0;
     ActiveNode activeNode;
-    // System.out.println("Compute Shortest Path Start: "
-    // + Calendar.getInstance().getTime());
+    int numSettledNodes = 0;
+     //System.out.println("Compute Shortest Path Start: "
+     //+ Calendar.getInstance().getTime());
 
-    // System.out.println("From Node: " + sourceNodeId + " to Node "
-    // + targetNodeId);
+     //System.out.println("From Node: " + sourceNodeId + " to Node "
+     //+ targetNodeId);
     ActiveNode sourceNode;
     if (heuristic == null) {
       sourceNode = new ActiveNode(sourceNodeId, 0, 0, -1);
@@ -115,7 +145,7 @@ public class DijkstraAlgorithm {
       // settle node
       visitedNodeMarks.put(currentNode.id, currentNode.dist);
       parents.put((Integer) currentNode.id, (Integer) currentNode.parent);
-
+      numSettledNodes++;
       /*
        * System.out.println("ADDED:" + (Integer) currentNode.id + " -> " +
        * (Integer) currentNode.parent);
@@ -125,7 +155,16 @@ public class DijkstraAlgorithm {
         shortestPathCost = currentNode.dist;
         break;
       }
-
+      //Stop dijkstra when a node with cost greater than costUpperBound is settled.
+      //or when the number of settled nodes is greater than maxNumSettledNodes.
+      //Used for ContractionHierarchies algorithm.
+      if(currentNode.dist > costUpperBound || numSettledNodes > maxNumSettledNodes) {
+        System.out.println("costUpperBound: " + costUpperBound);
+        System.out.println("numSettledNodes: " + numSettledNodes);
+        shortestPathCost = currentNode.dist; //Revisar, si esta bien...!!!
+        break;
+      }
+      
       // search adjacent node with shortest distance
       adjArcsCurrentNode = this.graph.getNodeAdjacentArcs(currentNode.id);
       for (int i = 0; i < adjArcsCurrentNode.size(); i++) {
@@ -242,5 +281,23 @@ public class DijkstraAlgorithm {
       System.out.println("id: " + node.id + "value: " + node.dist);
     }
     System.out.println("-------------------------------------");
+  }
+  
+  protected void printShortestPath(int sourceNodeId, int targetNodeId) {
+    String path ="";
+    Node currentNode;
+    int currentNodeId;
+
+    currentNode = graph.getMapNodeId().get(targetNodeId);
+    currentNodeId = targetNodeId;
+
+    path = path + currentNodeId + "->";
+    
+    while (currentNode.id != sourceNodeId) {
+      currentNodeId = parents.get(currentNodeId);
+      currentNode = graph.getMapNodeId().get(currentNodeId);
+      path = path + currentNodeId + "->"; 
+    }
+    System.out.println(path);
   }
 }
