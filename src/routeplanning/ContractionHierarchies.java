@@ -2,6 +2,7 @@ package routeplanning;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -116,16 +117,19 @@ public class ContractionHierarchies {
    * to contracted nodes to 0.
    */
   public void contractNode(int i) {
-    //The following map will save the costs from Ui to V
+    //The following map will save the costs from all Ui to V
     Map<Integer, Integer> costsMap = new HashMap();
+    //The following map keeps all the new arcs that will be added
+    //in the end.
+    Map<Node, List<Arc>> addedArcsMap = new HashMap();
     
     //nodeId is "v" the node I want to contract.
-    Integer nodeId = nodeOrdering.get(i);
-    System.out.println("Contracting node " + nodeId);
+    Integer nodeVId = nodeOrdering.get(i);
+    System.out.println("Contracting node " + nodeVId);
     //Node currentNode = graph.getMapNodeId().get(nodeId);
     //First we need all adjacent nodes of currentNode.
     //list of all "u_i"
-    List<Arc> arcs = graph.getNodeAdjacentArcs(nodeId);
+    List<Arc> arcs = graph.getNodeAdjacentArcs(nodeVId);
     
     //We set all arcs from all u_i to v as not Flag, so that they
     //won't be considered in the calculation of SP.
@@ -135,42 +139,89 @@ public class ContractionHierarchies {
       Integer nodeUi = arcs.get(k).getHeadNode().getId();
       Integer cost = arcs.get(k).cost;
       costsMap.put(nodeUi, cost);
+      System.out.println("Cost between " +  nodeVId 
+          +  " and " + nodeUi + " is " + cost); 
     }
     
     //TODO: check if this strategy is correct
     //For each pair of adjacent nodes:
     for (int k = 0; k < arcs.size(); k++) {
+      
       Integer nodeIdUi = arcs.get(k).getHeadNode().getId();
-      for (int q = 0; q < arcs.size(); q++) {
-        //if source and target node coincide
-        //skip to the next iteration
-        if (k == q) {
-          continue;
+      List<Arc> uiArcs = graph.getNodeAdjacentArcs(nodeIdUi);
+      
+      //Setting to set the arc from Ui to V as arcFlag False
+      for (int q = 0; q < uiArcs.size(); q++) {
+        Arc currentUiArc = uiArcs.get(q);
+        Integer headNodeId = currentUiArc.getHeadNode().getId();
+        if (headNodeId == nodeVId) {
+          currentUiArc.arcFlag = false;
+          System.out.println("Setting to set the arc " 
+            + " from Ui to V as arcFlag False");
         }
-        Integer nodeIdWj = arcs.get(q).getHeadNode().getId();
-        System.out.println("Checking nodes " + nodeIdUi + " - " + nodeIdWj);
-        int cost = dijkstra.computeShortestPath(nodeIdUi, nodeIdWj);
-        //I have to verify if the SP without v is better or
-        //worse than Dij = cost(Ui,V)+ cost(V,Wj)
-        int pathThroughV = costsMap.get(nodeIdUi) + costsMap.get(nodeIdWj);
+      }
+      
+      for (int j = 0; j < arcs.size(); j++) {
+        Integer nodeIdWj = arcs.get(j).getHeadNode().getId();
         
-        if (cost > pathThroughV) {
-          //then it is necessary to add the new arc
-          Node nodeUi = graph.getMapNodeId().get(nodeIdUi);
-          Node nodeWj = graph.getMapNodeId().get(nodeIdWj);
+        //checks that ui and wj are the same.
+        if (k != j) {
+          System.out.println("Checking nodes " + nodeIdUi + " - " + nodeIdWj);
+          int cost = dijkstra.computeShortestPath(nodeIdUi, nodeIdWj);
+          //I have to verify if the SP without v is better or
+          //worse than Dij = cost(Ui,V)+ cost(V,Wj)
+          int pathThroughV = costsMap.get(nodeIdUi) + costsMap.get(nodeIdWj);
           
-          //Arcs in two directions are needed
-          Arc newArcDire1 = new Arc(nodeWj, pathThroughV);
-          Arc newArcDire2 = new Arc(nodeUi, pathThroughV);
-          newArcDire1.arcFlag = true;
-          newArcDire2.arcFlag = true;
-          graph.addAdjacentArc(nodeUi, newArcDire1);
-          graph.addAdjacentArc(nodeWj, newArcDire2);
-        }
+          System.out.println("COST:" + cost + " - PATH-V: " + pathThroughV);
+        
+          if (cost > pathThroughV || cost == 0) {
+            System.out.println("***ADDING new Arc: " 
+              + nodeIdUi + " - " + nodeIdWj + " COST: " + pathThroughV);
+          //then it is necessary to add the new arc
+            Node nodeUi = graph.getMapNodeId().get(nodeIdUi);
+            Node nodeWj = graph.getMapNodeId().get(nodeIdWj);
+          
+            //Arcs in two directions are needed
+            Arc newArcDire1 = new Arc(nodeWj, pathThroughV);
+            Arc newArcDire2 = new Arc(nodeUi, pathThroughV);
+            newArcDire1.arcFlag = true;
+            newArcDire2.arcFlag = true;
+            
+            if (addedArcsMap.containsKey(nodeUi)) {
+              List<Arc> addedArcs = addedArcsMap.get(nodeUi);
+              addedArcs.add(newArcDire1);
+            } else {
+              List<Arc> addedArcs = new ArrayList();
+              addedArcs.add(newArcDire1);
+              addedArcsMap.put(nodeUi, addedArcs);
+            }
+            
+            if (addedArcsMap.containsKey(nodeWj)) {
+              List<Arc> addedArcs = addedArcsMap.get(nodeWj);
+              addedArcs.add(newArcDire2);
+            } else {
+              List<Arc> addedArcs = new ArrayList();
+              addedArcs.add(newArcDire2);
+              addedArcsMap.put(nodeWj, addedArcs);
+            }
+          }
         //else no extra arc is needed
+        }
       }
     }
     
+    //Time to add all accumulated arcs.
+    Iterator it = addedArcsMap.keySet().iterator();
+    while (it.hasNext()) {
+      Node node = (Node) it.next();
+      List<Arc> arcsToAdd = addedArcsMap.get(node);
+      for (int k = 0; k < arcsToAdd.size(); k++) {
+        graph.addAdjacentArc(node, arcsToAdd.get(k));
+        System.out.println("***ADDED ARC: " + node.getId() + " - " 
+          + arcsToAdd.get(k).getHeadNode().getId() + ":: "
+          + arcsToAdd.get(k).cost);
+      }
+    }
   }
   
   /**
