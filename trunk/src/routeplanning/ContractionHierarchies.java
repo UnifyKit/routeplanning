@@ -73,14 +73,8 @@ public class ContractionHierarchies {
    */  
   public void precomputation() {
     //set all arcs as flags
-    List<List<Arc>> adjacentArcs = graph.getAdjacentArcs();
-    for (int i = 0; i < adjacentArcs.size(); i++) {
-      List<Arc> arcList = adjacentArcs.get(i);
-      for (int k = 0; k < arcList.size(); k++) {
-        Arc currentArc = arcList.get(k);
-        currentArc.arcFlag = true;
-      }
-    }
+    setAllArcsToTrue();
+    
     computeRandomNodeOrdering();
     for (int i = 0; i < nodeOrdering.size(); i++) {
       contractNode(i);
@@ -132,8 +126,9 @@ public class ContractionHierarchies {
     
     //nodeId is "v" the node I want to contract.
     Integer nodeVId = nodeOrdering.get(i);
-    System.out.println("-----------(" + (i + 1) + ")" + " :: Contracting node " 
-      + nodeVId);
+//    System.out.println("-----------(" + (i + 1) + ")" 
+//    + " :: Contracting node " 
+//      + nodeVId);
     //Node currentNode = graph.getMapNodeId().get(nodeId);
     //First we need all adjacent nodes of currentNode.
     //list of all "u_i"
@@ -167,7 +162,7 @@ public class ContractionHierarchies {
       }
       
       if (ujWasDeleted) {
-        System.out.println("::SKIP Ui node " + nodeIdUi);
+//        System.out.println("::SKIP Ui node " + nodeIdUi);
         continue;
       }
       
@@ -177,8 +172,8 @@ public class ContractionHierarchies {
         Integer headNodeId = currentUiArc.getHeadNode().getId();
         if (headNodeId == nodeVId) {
           currentUiArc.arcFlag = false;
-          System.out.println("Setting to set the arc " 
-            + " from Ui to V as arcFlag False");
+//          System.out.println("Setting to set the arc " 
+//            + " from Ui to V as arcFlag False");
         }
       }  
       
@@ -194,13 +189,13 @@ public class ContractionHierarchies {
           }
         }
         
-        if (wjWasDeleted) {
-          System.out.println("::SKIP Wj node " + nodeIdUi);          
-        }
+//        if (wjWasDeleted) {
+//          System.out.println("::SKIP Wj node " + nodeIdUi);          
+//        }
         
         //checks that ui and wj are the same.
         if (k != j && !wjWasDeleted) {
-          System.out.println("Checking nodes " + nodeIdUi + " - " + nodeIdWj);
+//          System.out.println("Checking nodes " + nodeIdUi + " - " + nodeIdWj);
           int cost = dijkstra.computeShortestPath(nodeIdUi, nodeIdWj);
           //I have to verify if the SP without v is better or
           //worse than Dij = cost(Ui,V)+ cost(V,Wj)
@@ -209,11 +204,11 @@ public class ContractionHierarchies {
           //to make Dijkstra faster:
           dijkstra.setCostUpperBound(pathThroughV);
           
-          System.out.println("COST:" + cost + " - PATH-V: " + pathThroughV);
+//          System.out.println("COST:" + cost + " - PATH-V: " + pathThroughV);
         
           if (cost > pathThroughV || cost == 0) {
-            System.out.println("***ADDING new Arc: " 
-              + nodeIdUi + " - " + nodeIdWj + " COST: " + pathThroughV);
+//            System.out.println("***ADDING new Arc: " 
+//              + nodeIdUi + " - " + nodeIdWj + " COST: " + pathThroughV);
           //then it is necessary to add the new arc
             Node nodeUi = graph.getMapNodeId().get(nodeIdUi);
             Node nodeWj = graph.getMapNodeId().get(nodeIdWj);
@@ -255,9 +250,9 @@ public class ContractionHierarchies {
       List<Arc> arcsToAdd = addedArcsMap.get(node);
       for (int k = 0; k < arcsToAdd.size(); k++) {
         graph.addAdjacentArc(node, arcsToAdd.get(k));
-        System.out.println("***ADDED ARC: " + node.getId() + " - " 
-          + arcsToAdd.get(k).getHeadNode().getId() + ":: "
-          + arcsToAdd.get(k).cost);
+//        System.out.println("***ADDED ARC: " + node.getId() + " - " 
+//          + arcsToAdd.get(k).getHeadNode().getId() + ":: "
+//          + arcsToAdd.get(k).cost);
       }
     }
   }
@@ -272,5 +267,19 @@ public class ContractionHierarchies {
     //no problem the random generator won't include this value.
     int max = numberOfNodes;
     return rand.nextInt(max - min);
+  }
+
+  /**
+   * Set all arcs to true (before precomputation).
+   */
+  public void setAllArcsToTrue() {
+    List<List<Arc>> adjacentArcs = graph.getAdjacentArcs();
+    for (int i = 0; i < adjacentArcs.size(); i++) {
+      List<Arc> arcList = adjacentArcs.get(i);
+      for (int k = 0; k < arcList.size(); k++) {
+        Arc currentArc = arcList.get(k);
+        currentArc.arcFlag = true;
+      }
+    }
   }
 }
