@@ -45,26 +45,47 @@ public class ContractionHiearchiesTest {
     rn.addNodeToGraph(nodeM);
     
     Arc newArcAB = new Arc(nodeB, 3);  rn.addAdjacentArc(nodeA, newArcAB);
+    Arc newArcBA = new Arc(nodeA, 3);  rn.addAdjacentArc(nodeB, newArcBA);
     Arc newArcAD = new Arc(nodeD, 4);  rn.addAdjacentArc(nodeA, newArcAD);
-    Arc newArcBD = new Arc(nodeD, 5);  rn.addAdjacentArc(nodeB, newArcBD);
+    Arc newArcDA = new Arc(nodeA, 4);  rn.addAdjacentArc(nodeD, newArcDA);
+    Arc newArcBD = new Arc(nodeD, 5);  rn.addAdjacentArc(nodeB, newArcBD);    
+    Arc newArcDB = new Arc(nodeB, 5);  rn.addAdjacentArc(nodeD, newArcDB);
     Arc newArcBC = new Arc(nodeC, 2);  rn.addAdjacentArc(nodeB, newArcBC);
+    Arc newArcCB = new Arc(nodeB, 2);  rn.addAdjacentArc(nodeC, newArcCB);
     Arc newArcCD = new Arc(nodeD, 2);  rn.addAdjacentArc(nodeC, newArcCD);
+    Arc newArcDC = new Arc(nodeC, 2);  rn.addAdjacentArc(nodeD, newArcDC);
     Arc newArcAG = new Arc(nodeG, 7);  rn.addAdjacentArc(nodeA, newArcAG);
+    Arc newArcGA = new Arc(nodeA, 7);  rn.addAdjacentArc(nodeG, newArcGA);
     Arc newArcDF = new Arc(nodeF, 1);  rn.addAdjacentArc(nodeD, newArcDF);
+    Arc newArcFD = new Arc(nodeD, 1);  rn.addAdjacentArc(nodeF, newArcFD);    
     Arc newArcFG = new Arc(nodeG, 4);  rn.addAdjacentArc(nodeF, newArcFG);
+    Arc newArcGF = new Arc(nodeF, 4);  rn.addAdjacentArc(nodeG, newArcGF);
     Arc newArcCE = new Arc(nodeE, 5);  rn.addAdjacentArc(nodeC, newArcCE);
+    Arc newArcEC = new Arc(nodeC, 5);  rn.addAdjacentArc(nodeE, newArcEC);
     Arc newArcEF = new Arc(nodeF, 3);  rn.addAdjacentArc(nodeE, newArcEF);
+    Arc newArcFE = new Arc(nodeE, 3);  rn.addAdjacentArc(nodeF, newArcFE);    
     Arc newArcEH = new Arc(nodeH, 7);  rn.addAdjacentArc(nodeE, newArcEH);
+    Arc newArcHE = new Arc(nodeE, 7);  rn.addAdjacentArc(nodeH, newArcHE);
     Arc newArcFI = new Arc(nodeI, 1);  rn.addAdjacentArc(nodeF, newArcFI);
+    Arc newArcIF = new Arc(nodeF, 1);  rn.addAdjacentArc(nodeI, newArcIF);
     Arc newArcGJ = new Arc(nodeJ, 6);  rn.addAdjacentArc(nodeG, newArcGJ);
+    Arc newArcJG = new Arc(nodeG, 6);  rn.addAdjacentArc(nodeJ, newArcJG);
     Arc newArcIJ = new Arc(nodeJ, 3);  rn.addAdjacentArc(nodeI, newArcIJ);
+    Arc newArcJI = new Arc(nodeI, 3);  rn.addAdjacentArc(nodeJ, newArcJI);
     Arc newArcHI = new Arc(nodeI, 3);  rn.addAdjacentArc(nodeH, newArcHI);
+    Arc newArcIH = new Arc(nodeH, 3);  rn.addAdjacentArc(nodeI, newArcIH);
     Arc newArcHK = new Arc(nodeK, 4);  rn.addAdjacentArc(nodeH, newArcHK);
+    Arc newArcKH = new Arc(nodeH, 4);  rn.addAdjacentArc(nodeK, newArcKH);
     Arc newArcIL = new Arc(nodeL, 1);  rn.addAdjacentArc(nodeI, newArcIL);
+    Arc newArcLI = new Arc(nodeI, 1);  rn.addAdjacentArc(nodeL, newArcLI);    
     Arc newArcJM = new Arc(nodeM, 5);  rn.addAdjacentArc(nodeJ, newArcJM);
+    Arc newArcMJ = new Arc(nodeJ, 5);  rn.addAdjacentArc(nodeM, newArcMJ);    
     Arc newArcLM = new Arc(nodeM, 2);  rn.addAdjacentArc(nodeL, newArcLM);
+    Arc newArcML = new Arc(nodeL, 2);  rn.addAdjacentArc(nodeM, newArcML);
     Arc newArcKM = new Arc(nodeM, 4);  rn.addAdjacentArc(nodeK, newArcKM);
+    Arc newArcMK = new Arc(nodeK, 4);  rn.addAdjacentArc(nodeM, newArcMK);
     Arc newArcKL = new Arc(nodeL, 3);  rn.addAdjacentArc(nodeK, newArcKL);    
+    Arc newArcLK = new Arc(nodeK, 3);  rn.addAdjacentArc(nodeL, newArcLK);    
     
     return rn;
   }
@@ -157,38 +178,42 @@ public class ContractionHiearchiesTest {
     Assert.assertTrue(realOrdering.size() == 0);
   }
   
-//  /**
-//   * Tests that all arcs are flags after creating a ContractionHierarchies
-//   * object.
-//   */
-//  @Test
-//  public void testArcFlags() {
-//    RoadNetwork rn = createSampleGraph();
-//    ContractionHierarchies ch = new ContractionHierarchies(rn);
-//    ch.precomputation();
-//    
-//    boolean allArcsAreFlags = true;
-//    
-//    List<List<Arc>> adjacentArcs = rn.getAdjacentArcs();
-//    for (int i = 0; i < adjacentArcs.size(); i++) {
-//      List<Arc> arcList = adjacentArcs.get(i);
-//      for (int k = 0; k < arcList.size(); k++) {
-//        Arc currentArc = arcList.get(k);
-//        if (!currentArc.arcFlag) {
-//          allArcsAreFlags = false;
-//        }
-//      }
-//    }
-//    Assert.assertTrue(allArcsAreFlags);
-//  }
+  /**
+   * Tests that all arcs are flags after creating a ContractionHierarchies
+   * object.
+   */
+  @Test
+  public void testArcFlags() {
+    RoadNetwork rn = createSampleGraph();
+    List<List<Arc>> adjacentArcs = rn.getAdjacentArcs();
+    
+    ContractionHierarchies ch = new ContractionHierarchies(rn);
+    ch.setAllArcsToTrue();
+    
+    boolean allArcsAreFlags = true;
+    
+    for (int i = 0; i < adjacentArcs.size(); i++) {
+      List<Arc> arcList = adjacentArcs.get(i);
+      for (int k = 0; k < arcList.size(); k++) {
+        Arc currentArc = arcList.get(k);
+        if (!currentArc.arcFlag) {
+          allArcsAreFlags = false;
+        }
+      }
+    }
+    Assert.assertTrue(allArcsAreFlags);
+  }
   
   /**
-   * Tests if the contraction works testing the same example as
-   * in the lecture.
+   * Tests if the contraction works testing the same example
+   * of the lecture.
    */
   @Test
   public void testContraction() {
+    System.out.println("------------------------testContraction"
+      + "------------------------");
     RoadNetwork rn = createContractionSampleGraph();
+    System.out.println(rn.asString());
     //We have to contract the same node as in the lecture, which is V
     ContractionHierarchies ch = new ContractionHierarchies(rn);
     
@@ -202,42 +227,75 @@ public class ContractionHiearchiesTest {
         currentArc.arcFlag = true;
       }
     }
+    
     //we have to set manually the nodeOrdering list
     List<Integer> ordering = new ArrayList();
     ordering.addAll(rn.getNodeIds());
     ch.setNodeOrdering(ordering);
     
     //Now we contract node at position 2 which is V and has ID = 3
-    ch.contractNode(2);
-    //Now we verify the resulting graph
-    boolean contractionOk = true;
+    ch.contractNode(1);
     
-    //Node U1 Id = 1
-    List<Arc> arcsU1 = rn.getNodeAdjacentArcs(1);
-    for (int i = 0; i < arcsU1.size(); i++) {
-      Arc currentArc = arcsU1.get(i);
-      Integer nodeId = currentArc.getHeadNode().getId();
-      //Arc U1 W1
-      if (nodeId == 4) {
-        if (!currentArc.arcFlag) {
-          contractionOk = false;
-        }
+    System.out.println(rn.asString());
+    String expectedValue = "1|3-4-2-\n3|1-2-4-5-6-\n2|3-1-4-5-6-"
+      + "\n4|1-3-5-2-\n5|3-4-6-2-\n6|3-5-2-\n";
+    Assert.assertEquals(rn.asString(), expectedValue);
+  }
+  
+  /**
+   * Tests if the contraction works testing the same example
+   * of the lecture.
+   */
+  @Test
+  public void testContractionInGraph() {
+    System.out.println("----------------------testContractionGRAPH"
+        + "----------------------");
+    RoadNetwork rn = createSampleGraph();
+    System.out.println(rn.asString());
+    //We have to contract the same node as in the lecture, which is V
+    ContractionHierarchies ch = new ContractionHierarchies(rn);
+    
+    //We are not invoking precompute(), therefore
+    //we have to set all arcs as flags manually
+    List<List<Arc>> adjacentArcs = rn.getAdjacentArcs();
+    for (int i = 0; i < adjacentArcs.size(); i++) {
+      List<Arc> arcList = adjacentArcs.get(i);
+      for (int k = 0; k < arcList.size(); k++) {
+        Arc currentArc = arcList.get(k);
+        currentArc.arcFlag = true;
       }
     }
     
-    //Node U2 Id = 2
-    List<Arc> arcsU2 = rn.getNodeAdjacentArcs(2);
+    //we have to set manually the nodeOrdering list
+    //as in the lecture.
+    List<Integer> ordering = new ArrayList();
+    ordering.add(1);
+    ordering.add(2);
+    ordering.add(13);
+    ordering.add(11);
+    ordering.add(10);
+    ordering.add(7);
+    ordering.add(8);
+    ordering.add(3);
+    ordering.add(5);
+    ordering.add(6);
+    ordering.add(9);
+    ordering.add(12);
+    ordering.add(4);
     
-    //Node W1 Id = 4
-    List<Arc> arcsW1 = rn.getNodeAdjacentArcs(4);
+    ch.setNodeOrdering(ordering);
     
-    //Node W2 Id = 5
-    List<Arc> arcsW2 = rn.getNodeAdjacentArcs(5);
+    for (int i = 0; i < ordering.size(); i++) {
+      ch.contractNode(i);
+    }
     
-    //Node W3 Id = 6
-    List<Arc> arcsW3 = rn.getNodeAdjacentArcs(6);
-    
-    Assert.assertTrue(contractionOk);
+    System.out.println(rn.asString());
+    String expectedValue = "1|2-4-7-\n2|1-4-3-\n4|1-2-3-6-9-12-\n"
+      + "3|2-4-5-\n7|1-6-10-\n6|4-7-5-9-\n5|3-6-8-\n8|5-9-11-\n"
+      + "9|6-10-8-12-4-\n10|7-9-13-\n11|8-13-12-\n12|9-13-11-4-\n"
+      + "13|10-12-11-\n";
+
+    Assert.assertEquals(rn.asString(), expectedValue);
   }
 }
 
