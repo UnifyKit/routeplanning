@@ -50,6 +50,7 @@ public class ContractionHierarchies {
     //prepares DijkstraAlgorithm
     dijkstra = new DijkstraAlgorithm(graph);
     dijkstra.setConsiderArcFlags(true);
+    dijkstra.setMaxNumSettledNodes(20);
   }
   
   /**
@@ -131,7 +132,8 @@ public class ContractionHierarchies {
     
     //nodeId is "v" the node I want to contract.
     Integer nodeVId = nodeOrdering.get(i);
-    System.out.println("-----------("+(i+1)+")"+" :: Contracting node " + nodeVId);
+    System.out.println("-----------(" + (i + 1) + ")" + " :: Contracting node " 
+      + nodeVId);
     //Node currentNode = graph.getMapNodeId().get(nodeId);
     //First we need all adjacent nodes of currentNode.
     //list of all "u_i"
@@ -164,8 +166,8 @@ public class ContractionHierarchies {
         }
       }
       
-      if(ujWasDeleted) {
-        System.out.println("::SKIP Ui node "+nodeIdUi);
+      if (ujWasDeleted) {
+        System.out.println("::SKIP Ui node " + nodeIdUi);
         continue;
       }
       
@@ -193,7 +195,7 @@ public class ContractionHierarchies {
         }
         
         if (wjWasDeleted) {
-          System.out.println("::SKIP Wj node "+nodeIdUi);          
+          System.out.println("::SKIP Wj node " + nodeIdUi);          
         }
         
         //checks that ui and wj are the same.
@@ -203,6 +205,9 @@ public class ContractionHierarchies {
           //I have to verify if the SP without v is better or
           //worse than Dij = cost(Ui,V)+ cost(V,Wj)
           int pathThroughV = costsMap.get(nodeIdUi) + costsMap.get(nodeIdWj);
+          
+          //to make Dijkstra faster:
+          dijkstra.setCostUpperBound(pathThroughV);
           
           System.out.println("COST:" + cost + " - PATH-V: " + pathThroughV);
         
