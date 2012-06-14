@@ -116,8 +116,7 @@ public class ContractionHierarchies {
    * contract nodes, simply set the flags of the arcs adjacent
    * to contracted nodes to 0.
    */
-  public void contractNode(int i) {
-    //The following map will save the costs from all Ui to V
+  public void contractNode(int i) {    //The following map will save the costs from all Ui to V
     Map<Integer, Integer> costsMap = new HashMap();
     //The following map keeps all the new arcs that will be added
     //in the end.
@@ -163,9 +162,18 @@ public class ContractionHierarchies {
       
       for (int j = 0; j < arcs.size(); j++) {
         Integer nodeIdWj = arcs.get(j).getHeadNode().getId();
+        //Checks if an adjacent node was deleted in previous contractions.
+        boolean wjWasDeleted = true;
+        List<Arc> wjArcs = graph.getNodeAdjacentArcs(nodeIdWj);
+        for (int q = 0; q < wjArcs.size(); q++) {
+          if (wjArcs.get(q).arcFlag) {
+            wjWasDeleted = false;
+            break;
+          }
+        }
         
         //checks that ui and wj are the same.
-        if (k != j) {
+        if (k != j && !wjWasDeleted) {
           System.out.println("Checking nodes " + nodeIdUi + " - " + nodeIdWj);
           int cost = dijkstra.computeShortestPath(nodeIdUi, nodeIdWj);
           //I have to verify if the SP without v is better or
