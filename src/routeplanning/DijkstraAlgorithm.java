@@ -1,7 +1,6 @@
 package routeplanning;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -155,10 +154,12 @@ public class DijkstraAlgorithm {
         shortestPathCost = currentNode.dist;
         break;
       }
-      //Stop dijkstra when a node with cost greater than costUpperBound is settled.
+      //Stop dijkstra when a node with cost greater 
+      //than costUpperBound is settled.
       //or when the number of settled nodes is greater than maxNumSettledNodes.
       //Used for ContractionHierarchies algorithm.
-      if(currentNode.dist > costUpperBound || numSettledNodes > maxNumSettledNodes) {
+      if (currentNode.dist > costUpperBound 
+          || numSettledNodes > maxNumSettledNodes) {
         System.out.println("costUpperBound: " + costUpperBound);
         System.out.println("numSettledNodes: " + numSettledNodes);
         shortestPathCost = currentNode.dist; //Revisar, si esta bien...!!!
@@ -283,8 +284,12 @@ public class DijkstraAlgorithm {
     System.out.println("-------------------------------------");
   }
   
+  
+  /**
+   * Prints the shortest path (for debugging purposes).
+   */
   protected void printShortestPath(int sourceNodeId, int targetNodeId) {
-    String path ="";
+    String path = "";
     Node currentNode;
     int currentNodeId;
 
