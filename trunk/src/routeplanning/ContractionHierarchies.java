@@ -33,6 +33,13 @@ public class ContractionHierarchies {
    * ordering of the nodes.
    */
   List<Integer> nodeOrdering;
+  
+  
+  /**
+   * The following map keeps all the new arcs that will be added
+   * in the end.
+   */
+  Map<Node, List<Arc>> addedArcsMap = new HashMap();
 
   /**
    * Creates instance of this class for a given (road) graph and
@@ -76,7 +83,7 @@ public class ContractionHierarchies {
     computeRandomNodeOrdering();
     for (int i = 0; i < nodeOrdering.size(); i++) {
       contractNode(i);
-    }
+    }    
   }
   
   /**
@@ -116,15 +123,15 @@ public class ContractionHierarchies {
    * contract nodes, simply set the flags of the arcs adjacent
    * to contracted nodes to 0.
    */
-  public void contractNode(int i) {    //The following map will save the costs from all Ui to V
+  public void contractNode(int i) {    
+    //The following map will save the costs from all Ui to V
     Map<Integer, Integer> costsMap = new HashMap();
     //The following map keeps all the new arcs that will be added
     //in the end.
-    Map<Node, List<Arc>> addedArcsMap = new HashMap();
     
     //nodeId is "v" the node I want to contract.
     Integer nodeVId = nodeOrdering.get(i);
-    System.out.println("Contracting node " + nodeVId);
+    System.out.println("-----------("+(i+1)+")"+" :: Contracting node " + nodeVId);
     //Node currentNode = graph.getMapNodeId().get(nodeId);
     //First we need all adjacent nodes of currentNode.
     //list of all "u_i"
@@ -138,8 +145,8 @@ public class ContractionHierarchies {
       Integer nodeUi = arcs.get(k).getHeadNode().getId();
       Integer cost = arcs.get(k).cost;
       costsMap.put(nodeUi, cost);
-      System.out.println("Cost between " +  nodeVId 
-          +  " and " + nodeUi + " is " + cost); 
+/*      System.out.println("Cost between " +  nodeVId 
+          +  " and " + nodeUi + " is " + cost); */
     }
     
     //TODO: check if this strategy is correct
@@ -148,6 +155,19 @@ public class ContractionHierarchies {
       
       Integer nodeIdUi = arcs.get(k).getHeadNode().getId();
       List<Arc> uiArcs = graph.getNodeAdjacentArcs(nodeIdUi);
+      
+      boolean ujWasDeleted = true;
+      for (int q = 0; q < uiArcs.size(); q++) {
+        if (uiArcs.get(q).arcFlag) {
+          ujWasDeleted = false;
+          break;
+        }
+      }
+      
+      if(ujWasDeleted) {
+        System.out.println("::SKIP Ui node "+nodeIdUi);
+        continue;
+      }
       
       //Setting to set the arc from Ui to V as arcFlag False
       for (int q = 0; q < uiArcs.size(); q++) {
@@ -158,7 +178,7 @@ public class ContractionHierarchies {
           System.out.println("Setting to set the arc " 
             + " from Ui to V as arcFlag False");
         }
-      }
+      }  
       
       for (int j = 0; j < arcs.size(); j++) {
         Integer nodeIdWj = arcs.get(j).getHeadNode().getId();
@@ -170,6 +190,10 @@ public class ContractionHierarchies {
             wjWasDeleted = false;
             break;
           }
+        }
+        
+        if (wjWasDeleted) {
+          System.out.println("::SKIP Wj node "+nodeIdUi);          
         }
         
         //checks that ui and wj are the same.
@@ -218,6 +242,7 @@ public class ContractionHierarchies {
       }
     }
     
+    //Finally we add all the new arcs:
     //Time to add all accumulated arcs.
     Iterator it = addedArcsMap.keySet().iterator();
     while (it.hasNext()) {
@@ -244,10 +269,3 @@ public class ContractionHierarchies {
     return rand.nextInt(max - min);
   }
 }
-
-
-
-
-
-
-
