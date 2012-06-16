@@ -384,7 +384,7 @@ public class ContractionHiearchiesTest {
         Assert.assertTrue(currentArc.arcFlag);
       }
     }
-    //Assert.assertEquals(new Integer(-19), new Integer(totalEdgeDifference));
+    Assert.assertEquals(new Integer(-40), new Integer(totalEdgeDifference));
   }
 }
 
