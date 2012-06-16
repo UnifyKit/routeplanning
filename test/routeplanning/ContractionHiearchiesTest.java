@@ -2,6 +2,8 @@ package routeplanning;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -162,20 +164,25 @@ public class ContractionHiearchiesTest {
     ch.computeRandomNodeOrdering();
     List<Integer> randomPosNodeIds = ch.getNodeOrdering();
     List<Integer> realOrdering = rn.getNodeIds();
+    Map<Integer, Integer> orderingMap = ch.getNodeOrderingMap();
     
     System.out.println(realOrdering);
     System.out.println(randomPosNodeIds);
+    System.out.println(orderingMap);
     
     //Checks if both lists have the same size in the end.
     Assert.assertTrue(randomPosNodeIds.size() == realOrdering.size());
     
     for (int i = 0; i < randomPosNodeIds.size(); i++) {
       Integer nodeId =  randomPosNodeIds.get(i);
+      Assert.assertEquals(orderingMap.get(nodeId), new Integer(i));
       realOrdering.remove(nodeId);
     }
     //Checks if the elements in the reordered list are the same
     //as in the old list.
     Assert.assertTrue(realOrdering.size() == 0);
+    
+    
   }
   
   /**
@@ -228,18 +235,26 @@ public class ContractionHiearchiesTest {
       }
     }
     
+    System.out.println(rn.getNodeIds());
+    
     //we have to set manually the nodeOrdering list
     List<Integer> ordering = new ArrayList();
-    ordering.addAll(rn.getNodeIds());
+    ordering.add(rn.getNodeIds().get(1));
+    ordering.add(rn.getNodeIds().get(0));
+    ordering.add(rn.getNodeIds().get(2));
+    ordering.add(rn.getNodeIds().get(3));
+    ordering.add(rn.getNodeIds().get(4));
+    ordering.add(rn.getNodeIds().get(5));
+    
     ch.setNodeOrdering(ordering);
     
-    //Now we contract node at position 2 which is V and has ID = 3
-    ch.contractNode(1);
+    //Now we contract the node V with ID = 3 
+    ch.contractNode(0);
     
     System.out.println(rn.asString());
     String expectedValue = "1|3-4-2-\n3|1-2-4-5-6-\n2|3-1-4-5-6-"
       + "\n4|1-3-5-2-\n5|3-4-6-2-\n6|3-5-2-\n";
-    Assert.assertEquals(rn.asString(), expectedValue);
+    Assert.assertEquals(expectedValue, rn.asString());
   }
   
   /**
@@ -295,7 +310,81 @@ public class ContractionHiearchiesTest {
       + "9|6-10-8-12-4-\n10|7-9-13-\n11|8-13-12-\n12|9-13-11-4-\n"
       + "13|10-12-11-\n";
 
-    Assert.assertEquals(rn.asString(), expectedValue);
+    Assert.assertEquals(expectedValue, rn.asString());
+  }
+  
+  /**
+   * Tests if the contraction works testing the same example
+   * of the lecture.
+   */
+  @Test
+  public void testContractionWithBooleanInGraph() {
+    System.out.println("----------------------testContractionWithBooleanGRAPH"
+        + "----------------------");
+    RoadNetwork rn = createSampleGraph();
+    String graphBeforeContractions = rn.asString();
+    System.out.println(rn.asString());
+    //We have to contract the same node as in the lecture, which is V
+    ContractionHierarchies ch = new ContractionHierarchies(rn);
+    
+    //We are not invoking precompute(), therefore
+    //we have to set all arcs as flags manually
+    List<List<Arc>> adjacentArcs = rn.getAdjacentArcs();
+    for (int i = 0; i < adjacentArcs.size(); i++) {
+      List<Arc> arcList = adjacentArcs.get(i);
+      for (int k = 0; k < arcList.size(); k++) {
+        Arc currentArc = arcList.get(k);
+        currentArc.arcFlag = true;
+      }
+    }
+    
+    //we have to set manually the nodeOrdering list
+    //as in the lecture.
+    List<Integer> ordering = new ArrayList();
+    ordering.add(1);
+    ordering.add(2);
+    ordering.add(13);
+    ordering.add(11);
+    ordering.add(10);
+    ordering.add(7);
+    ordering.add(8);
+    ordering.add(3);
+    ordering.add(5);
+    ordering.add(6);
+    ordering.add(9);
+    ordering.add(12);
+    ordering.add(4);
+    
+    ch.setNodeOrdering(ordering);
+    
+    int totalEdgeDifference = 0;
+    for (int i = 0; i < ordering.size(); i++) {
+      int currentDifference = ch.contractNode(i, true);
+      System.out.println("EDGE DIFFERENCE CONTRACTING " + (i + 1));
+      System.out.println(currentDifference);
+      totalEdgeDifference = totalEdgeDifference + currentDifference;
+    }
+    
+    System.out.println(rn.asString());
+    String graphAfterContractions = rn.asString();
+    System.out.println("TOTAL EDGE DIFFERENCE: " + totalEdgeDifference);
+    Assert.assertEquals(graphBeforeContractions, graphAfterContractions);
+    
+    //test that all arcs are set to true after invoking this method 
+    adjacentArcs = rn.getAdjacentArcs();
+    for (int i = 0; i < adjacentArcs.size(); i++) {
+      List<Arc> arcList = adjacentArcs.get(i);
+      for (int k = 0; k < arcList.size(); k++) {
+        Arc currentArc = arcList.get(k);
+        if (!currentArc.arcFlag) {
+          System.out.println("AYYYYYYYYYYYYYYYYYYY::::::::" 
+            + currentArc.getHeadNode().getId());
+          System.out.println(k);
+        }
+        Assert.assertTrue(currentArc.arcFlag);
+      }
+    }
+    //Assert.assertEquals(new Integer(-19), new Integer(totalEdgeDifference));
   }
 }
 
