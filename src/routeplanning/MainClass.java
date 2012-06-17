@@ -394,10 +394,10 @@ public class MainClass {
     // + "src/routeplanning/resources/saarland_reduced.osm");
     // rfs.process();
     RoadNetwork roadNet = new RoadNetwork();
-    // roadNet.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/"
-    // + "resources/saarland_reduced.osm");
-    roadNet.readFromOsmFile("D:/workspace/routeplanning/src"
-        + "/routeplanning/resources/saarland_reduced.osm");
+    roadNet.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/"
+        + "resources/saarland_reduced.osm");
+    // roadNet.readFromOsmFile("D:/workspace/routeplanning/src"
+    // + "/routeplanning/resources/saarland_reduced.osm");
 
     // System.out.println("****************************"
     // + "*****************************");
@@ -407,7 +407,7 @@ public class MainClass {
     // MainClass.tryDijkstrasWithLandmarks(roadNet, 100);
     System.out.println("****************************"
         + "*****************************");
-    MainClass.tryArcFlags(roadNet, 100);
+    // MainClass.tryArcFlags(roadNet, 100);
     System.out.println("****************************"
         + "*****************************");
 
@@ -424,6 +424,118 @@ public class MainClass {
      * "groupRepository/src/routeplanning/resources/path.txt", 385925420,
      * 262172939);
      */
+    // RoadNetwork rn;
+    // TestGraphEx6 testgraph = new TestGraphEx6();
+    // rn = testgraph.createSampleGraphEx6();
+    //
+    // System.out.println(rn.asString());
+    // DijkstraAlgorithm dj = new DijkstraAlgorithm(rn);
+    // System.out.println("SP:" + dj.computeShortestPath(0, 8));
+    // dj.printShortestPath(0, 8);
+    //
+    // ContractionHiearchies2 ch = new ContractionHiearchies2(rn);
+    // ch.computeRandomNodeOrdering();
+    // ch.contractNode();
+
+    MainClass.contractFirstNodes(roadNet, 1000);
+  }
+
+  public static void contractFirstNodes(RoadNetwork network,
+      int numberOfExecutions) {
+    int zeroShortcuts = 0;
+    int oneShortcut = 0;
+    int twoShortcuts = 0;
+    int threeShortcuts = 0;
+    int fourOrMoreShortcuts = 0;
+    int edSmallerEqualMinus3 = 0;
+    int edEqualsMinus2 = 0;
+    int edEqualsMinus1 = 0;
+    int edEqualsZero = 0;
+    int edEqualsOne = 0;
+    int edEqualsTwo = 0;
+    int edGreaterEqualsThree = 0;
+
+    System.out.println("Start from Largest Connected Component...");
+    RoadNetwork largestComponent = network.reduceToLargestConnectedComponent();
+    System.out.println("End from Largest Connected Component...");
+
+    System.out.println("1. NUMBER OF NODES OF LCC: "
+        + largestComponent.getNodeIds().size());
+
+    System.out.println("2. NUMBER OF ARCS OF LCC: "
+        + largestComponent.getNumberOfArcs());
+
+    ContractionHierarchies ch = new ContractionHierarchies(largestComponent);
+    ch.computeRandomNodeOrdering();
+
+    long totalExecutionTime = 0;
+    DecimalFormat twoDForm = new DecimalFormat("#.#######");
+
+    for (int i = 0; i < numberOfExecutions; i++) {
+      // Compute Edge difference values, without modifying the graph.
+      // int ed = ch.contractNode(i,true);
+      // if (ed <= -3) {
+      // edSmallerEqualMinus3++;
+      // } else if (ed == -2) {
+      // edEqualsMinus2++;
+      // } else if (ed == -1) {
+      // edEqualsMinus1++;
+      // } else if (ed == 0) {
+      // edEqualsZero++;
+      // } else if (ed == 1) {
+      // edEqualsOne++;
+      // } else if (ed == 2) {
+      // edEqualsTwo++;
+      // } else if (ed >= 3) {
+      // edGreaterEqualsThree++;
+      // } else {
+      // System.out.println("???");
+      // }
+      int numArcsBeforeContraction = largestComponent.getNumberOfArcs();
+      // System.out.println("------------------------------------------------");
+      long start = System.currentTimeMillis();
+      ch.contractNode(i);
+      long end = System.currentTimeMillis();
+      int numArcsAfterContraction = largestComponent.getNumberOfArcs();
+      int shortcutsAdded = numArcsAfterContraction - numArcsBeforeContraction;
+
+      if (shortcutsAdded == 0) {
+        zeroShortcuts++;
+      } else if (shortcutsAdded == 1) {
+        oneShortcut++;
+      } else if (shortcutsAdded == 2) {
+        twoShortcuts++;
+      } else if (shortcutsAdded == 3) {
+        threeShortcuts++;
+      } else if (shortcutsAdded >= 4) {
+        fourOrMoreShortcuts++;
+      } else {
+        System.out.println("???shortcutsAdded" + shortcutsAdded);
+      }
+
+      totalExecutionTime = totalExecutionTime + (end - start);
+
+      // System.out.println("Contraction time: " + (end - start));
+      // System.out.println("Number of shortcuts added: " + shortcutsAdded);
+      // System.out.println("------------------------------------------------");
+
+    }
+
+    System.out.println("AVERAGE CONTRACTION TIME: "
+        + Double.valueOf(twoDForm.format((totalExecutionTime)
+            / numberOfExecutions)) + " milliseconds");
+
+    System.out.println("TOTAL EXECUTION TIME: " + totalExecutionTime
+        + " milliseconds");
+    System.out.println("NUMBER OF CONTRACTION WHERE SHORTCUTS ADDED ARE: ");
+    System.out.println("0 -> " + zeroShortcuts + "| 1 -> " + oneShortcut
+        + "| 2 -> " + twoShortcuts + "| 3 -> " + threeShortcuts + "| 4 -> "
+        + fourOrMoreShortcuts);
+    System.out.println("EDGE DIFFERENCES: ");
+    System.out.println("<=3 -> " + edSmallerEqualMinus3 + "| -2 -> "
+        + edEqualsMinus2 + "| -1 -> " + edEqualsMinus1 + "| 0 -> "
+        + edEqualsZero + "| 1 -> " + edEqualsOne + "| 2 -> " + edEqualsTwo
+        + "| >=3 -> " + edGreaterEqualsThree);
   }
 
   /**
