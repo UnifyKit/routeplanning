@@ -27,17 +27,16 @@ public class DijkstraAlgorithm {
    * Class needed to compare the current values of two nodes. This is required
    * to implement the priority queue.
    */
-  protected final Comparator<ActiveNode> travelTimeComparator = 
-      new Comparator<ActiveNode>() {
-      public int compare(ActiveNode n1, ActiveNode n2) {
-        double dist = (n1.dist + n1.heuristic) - (n2.dist + n2.heuristic);
-        if (dist < 0) {
-          return -1;
-        } else {
-          return 1;
-        }
+  protected final Comparator<ActiveNode> travelTimeComparator = new Comparator<ActiveNode>() {
+    public int compare(ActiveNode n1, ActiveNode n2) {
+      double dist = (n1.dist + n1.heuristic) - (n2.dist + n2.heuristic);
+      if (dist < 0) {
+        return -1;
+      } else {
+        return 1;
       }
-    };
+    }
+  };
 
   /**
    * Heuristic function if running in A* mode.
@@ -54,17 +53,18 @@ public class DijkstraAlgorithm {
    * not. It is FALSE by default.
    */
   protected boolean considerArcFlags = false;
-  
+
   /**
    * Stop Dijkstra when a node with cost greater than this cost is settled.
    */
   protected int costUpperBound;
-  
+
   /**
-   * Stop Dijkstra after this many nodes are settled, to make
-   * sure that it never takes too long.
+   * Stop Dijkstra after this many nodes are settled, to make sure that it never
+   * takes too long.
    */
   protected int maxNumSettledNodes;
+
   /**
    * Create instance of this class for a given (road) graph.
    * 
@@ -82,17 +82,21 @@ public class DijkstraAlgorithm {
   public void setConsiderArcFlags(boolean considerArcFlags) {
     this.considerArcFlags = considerArcFlags;
   }
+
   /**
-   * Set cost upper bound, see costUpperBound.
-   * Default (set in constructor) INT_MAX, then no effect.
+   * Set cost upper bound, see costUpperBound. Default (set in constructor)
+   * INT_MAX, then no effect.
+   * 
    * @param costUpperBound
    */
   public void setCostUpperBound(int costUpperBound) {
     this.costUpperBound = costUpperBound;
   }
+
   /**
-   * Set maxNumSettledNodes, see below. Default (set in
-   * constructor) INT_MAX, then no effect.
+   * Set maxNumSettledNodes, see below. Default (set in constructor) INT_MAX,
+   * then no effect.
+   * 
    * @param maxNumSettledNodes
    */
   public void setMaxNumSettledNodes(int maxNumSettledNodes) {
@@ -118,11 +122,11 @@ public class DijkstraAlgorithm {
     int distToAdjNode = 0;
     ActiveNode activeNode;
     int numSettledNodes = 0;
-     //System.out.println("Compute Shortest Path Start: "
-     //+ Calendar.getInstance().getTime());
+    // System.out.println("Compute Shortest Path Start: "
+    // + Calendar.getInstance().getTime());
 
-     //System.out.println("From Node: " + sourceNodeId + " to Node "
-     //+ targetNodeId);
+    // System.out.println("From Node: " + sourceNodeId + " to Node "
+    // + targetNodeId);
     ActiveNode sourceNode;
     if (heuristic == null) {
       sourceNode = new ActiveNode(sourceNodeId, 0, 0, -1);
@@ -154,18 +158,18 @@ public class DijkstraAlgorithm {
         shortestPathCost = currentNode.dist;
         break;
       }
-      //Stop dijkstra when a node with cost greater 
-      //than costUpperBound is settled.
-      //or when the number of settled nodes is greater than maxNumSettledNodes.
-      //Used for ContractionHierarchies algorithm.
-      if (currentNode.dist > costUpperBound 
+      // Stop dijkstra when a node with cost greater
+      // than costUpperBound is settled.
+      // or when the number of settled nodes is greater than maxNumSettledNodes.
+      // Used for ContractionHierarchies algorithm.
+      if (currentNode.dist > costUpperBound
           || numSettledNodes > maxNumSettledNodes) {
-        System.out.println("costUpperBound: " + costUpperBound);
-        System.out.println("numSettledNodes: " + numSettledNodes);
-        shortestPathCost = currentNode.dist; //Revisar, si esta bien...!!!
+        // System.out.println("costUpperBound: " + costUpperBound);
+        // System.out.println("numSettledNodes: " + numSettledNodes);
+        shortestPathCost = currentNode.dist; // Revisar, si esta bien...!!!
         break;
       }
-      
+
       // search adjacent node with shortest distance
       adjArcsCurrentNode = this.graph.getNodeAdjacentArcs(currentNode.id);
       for (int i = 0; i < adjArcsCurrentNode.size(); i++) {
@@ -283,8 +287,7 @@ public class DijkstraAlgorithm {
     }
     System.out.println("-------------------------------------");
   }
-  
-  
+
   /**
    * Prints the shortest path (for debugging purposes).
    */
@@ -297,11 +300,11 @@ public class DijkstraAlgorithm {
     currentNodeId = targetNodeId;
 
     path = path + currentNodeId + "->";
-    
+
     while (currentNode.id != sourceNodeId) {
       currentNodeId = parents.get(currentNodeId);
       currentNode = graph.getMapNodeId().get(currentNodeId);
-      path = path + currentNodeId + "->"; 
+      path = path + currentNodeId + "->";
     }
     System.out.println(path);
   }
