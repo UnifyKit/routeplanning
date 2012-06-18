@@ -207,7 +207,6 @@ public class ContractionHiearchiesTest {
     for (int i = 0; i < randomPosNodeIds.size(); i++) {
       Integer nodeId =  randomPosNodeIds.get(i);
       Assert.assertEquals(orderingMap.get(nodeId), new Integer(i));
-
       realOrdering.remove(nodeId);
     }
     //Checks if the elements in the reordered list are the same
