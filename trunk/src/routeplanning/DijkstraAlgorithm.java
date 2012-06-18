@@ -27,16 +27,17 @@ public class DijkstraAlgorithm {
    * Class needed to compare the current values of two nodes. This is required
    * to implement the priority queue.
    */
-  protected final Comparator<ActiveNode> travelTimeComparator = new Comparator<ActiveNode>() {
-    public int compare(ActiveNode n1, ActiveNode n2) {
-      double dist = (n1.dist + n1.heuristic) - (n2.dist + n2.heuristic);
-      if (dist < 0) {
-        return -1;
-      } else {
-        return 1;
+  protected final Comparator<ActiveNode> travelTimeComparator 
+    = new Comparator<ActiveNode>() {
+      public int compare(ActiveNode n1, ActiveNode n2) {
+        double dist = (n1.dist + n1.heuristic) - (n2.dist + n2.heuristic);
+        if (dist < 0) {
+          return -1;
+        } else {
+          return 1;
+        }
       }
-    }
-  };
+    };
 
   /**
    * Heuristic function if running in A* mode.

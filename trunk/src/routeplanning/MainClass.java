@@ -394,8 +394,8 @@ public class MainClass {
     // + "src/routeplanning/resources/saarland_reduced.osm");
     // rfs.process();
     RoadNetwork roadNet = new RoadNetwork();
-    roadNet.readFromOsmFile("D:/workspace/routeplanning/src/routeplanning/"
-        + "resources/saarland_reduced.osm");
+    roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
+        + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
     // roadNet.readFromOsmFile("D:/workspace/routeplanning/src"
     // + "/routeplanning/resources/saarland_reduced.osm");
 
@@ -405,11 +405,11 @@ public class MainClass {
     // System.out.println("****************************"
     // + "*****************************");
     // MainClass.tryDijkstrasWithLandmarks(roadNet, 100);
-    System.out.println("****************************"
-        + "*****************************");
+//    System.out.println("****************************"
+//        + "*****************************");
     // MainClass.tryArcFlags(roadNet, 100);
-    System.out.println("****************************"
-        + "*****************************");
+//    System.out.println("****************************"
+//        + "*****************************");
 
     /*
      * DijkstraAlgorithm dij = new DijkstraAlgorithm(roadNet);
@@ -436,10 +436,20 @@ public class MainClass {
     // ContractionHiearchies2 ch = new ContractionHiearchies2(rn);
     // ch.computeRandomNodeOrdering();
     // ch.contractNode();
-
+    System.out.println("****************************"
+        + "*****************************");
     MainClass.contractFirstNodes(roadNet, 1000);
+    System.out.println("****************************"
+        + "*****************************");    
   }
-
+  
+  
+  /**
+   * As requested in Exercise Sheet 6 - ex. 2.
+   * 
+   * @param network
+   *          the original road network extracted from the osm file.
+   */
   public static void contractFirstNodes(RoadNetwork network,
       int numberOfExecutions) {
     int zeroShortcuts = 0;
@@ -466,38 +476,39 @@ public class MainClass {
         + largestComponent.getNumberOfArcs());
 
     ContractionHierarchies ch = new ContractionHierarchies(largestComponent);
+    ch.setAllArcsToTrue();
     ch.computeRandomNodeOrdering();
 
     long totalExecutionTime = 0;
-    DecimalFormat twoDForm = new DecimalFormat("#.#######");
+    DecimalFormat twoDForm = new DecimalFormat("#.##");
 
     for (int i = 0; i < numberOfExecutions; i++) {
       // Compute Edge difference values, without modifying the graph.
-      // int ed = ch.contractNode(i,true);
-      // if (ed <= -3) {
-      // edSmallerEqualMinus3++;
-      // } else if (ed == -2) {
-      // edEqualsMinus2++;
-      // } else if (ed == -1) {
-      // edEqualsMinus1++;
-      // } else if (ed == 0) {
-      // edEqualsZero++;
-      // } else if (ed == 1) {
-      // edEqualsOne++;
-      // } else if (ed == 2) {
-      // edEqualsTwo++;
-      // } else if (ed >= 3) {
-      // edGreaterEqualsThree++;
-      // } else {
-      // System.out.println("???");
-      // }
-      int numArcsBeforeContraction = largestComponent.getNumberOfArcs();
-      // System.out.println("------------------------------------------------");
       long start = System.currentTimeMillis();
-      ch.contractNode(i);
+      List<Integer> info = ch.contractNode(i, false);
       long end = System.currentTimeMillis();
-      int numArcsAfterContraction = largestComponent.getNumberOfArcs();
-      int shortcutsAdded = numArcsAfterContraction - numArcsBeforeContraction;
+      
+      int ed = info.get(1);
+      if (ed <= -3) {
+        edSmallerEqualMinus3++;
+      } else if (ed == -2) {
+        edEqualsMinus2++;
+      } else if (ed == -1) {
+        edEqualsMinus1++;
+      } else if (ed == 0) {
+        edEqualsZero++;
+      } else if (ed == 1) {
+        edEqualsOne++;
+      } else if (ed == 2) {
+        edEqualsTwo++;
+      } else if (ed >= 3) {
+        edGreaterEqualsThree++;
+      } else {
+        System.out.println("???");
+      }
+      
+      System.out.println("------------------------------------------------");
+      int shortcutsAdded = info.get(0);
 
       if (shortcutsAdded == 0) {
         zeroShortcuts++;
@@ -514,19 +525,14 @@ public class MainClass {
       }
 
       totalExecutionTime = totalExecutionTime + (end - start);
-
-      // System.out.println("Contraction time: " + (end - start));
-      // System.out.println("Number of shortcuts added: " + shortcutsAdded);
-      // System.out.println("------------------------------------------------");
-
+      System.out.println("------------------------------------------------");
     }
 
     System.out.println("AVERAGE CONTRACTION TIME: "
-        + Double.valueOf(twoDForm.format((totalExecutionTime)
-            / numberOfExecutions)) + " milliseconds");
+      + ((totalExecutionTime * 1000) / numberOfExecutions) + " microseconds");
 
-    System.out.println("TOTAL EXECUTION TIME: " + totalExecutionTime
-        + " milliseconds");
+//    System.out.println("TOTAL EXECUTION TIME: " + totalExecutionTime
+//        + " milliseconds");
     System.out.println("NUMBER OF CONTRACTION WHERE SHORTCUTS ADDED ARE: ");
     System.out.println("0 -> " + zeroShortcuts + "| 1 -> " + oneShortcut
         + "| 2 -> " + twoShortcuts + "| 3 -> " + threeShortcuts + "| 4 -> "
