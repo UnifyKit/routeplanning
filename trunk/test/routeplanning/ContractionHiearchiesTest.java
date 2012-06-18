@@ -181,8 +181,38 @@ public class ContractionHiearchiesTest {
     //Checks if the elements in the reordered list are the same
     //as in the old list.
     Assert.assertTrue(realOrdering.size() == 0);
+  }
+  
+  /**
+   * Tests that the computeNodeOrderingByEdgeDifference method.
+   */
+  @Test
+  public void testComputeNodeOrderingByEdgeDifference() {
+    System.out.println("------------testComputeNodeOrderingByEdgeDifference"
+        + "--------------");
+    RoadNetwork rn = createSampleGraph();
+    ContractionHierarchies ch = new ContractionHierarchies(rn);
+    ch.computeNodeOrderingByEdgeDifference();
+    List<Integer> randomPosNodeIds = ch.getNodeOrdering();
+    List<Integer> realOrdering = rn.getNodeIds();
+    Map<Integer, Integer> orderingMap = ch.getNodeOrderingMap();
     
+    System.out.println(realOrdering);
+    System.out.println(randomPosNodeIds);
+    System.out.println(orderingMap);
     
+    //Checks if both lists have the same size in the end.
+    Assert.assertTrue(randomPosNodeIds.size() == realOrdering.size());
+    
+    for (int i = 0; i < randomPosNodeIds.size(); i++) {
+      Integer nodeId =  randomPosNodeIds.get(i);
+      Assert.assertEquals(orderingMap.get(nodeId), new Integer(i));
+
+      realOrdering.remove(nodeId);
+    }
+    //Checks if the elements in the reordered list are the same
+    //as in the old list.
+    Assert.assertTrue(realOrdering.size() == 0);
   }
   
   /**
@@ -249,7 +279,7 @@ public class ContractionHiearchiesTest {
     ch.setNodeOrdering(ordering);
     
     //Now we contract the node V with ID = 3 
-    ch.contractNode(0);
+    ch.contractNode(0, false);
     
     System.out.println(rn.asString());
     String expectedValue = "1|3-4-2-\n3|1-2-4-5-6-\n2|3-1-4-5-6-"
@@ -301,7 +331,7 @@ public class ContractionHiearchiesTest {
     ch.setNodeOrdering(ordering);
     
     for (int i = 0; i < ordering.size(); i++) {
-      ch.contractNode(i);
+      ch.contractNode(i, false);
     }
     
     System.out.println(rn.asString());
@@ -358,11 +388,17 @@ public class ContractionHiearchiesTest {
     ch.setNodeOrdering(ordering);
     
     int totalEdgeDifference = 0;
+    int totalAddedShortcuts = 0;
     for (int i = 0; i < ordering.size(); i++) {
-      int currentDifference = ch.contractNode(i, true);
+      List<Integer> info = ch.contractNode(i, true);
+      int currentAddedshortcuts = info.get(0);
+      int currentDifference = info.get(1);
       System.out.println("EDGE DIFFERENCE CONTRACTING " + (i + 1));
       System.out.println(currentDifference);
+      System.out.println("ADDED SHORTCUTS in " + (i + 1));
+      System.out.println(currentAddedshortcuts);
       totalEdgeDifference = totalEdgeDifference + currentDifference;
+      totalAddedShortcuts = totalAddedShortcuts + currentAddedshortcuts;
     }
     
     System.out.println(rn.asString());
@@ -385,6 +421,7 @@ public class ContractionHiearchiesTest {
       }
     }
     Assert.assertEquals(new Integer(-40), new Integer(totalEdgeDifference));
+    Assert.assertEquals(new Integer(2), new Integer(totalAddedShortcuts));
   }
 }
 
