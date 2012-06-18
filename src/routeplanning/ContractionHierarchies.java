@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 
 /**
  * Class implementing the Contraction Hierarchies' approach from lecture 6.
@@ -32,14 +33,14 @@ public class ContractionHierarchies {
   /**
    * ordering of the nodes.
    */
-  List<Integer> nodeOrdering;
+  List<Integer> nodeOrdering = new ArrayList();
 
   /**
    * The following structure maps a node to its position in the List
    * nodeordering. The key is the node id, the value is its position in the
    * nodeOrdering list.
    */
-  Map<Integer, Integer> nodeOrderingMap = new HashMap();
+  Map<Integer, Integer> orderOfNodeMap = new HashMap();
 
   /**
    * Creates instance of this class for a given (road) graph and builds the
@@ -64,7 +65,7 @@ public class ContractionHierarchies {
    * Getter for nodeOrderingMap.
    */
   public Map<Integer, Integer> getNodeOrderingMap() {
-    return nodeOrderingMap;
+    return orderOfNodeMap;
   }
 
   /**
@@ -74,7 +75,7 @@ public class ContractionHierarchies {
     this.nodeOrdering = nodeOrdering;
     for (int i = 0; i < nodeOrdering.size(); i++) {
       Integer currentNodeId = nodeOrdering.get(i);
-      nodeOrderingMap.put(currentNodeId, i);
+      orderOfNodeMap.put(currentNodeId, i);
     }
   }
 
@@ -83,12 +84,9 @@ public class ContractionHierarchies {
    * set as Flags.
    */
   public void precomputation() {
-    // set all arcs as flags
-    setAllArcsToTrue();
-
-    computeRandomNodeOrdering();
+    computeNodeOrderingByEdgeDifference();
     for (int i = 0; i < nodeOrdering.size(); i++) {
-      contractNode(i);
+      contractNode(i, true);
     }
   }
 
@@ -98,7 +96,56 @@ public class ContractionHierarchies {
    * random entry to the right. Then swap nodeOrdering[1] with a random entry on
    * the right. And so on. This implementation takes linear time.
    */
+  public void computeNodeOrderingByEdgeDifference() {
+    setAllArcsToTrue();
+    //Initialization of nodeOrdering
+    setNodeOrdering(graph.getNodeIds());
+    
+    // We have already the list "nodes" which has all the ids of the nodes.
+    // We will work on a copy of this list (it only copies the references).
+    List<Integer> tempNodeOrdering = new ArrayList<Integer>();
+    tempNodeOrdering.addAll(graph.getNodeIds());
+    //The map maps each edge difference with a list of nodes that have
+    //this edge difference
+    TreeMap<Integer, List<Integer>> edgeDiffMap = new TreeMap();
+
+    // linear time (on the number of nodes)
+    for (int i = 0; i < tempNodeOrdering.size(); i++) {
+      Integer currentNodeId = tempNodeOrdering.get(i);  
+      List<Integer> info = contractNode(i, true);
+      Integer edgeDifference = info.get(1);
+      if (edgeDiffMap.containsKey(edgeDifference)) {
+        List<Integer> nodes = edgeDiffMap.get(edgeDifference);
+        nodes.add(currentNodeId);
+      } else {
+        List<Integer> nodes = new ArrayList();
+        nodes.add(currentNodeId);
+        edgeDiffMap.put(edgeDifference, nodes);
+      }
+    }
+    nodeOrdering = new ArrayList<Integer>();
+    orderOfNodeMap = new HashMap();
+    int counter = 0;
+    Iterator it = edgeDiffMap.keySet().iterator();
+    while (it.hasNext()) {
+      Integer currentKey = (Integer) it.next();
+      List<Integer> nodes = edgeDiffMap.get(currentKey);
+      System.out.println("EDGE DIFF: " + currentKey);
+      System.out.println(nodes);
+      for (int i = 0; i < nodes.size(); i++) {
+        orderOfNodeMap.put(nodes.get(i), counter);
+        nodeOrdering.add(nodes.get(i));
+        counter++;
+      }
+    }
+  }
+  
+  /**
+   * Does the precomputation by contracting all nodes in the order
+   * of their edge differences, and adding shortcuts on the way.
+   */
   public void computeRandomNodeOrdering() {
+    setAllArcsToTrue();
     // We have already the list "nodes" which has all the ids of the nodes.
     // We will work on a copy of this list (it only copies the references).
     List<Integer> randomNodeOrdering = new ArrayList<Integer>();
@@ -115,29 +162,35 @@ public class ContractionHierarchies {
       }
       Integer tempRef = currentNodeId;
       randomNodeOrdering.set(i, randomNodeOrdering.get(newPos));
-      nodeOrderingMap.put(randomNodeOrdering.get(newPos), i);
+      orderOfNodeMap.put(randomNodeOrdering.get(newPos), i);
       randomNodeOrdering.set(newPos, tempRef);
-      nodeOrderingMap.put(tempRef, newPos);
+      orderOfNodeMap.put(tempRef, newPos);
     }
     nodeOrdering = randomNodeOrdering;
   }
+  
 
   /**
    * Central contraction routine: contract the i-th node in the ordering,
    * ignoring nodes 1, ..., i - 1 in the ordering and their adjacent arcs.
-   * IMPLEMENTATION NOTE: To ignore nodes (and their adjacent arcs), you can
-   * simply usee Arc class. As it goes the arcFlag member of th along and
-   * contract nodes, simply set the flags of the arcs adjacent to contracted
-   * nodes to 0. Additional argument says whether we really want to contract the
-   * node or just compute the edge difference. Default is false. If true, don't
-   * change anything in the graph (don't add any arcs and don't set any arc
-   * flags to false) and return the edge difference.
+   * IMPLEMENTATION NOTE: To ignore nodes (and their adjacent arcs), we use
+   * the Arc class. As it goes along and contract nodes, simply set the flags 
+   * of the arcs adjacent to contracted nodes to 0. 
+   * Additional argument says whether we really want to contract the
+   * node or just compute the numbers of shortcuts and the edge difference. 
+   * Default is false. If true, it doesn't change anything in the graph 
+   * (don't add any arcs and don't set any arc flags to false) and return 
+   * a list.
+   * 
+   * @return A list containing two integers. The first integer is the number
+   * of shortcuts, the second integer is the edge difference.
    */
 
-  public int contractNode(int i, boolean computeEdgeDifferenceOnly) {
+  public List<Integer> contractNode(int i, boolean computeEdgeDifferenceOnly) {
     int edgeDifference = 0;
     int removedArcs = 0;
-    int createdArcs = 0;
+    int createdShortcuts = 0;
+    List<Integer> infoList = new ArrayList();
 
     // The following map will save the costs from all Ui to V
     Map<Integer, Integer> costsMap = new HashMap();
@@ -152,9 +205,9 @@ public class ContractionHierarchies {
 
     // nodeId is "v" the node I want to contract.
     Integer nodeVId = nodeOrdering.get(i);
-    // System.out.println("-----------(" + (i + 1) + ")"
-    // + " :: Contracting node "
-    // + nodeVId);
+//     System.out.println("-----------(" + (i + 1) + ")"
+//     + " :: Contracting node "
+//     + nodeVId);
     // Node currentNode = graph.getMapNodeId().get(nodeId);
     // First we need all adjacent nodes of currentNode.
     // list of all "u_i"
@@ -164,16 +217,19 @@ public class ContractionHierarchies {
     // won't be considered in the calculation of SP.
     for (int k = 0; k < nodeVarcs.size(); k++) {
       Arc arcToV = nodeVarcs.get(k);
+//        System.out.println("ADJACENT NODES: " + nodeVarcs.size());
       if (arcToV.arcFlag) {
         Integer nodeUi = nodeVarcs.get(k).getHeadNode().getId();
-        Integer positionOfUi = nodeOrderingMap.get(nodeUi);
+        Integer positionOfUi = orderOfNodeMap.get(nodeUi);
+//      System.out.println("Analyzing edge " + nodeVId
+//      + " - " + nodeUi + " :: ");
 
         if (positionOfUi > i) {
           arcToV.arcFlag = false;
           Integer cost = nodeVarcs.get(k).cost;
           costsMap.put(nodeUi, cost);
-          // System.out.println("Cost between " + nodeVId
-          // + " and " + nodeUi + " is " + cost);
+//            System.out.println("Analyzing edge " + nodeVId
+//            + " - " + nodeUi + " :: ");
           changedArcs.add(arcToV);
           removedArcs++;
         }
@@ -186,7 +242,7 @@ public class ContractionHierarchies {
       Integer nodeIdUi = nodeVarcs.get(k).getHeadNode().getId();
       // We have to detect if the node Ui was processed.
       // We can use the nodeOrderingMap to do that:
-      Integer positionOfUi = nodeOrderingMap.get(nodeIdUi);
+      Integer positionOfUi = orderOfNodeMap.get(nodeIdUi);
 
       if (positionOfUi != null && positionOfUi < i) {
         // System.out.println("::SKIP Ui node " + nodeIdUi);
@@ -214,7 +270,7 @@ public class ContractionHierarchies {
         Integer nodeIdWj = nodeVarcs.get(j).getHeadNode().getId();
 
         // Checks if an adjacent node was deleted in previous contractions.
-        Integer positionOfWj = nodeOrderingMap.get(nodeIdWj);
+        Integer positionOfWj = orderOfNodeMap.get(nodeIdWj);
 
         if (positionOfWj != null && positionOfWj < i) {
           // System.out.println("::SKIP Wj node " + nodeIdWj);
@@ -242,33 +298,30 @@ public class ContractionHierarchies {
             Node nodeUi = graph.getMapNodeId().get(nodeIdUi);
             Node nodeWj = graph.getMapNodeId().get(nodeIdWj);
 
-            if (computeEdgeDifferenceOnly) {
-              createdArcs++;
+            // Arcs in two directions are needed
+            Arc newArcDire1 = new Arc(nodeWj, pathThroughV);
+            Arc newArcDire2 = new Arc(nodeUi, pathThroughV);
+            newArcDire1.arcFlag = true;
+            newArcDire2.arcFlag = true;
+            
+            if (addedArcsMap.containsKey(nodeUi)) {
+              List<Arc> addedArcs = addedArcsMap.get(nodeUi);
+              addedArcs.add(newArcDire1);
             } else {
-              // Arcs in two directions are needed
-              Arc newArcDire1 = new Arc(nodeWj, pathThroughV);
-              Arc newArcDire2 = new Arc(nodeUi, pathThroughV);
-              newArcDire1.arcFlag = true;
-              newArcDire2.arcFlag = true;
-
-              if (addedArcsMap.containsKey(nodeUi)) {
-                List<Arc> addedArcs = addedArcsMap.get(nodeUi);
-                addedArcs.add(newArcDire1);
-              } else {
-                List<Arc> addedArcs = new ArrayList();
-                addedArcs.add(newArcDire1);
-                addedArcsMap.put(nodeUi, addedArcs);
-              }
-
-              if (addedArcsMap.containsKey(nodeWj)) {
-                List<Arc> addedArcs = addedArcsMap.get(nodeWj);
-                addedArcs.add(newArcDire2);
-              } else {
-                List<Arc> addedArcs = new ArrayList();
-                addedArcs.add(newArcDire2);
-                addedArcsMap.put(nodeWj, addedArcs);
-              }
+              List<Arc> addedArcs = new ArrayList();
+              addedArcs.add(newArcDire1);
+              addedArcsMap.put(nodeUi, addedArcs);
             }
+
+            if (addedArcsMap.containsKey(nodeWj)) {
+              List<Arc> addedArcs = addedArcsMap.get(nodeWj);
+              addedArcs.add(newArcDire2);
+            } else {
+              List<Arc> addedArcs = new ArrayList();
+              addedArcs.add(newArcDire2);
+              addedArcsMap.put(nodeWj, addedArcs);
+            }
+            createdShortcuts++;
           }
         }
       }
@@ -294,151 +347,154 @@ public class ContractionHierarchies {
         }
       }
     }
-    edgeDifference = createdArcs - removedArcs;
-    return edgeDifference;
+    edgeDifference = createdShortcuts - removedArcs;
+    infoList.add(createdShortcuts);
+    infoList.add(edgeDifference);
+    return infoList;
   }
 
-  /**
-   * Central contraction routine: contract the i-th node in the ordering,
-   * ignoring nodes 1, ..., i - 1 in the ordering and their adjacent arcs.
-   * IMPLEMENTATION NOTE: To ignore nodes (and their adjacent arcs), you can
-   * simply usee Arc class. As it goes the arcFlag member of th along and
-   * contract nodes, simply set the flags of the arcs adjacent to contracted
-   * nodes to 0. Additional argument says whether we really want to contract the
-   * node or just compute the edge difference. Default is false. If true, don't
-   * change anything in the graph (don't add any arcs and don't set any arc
-   * flags to false) and return the edge difference.
-   */
-  public void contractNode(int i) {
-    // The following map will save the costs from all Ui to V
-    Map<Integer, Integer> costsMap = new HashMap();
-    // The following map keeps all the new arcs that will be added
-    // in the end.
-    Map<Node, List<Arc>> addedArcsMap = new HashMap();
-
-    // nodeId is "v" the node I want to contract.
-    Integer nodeVId = nodeOrdering.get(i);
-    // System.out.println("-----------(" + (i + 1) + ")"
-    // + " :: Contracting node "
-    // + nodeVId);
-    // Node currentNode = graph.getMapNodeId().get(nodeId);
-    // First we need all adjacent nodes of currentNode.
-    // list of all "u_i"
-    List<Arc> nodeVarcs = graph.getNodeAdjacentArcs(nodeVId);
-
-    // We set all arcs from all u_i to v as not Flag, so that they
-    // won't be considered in the calculation of SP.
-    for (int k = 0; k < nodeVarcs.size(); k++) {
-      Arc arcToV = nodeVarcs.get(k);
-      arcToV.arcFlag = false;
-      Integer nodeUi = nodeVarcs.get(k).getHeadNode().getId();
-      Integer cost = nodeVarcs.get(k).cost;
-      costsMap.put(nodeUi, cost);
-      // System.out.println("Cost between " + nodeVId
-      // + " and " + nodeUi + " is " + cost);
-    }
-
-    // For each pair of adjacent nodes:
-    for (int k = 0; k < nodeVarcs.size(); k++) {
-
-      Integer nodeIdUi = nodeVarcs.get(k).getHeadNode().getId();
-      // We have to detect if the node Ui was processed.
-      // We can use the nodeOrderingMap to do that:
-      Integer positionOfUi = nodeOrderingMap.get(nodeIdUi);
-
-      if (positionOfUi != null && positionOfUi < i) {
-        // System.out.println("::SKIP Ui node " + nodeIdUi);
-        continue;
-      }
-
-      List<Arc> uiArcs = graph.getNodeAdjacentArcs(nodeIdUi);
-
-      // We set the arc from Ui to V as arcFlag False
-      for (int q = 0; q < uiArcs.size(); q++) {
-        Arc currentUiArc = uiArcs.get(q);
-        Integer headNodeId = currentUiArc.getHeadNode().getId();
-        if (headNodeId == nodeVId) {
-          currentUiArc.arcFlag = false;
-          // System.out.println("Setting to set the arc "
-          // + " from Ui to V as arcFlag False");
-        }
-      }
-
-      for (int j = 0; j < nodeVarcs.size(); j++) {
-        Integer nodeIdWj = nodeVarcs.get(j).getHeadNode().getId();
-
-        // Checks if an adjacent node was deleted in previous contractions.
-        Integer positionOfWj = nodeOrderingMap.get(nodeIdWj);
-
-        if (positionOfWj != null && positionOfWj < i) {
-          // System.out.println("::SKIP Wj node " + nodeIdWj);
-          continue;
-        }
-
-        // checks that ui and wj are the same.
-        if (k != j) {
-          // System.out.println("Checking nodes " + nodeIdUi + " - " +
-          // nodeIdWj);
-          int cost = dijkstra.computeShortestPath(nodeIdUi, nodeIdWj);
-          // Verify if the SP without v is better or
-          // worse than Dij = cost(Ui,V)+ cost(V,Wj)
-          int pathThroughV = costsMap.get(nodeIdUi) + costsMap.get(nodeIdWj);
-
-          // to make Dijkstra faster:
-          dijkstra.setCostUpperBound(pathThroughV);
-
-          // System.out.println("COST:" + cost + " - PATH-V: " + pathThroughV);
-
-          if (cost > pathThroughV || cost == 0) {
-            // System.out.println("***ADDING new Arc: "
-            // + nodeIdUi + " - " + nodeIdWj + " COST: " + pathThroughV);
-            // then it is necessary to add the new arc
-            Node nodeUi = graph.getMapNodeId().get(nodeIdUi);
-            Node nodeWj = graph.getMapNodeId().get(nodeIdWj);
-
-            // Arcs in two directions are needed
-            Arc newArcDire1 = new Arc(nodeWj, pathThroughV);
-            Arc newArcDire2 = new Arc(nodeUi, pathThroughV);
-            newArcDire1.arcFlag = true;
-            newArcDire2.arcFlag = true;
-
-            if (addedArcsMap.containsKey(nodeUi)) {
-              List<Arc> addedArcs = addedArcsMap.get(nodeUi);
-              addedArcs.add(newArcDire1);
-            } else {
-              List<Arc> addedArcs = new ArrayList();
-              addedArcs.add(newArcDire1);
-              addedArcsMap.put(nodeUi, addedArcs);
-            }
-
-            if (addedArcsMap.containsKey(nodeWj)) {
-              List<Arc> addedArcs = addedArcsMap.get(nodeWj);
-              addedArcs.add(newArcDire2);
-            } else {
-              List<Arc> addedArcs = new ArrayList();
-              addedArcs.add(newArcDire2);
-              addedArcsMap.put(nodeWj, addedArcs);
-            }
-          }
-          // else no extra arc is needed
-        }
-      }
-    }
-
-    // Finally we add all the new arcs:
-    // Time to add all accumulated arcs.
-    Iterator it = addedArcsMap.keySet().iterator();
-    while (it.hasNext()) {
-      Node node = (Node) it.next();
-      List<Arc> arcsToAdd = addedArcsMap.get(node);
-      for (int k = 0; k < arcsToAdd.size(); k++) {
-        graph.addAdjacentArc(node, arcsToAdd.get(k));
-        // System.out.println("***ADDED ARC: " + node.getId() + " - "
-        // + arcsToAdd.get(k).getHeadNode().getId() + ":: "
-        // + arcsToAdd.get(k).cost);
-      }
-    }
-  }
+//  /**
+//   * Central contraction routine: contract the i-th node in the ordering,
+//   * ignoring nodes 1, ..., i - 1 in the ordering and their adjacent arcs.
+//   * IMPLEMENTATION NOTE: To ignore nodes (and their adjacent arcs), you can
+//   * simply usee Arc class. As it goes the arcFlag member of th along and
+//   * contract nodes, simply set the flags of the arcs adjacent to contracted
+//   * nodes to 0. Additional argument says whether we really want to contract
+//   * the node or just compute the edge difference. Default is false. If true,
+//   * don't change anything in the graph (don't add any arcs and don't set any
+//   * arc flags to false) and return the edge difference.
+//   */
+//  public void contractNode(int i) {
+//    // The following map will save the costs from all Ui to V
+//    Map<Integer, Integer> costsMap = new HashMap();
+//    // The following map keeps all the new arcs that will be added
+//    // in the end.
+//    Map<Node, List<Arc>> addedArcsMap = new HashMap();
+//
+//    // nodeId is "v" the node I want to contract.
+//    Integer nodeVId = nodeOrdering.get(i);
+//    // System.out.println("-----------(" + (i + 1) + ")"
+//    // + " :: Contracting node "
+//    // + nodeVId);
+//    // Node currentNode = graph.getMapNodeId().get(nodeId);
+//    // First we need all adjacent nodes of currentNode.
+//    // list of all "u_i"
+//    List<Arc> nodeVarcs = graph.getNodeAdjacentArcs(nodeVId);
+//
+//    // We set all arcs from all u_i to v as not Flag, so that they
+//    // won't be considered in the calculation of SP.
+//    for (int k = 0; k < nodeVarcs.size(); k++) {
+//      Arc arcToV = nodeVarcs.get(k);
+//      arcToV.arcFlag = false;
+//      Integer nodeUi = nodeVarcs.get(k).getHeadNode().getId();
+//      Integer cost = nodeVarcs.get(k).cost;
+//      costsMap.put(nodeUi, cost);
+//      // System.out.println("Cost between " + nodeVId
+//      // + " and " + nodeUi + " is " + cost);
+//    }
+//
+//    // For each pair of adjacent nodes:
+//    for (int k = 0; k < nodeVarcs.size(); k++) {
+//
+//      Integer nodeIdUi = nodeVarcs.get(k).getHeadNode().getId();
+//      // We have to detect if the node Ui was processed.
+//      // We can use the nodeOrderingMap to do that:
+//      Integer positionOfUi = nodeOrderingMap.get(nodeIdUi);
+//
+//      if (positionOfUi != null && positionOfUi < i) {
+//        // System.out.println("::SKIP Ui node " + nodeIdUi);
+//        continue;
+//      }
+//
+//      List<Arc> uiArcs = graph.getNodeAdjacentArcs(nodeIdUi);
+//
+//      // We set the arc from Ui to V as arcFlag False
+//      for (int q = 0; q < uiArcs.size(); q++) {
+//        Arc currentUiArc = uiArcs.get(q);
+//        Integer headNodeId = currentUiArc.getHeadNode().getId();
+//        if (headNodeId == nodeVId) {
+//          currentUiArc.arcFlag = false;
+//          // System.out.println("Setting to set the arc "
+//          // + " from Ui to V as arcFlag False");
+//        }
+//      }
+//
+//      for (int j = 0; j < nodeVarcs.size(); j++) {
+//        Integer nodeIdWj = nodeVarcs.get(j).getHeadNode().getId();
+//
+//        // Checks if an adjacent node was deleted in previous contractions.
+//        Integer positionOfWj = nodeOrderingMap.get(nodeIdWj);
+//
+//        if (positionOfWj != null && positionOfWj < i) {
+//          // System.out.println("::SKIP Wj node " + nodeIdWj);
+//          continue;
+//        }
+//
+//        // checks that ui and wj are the same.
+//        if (k != j) {
+//          // System.out.println("Checking nodes " + nodeIdUi + " - " +
+//          // nodeIdWj);
+//          int cost = dijkstra.computeShortestPath(nodeIdUi, nodeIdWj);
+//          // Verify if the SP without v is better or
+//          // worse than Dij = cost(Ui,V)+ cost(V,Wj)
+//          int pathThroughV = costsMap.get(nodeIdUi) + costsMap.get(nodeIdWj);
+//
+//          // to make Dijkstra faster:
+//          dijkstra.setCostUpperBound(pathThroughV);
+//
+//          // System.out.println("COST:" + cost + " - PATH-V: " 
+//               + pathThroughV);
+//
+//          if (cost > pathThroughV || cost == 0) {
+//            // System.out.println("***ADDING new Arc: "
+//            // + nodeIdUi + " - " + nodeIdWj + " COST: " + pathThroughV);
+//            // then it is necessary to add the new arc
+//            Node nodeUi = graph.getMapNodeId().get(nodeIdUi);
+//            Node nodeWj = graph.getMapNodeId().get(nodeIdWj);
+//
+//            // Arcs in two directions are needed
+//            Arc newArcDire1 = new Arc(nodeWj, pathThroughV);
+//            Arc newArcDire2 = new Arc(nodeUi, pathThroughV);
+//            newArcDire1.arcFlag = true;
+//            newArcDire2.arcFlag = true;
+//
+//            if (addedArcsMap.containsKey(nodeUi)) {
+//              List<Arc> addedArcs = addedArcsMap.get(nodeUi);
+//              addedArcs.add(newArcDire1);
+//            } else {
+//              List<Arc> addedArcs = new ArrayList();
+//              addedArcs.add(newArcDire1);
+//              addedArcsMap.put(nodeUi, addedArcs);
+//            }
+//
+//            if (addedArcsMap.containsKey(nodeWj)) {
+//              List<Arc> addedArcs = addedArcsMap.get(nodeWj);
+//              addedArcs.add(newArcDire2);
+//            } else {
+//              List<Arc> addedArcs = new ArrayList();
+//              addedArcs.add(newArcDire2);
+//              addedArcsMap.put(nodeWj, addedArcs);
+//            }
+//          }
+//          // else no extra arc is needed
+//        }
+//      }
+//    }
+//
+//    // Finally we add all the new arcs:
+//    // Time to add all accumulated arcs.
+//    Iterator it = addedArcsMap.keySet().iterator();
+//    while (it.hasNext()) {
+//      Node node = (Node) it.next();
+//      List<Arc> arcsToAdd = addedArcsMap.get(node);
+//      for (int k = 0; k < arcsToAdd.size(); k++) {
+//        graph.addAdjacentArc(node, arcsToAdd.get(k));
+//        // System.out.println("***ADDED ARC: " + node.getId() + " - "
+//        // + arcsToAdd.get(k).getHeadNode().getId() + ":: "
+//        // + arcsToAdd.get(k).cost);
+//      }
+//    }
+//  }
 
   // /**
   // * Central contraction routine: contract the i-th node in the ordering,
