@@ -378,72 +378,7 @@ public class MainClass {
     System.out.println("AVERAGE SP. COST: " + totalCost / numberOfExecutions);
 
   }
-
-  /**
-   * Main method.
-   * 
-   * @param args
-   */
-
-  public static void main(String[] args) {
-    // If one wants to reduce the file size.
-    // ReduceFileSize rfs = new ReduceFileSize(
-    // "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
-    // + "src/routeplanning/resources/saarland.osm",
-    // "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
-    // + "src/routeplanning/resources/saarland_reduced.osm");
-    // rfs.process();
-    RoadNetwork roadNet = new RoadNetwork();
-    roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
-        + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
-    // roadNet.readFromOsmFile("D:/workspace/routeplanning/src"
-    // + "/routeplanning/resources/saarland_reduced.osm");
-
-    // System.out.println("****************************"
-    // + "*****************************");
-    // //MainClass.tryDijkstrasWithSimpleHeuristic(roadNet, 100);
-    // System.out.println("****************************"
-    // + "*****************************");
-    // MainClass.tryDijkstrasWithLandmarks(roadNet, 100);
-//    System.out.println("****************************"
-//        + "*****************************");
-    // MainClass.tryArcFlags(roadNet, 100);
-//    System.out.println("****************************"
-//        + "*****************************");
-
-    /*
-     * DijkstraAlgorithm dij = new DijkstraAlgorithm(roadNet);
-     * System.out.println("COST:" + dij.computeShortestPath(385925420,
-     * 262172939)); //MainClass.toTextFile(roadNet, dij.parents,
-     * //"D:/workspace/routeplanning/src/routeplanning/resources/path.txt",
-     * //385925420, 259000790); ArcFlagsAlgorithm afg = new
-     * ArcFlagsAlgorithm(roadNet); afg.precomputeArcFlags(49.20, 49.25, 6.95,
-     * 7.05); System.out.println("COST:" + afg.computeShortestPath(385925420,
-     * 262172939)); pathToTextFile(roadNet, afg.getParents(),
-     * "E:/Documents/UNI/SS12/Efficient Route Planning/" +
-     * "groupRepository/src/routeplanning/resources/path.txt", 385925420,
-     * 262172939);
-     */
-    // RoadNetwork rn;
-    // TestGraphEx6 testgraph = new TestGraphEx6();
-    // rn = testgraph.createSampleGraphEx6();
-    //
-    // System.out.println(rn.asString());
-    // DijkstraAlgorithm dj = new DijkstraAlgorithm(rn);
-    // System.out.println("SP:" + dj.computeShortestPath(0, 8));
-    // dj.printShortestPath(0, 8);
-    //
-    // ContractionHiearchies2 ch = new ContractionHiearchies2(rn);
-    // ch.computeRandomNodeOrdering();
-    // ch.contractNode();
-    System.out.println("****************************"
-        + "*****************************");
-    MainClass.contractFirstNodes(roadNet, 1000);
-    System.out.println("****************************"
-        + "*****************************");    
-  }
-  
-  
+ 
   /**
    * As requested in Exercise Sheet 6 - ex. 2.
    * 
@@ -541,14 +476,157 @@ public class MainClass {
         + edEqualsZero + "| 1 -> " + edEqualsOne + "| 2 -> " + edEqualsTwo
         + "| >=3 -> " + edGreaterEqualsThree);
   }
+  
+  
+  /**
+   * As requested in Exercise Sheet 7 - ex. 2.
+   * 
+   * @param network
+   *          the original road network extracted from the osm file.
+   */
+  public static void tryContractionHierarchies(RoadNetwork network, 
+      int numberOfExecutions) {
+    System.out.println("Start from Largest Connected Component...");
+    RoadNetwork largestComponent = network.reduceToLargestConnectedComponent();
+    System.out.println("End from Largest Connected Component...");
 
+    System.out.println("1. NUMBER OF NODES OF LCC: "
+        + largestComponent.getNodeIds().size());
+
+    System.out.println("2. NUMBER OF ARCS OF LCC: "
+        + largestComponent.getNumberOfArcs());
+    
+    //The four values requested for this exercise sheet
+    long preComputationTime = 0;
+    int totalAddedShortcuts = 0;
+    long totalExecutionTime = 0;
+    Integer totalCost = 0;
+
+
+    DecimalFormat twoDForm = new DecimalFormat("#.##");
+
+    ContractionHierarchies ch = new ContractionHierarchies(largestComponent);
+    long startPre = System.currentTimeMillis();
+    System.out.println("Start of precomputation....");
+    totalAddedShortcuts = ch.precomputationLazy();
+    System.out.println("End of precomputation....");
+    long endPre = System.currentTimeMillis();
+    preComputationTime = endPre - startPre;
+
+    for (int i = 0; i < numberOfExecutions; i++) {
+      // System.out.println("------------------------------------------------");
+      Integer sourceNodeId = largestComponent.getRandomNodeId();
+      Integer targetNodeId = largestComponent.getRandomNodeId();
+      
+      while (sourceNodeId == targetNodeId) {
+        targetNodeId = largestComponent.getRandomNodeId();
+      }
+      
+      System.out.println("CALCULATING shortest path from Node " + sourceNodeId
+          + " TO Node " + targetNodeId);
+      long start = System.currentTimeMillis();
+      Integer cost = ch.computeShortestPath(sourceNodeId, targetNodeId);
+      long end = System.currentTimeMillis();
+
+      totalExecutionTime = totalExecutionTime + (end - start);
+      totalCost = totalCost + cost;
+
+      System.out.println("SHORTEST PATH FROM NODE: " + sourceNodeId
+          + " TO NODE: " + targetNodeId + " :::: " + cost + " seconds");
+
+      // System.out.println("------------------------------------------------");
+    }
+    System.out
+        .println("RUNNING TIME FOR PRECOMPUTATION OF CONTRACTION HIERARCHIES: "
+            + Double.valueOf(twoDForm.format(preComputationTime))
+            + " milliseconds");
+    System.out.println("# ADDED SHORTCUTS: " + totalAddedShortcuts);    
+    System.out.println("AVERAGE QUERY RUNNING TIME: "
+        + Double.valueOf(twoDForm.format((totalExecutionTime)
+            / numberOfExecutions)) + " milliseconds");
+    System.out.println("AVERAGE SP. COST: " + totalCost / numberOfExecutions);
+  }
+
+  /**
+   * Main method.
+   * 
+   * @param args
+   */
+
+  public static void main(String[] args) {
+    // If one wants to reduce the file size.
+    // ReduceFileSize rfs = new ReduceFileSize(
+    // "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
+    // + "src/routeplanning/resources/saarland.osm",
+    // "E:/Documents/UNI/SS12/Efficient Route Planning/groupRepository/"
+    // + "src/routeplanning/resources/saarland_reduced.osm");
+    // rfs.process();
+    RoadNetwork roadNet = new RoadNetwork();
+    roadNet.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
+        + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
+    // roadNet.readFromOsmFile("D:/workspace/routeplanning/src"
+    // + "/routeplanning/resources/saarland_reduced.osm");
+
+    // System.out.println("****************************"
+    // + "*****************************");
+    // //MainClass.tryDijkstrasWithSimpleHeuristic(roadNet, 100);
+    // System.out.println("****************************"
+    // + "*****************************");
+    // MainClass.tryDijkstrasWithLandmarks(roadNet, 100);
+//    System.out.println("****************************"
+//        + "*****************************");
+    // MainClass.tryArcFlags(roadNet, 100);
+//    System.out.println("****************************"
+//        + "*****************************");
+
+    /*
+     * DijkstraAlgorithm dij = new DijkstraAlgorithm(roadNet);
+     * System.out.println("COST:" + dij.computeShortestPath(385925420,
+     * 262172939)); //MainClass.toTextFile(roadNet, dij.parents,
+     * //"D:/workspace/routeplanning/src/routeplanning/resources/path.txt",
+     * //385925420, 259000790); ArcFlagsAlgorithm afg = new
+     * ArcFlagsAlgorithm(roadNet); afg.precomputeArcFlags(49.20, 49.25, 6.95,
+     * 7.05); System.out.println("COST:" + afg.computeShortestPath(385925420,
+     * 262172939)); pathToTextFile(roadNet, afg.getParents(),
+     * "E:/Documents/UNI/SS12/Efficient Route Planning/" +
+     * "groupRepository/src/routeplanning/resources/path.txt", 385925420,
+     * 262172939);
+     */
+    // RoadNetwork rn;
+    // TestGraphEx6 testgraph = new TestGraphEx6();
+    // rn = testgraph.createSampleGraphEx6();
+    //
+    // System.out.println(rn.asString());
+    // DijkstraAlgorithm dj = new DijkstraAlgorithm(rn);
+    // System.out.println("SP:" + dj.computeShortestPath(0, 8));
+    // dj.printShortestPath(0, 8);
+    //
+    // ContractionHiearchies2 ch = new ContractionHiearchies2(rn);
+    // ch.computeRandomNodeOrdering();
+    // ch.contractNode();
+//    System.out.println("****************************"
+//        + "*****************************");
+//    MainClass.contractFirstNodes(roadNet, 1000);
+//    System.out.println("****************************"
+//        + "*****************************");
+    System.out.println("****************************"
+      + "*****************************");
+    MainClass.tryContractionHierarchies(roadNet, 1000);
+    System.out.println("****************************"
+      + "*****************************");
+  }
+  
+  
+  
+  
+  
   /**
    * Export settled nodes to text file, used for tests.
    * 
    * @param afg
    * @param roadNet
    */
-  public static void settledNodesToFile(ArcFlagsAlgorithm afg,
+  private static void settledNodesToFile(ArcFlagsAlgorithm afg,
       RoadNetwork roadNet) {
     Node node;
     String pathOut = "D:/workspace/routeplanning/src/routeplanning/"
@@ -570,7 +648,7 @@ public class MainClass {
   /**
    * Method to export a path to a text file, used for tests.
    */
-  public static void pathToTextFile(RoadNetwork rn,
+  private static void pathToTextFile(RoadNetwork rn,
       Map<Integer, Integer> parent, String pathOut, int sourceNodeId,
       int targetNodeId) {
     try {
@@ -603,7 +681,7 @@ public class MainClass {
   /**
    * Method to export nodes to a file, used for tests.
    */
-  public void exportListNodesToFile(List<Node> nodes, String pathOut) {
+  private void exportListNodesToFile(List<Node> nodes, String pathOut) {
     // String pathOut = "D:/workspace/routeplanning/src/
     // routeplanning/resources/boundaryNodes.txt";
     try {
