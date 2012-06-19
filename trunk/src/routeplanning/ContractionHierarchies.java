@@ -489,10 +489,12 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
   }
 
   /**
-   * Compute the shortest paths from the given source to the given target node.
-   * NOTE 1: If called with target node -1, Dijkstra is run until all nodes
-   * reachable from the source are settled. NOTE 2: If member variable heuristic
-   * is not null, simply add h(u) to the value of node u in the priority queue.
+   * Compute the shortest paths from the given 
+   * source to the given target node.
+   * Two Dijkstra interleaved per query, both considering only
+   * the arc flags set at the end of the precomputation above. 
+   * Dijkstra1 source -> target
+   * Dijkstra2 target -> source
    * 
    * @param sourceNodeId
    * @param targetNodeId
