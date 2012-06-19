@@ -106,25 +106,25 @@ public class LandmarkAlgorithmTest {
     return rn;
   }
   
-  /**
-   * TODO.
-   * @param graph
-   */
-  @Test
-  public void testVisitedNodes() {
-    // Source node0, Target node4
-    RoadNetwork rn = createSampleGraph();
-    LandmarkAlgorithm landAlg = new LandmarkAlgorithm(rn);
-    landAlg.selectLandmarks(2);
-    int cost = landAlg.computeShortestPath(0, 4);
-    int expectedCost = 8;
-    System.out.println("VisitedNodes:" + landAlg.getVisitedNodes().toString());
-    String visitedNodes = landAlg.getVisitedNodes().toString();
-    String expectedVisitedNodes = "{0=0, 1=2, 2=4, 3=6, 4=8}";
-    System.out.println("Selected nodes: " + landAlg.getLandmarkIds());
-    Assert.assertEquals(expectedCost, cost);
-    Assert.assertEquals(expectedVisitedNodes, visitedNodes);
-  }
+//  /**
+//   * TODO.
+//   * @param graph
+//   */
+//  @Test
+//  public void testVisitedNodes() {
+//    // Source node0, Target node4
+//    RoadNetwork rn = createSampleGraph();
+//    LandmarkAlgorithm landAlg = new LandmarkAlgorithm(rn);
+//    landAlg.selectLandmarks(2);
+//    int cost = landAlg.computeShortestPath(0, 4);
+//    int expectedCost = 8;
+//    System.out.println("VisitedNodes:" + landAlg.getVisitedNodes().toString());
+//    String visitedNodes = landAlg.getVisitedNodes().toString();
+//    String expectedVisitedNodes = "{0=0, 1=2, 2=4, 3=6, 4=8}";
+//    System.out.println("Selected nodes: " + landAlg.getLandmarkIds());
+//    Assert.assertEquals(expectedCost, cost);
+//    Assert.assertEquals(expectedVisitedNodes, visitedNodes);
+//  }
   
   /**
    * Tests the behavior of the selection of landmarks.
