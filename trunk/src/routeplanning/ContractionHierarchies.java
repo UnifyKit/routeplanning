@@ -133,8 +133,8 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
    * the original graph), reset the arc flags such that only the arc flags for
    * arcs u, v with orderOfNode[u] < orderOfNode[v] are true.
    */
-  public void precomputationLazy() {
-
+  public int precomputationLazy() {
+    int numberOfAddedShortcuts = 0;
     computeNodeOrderingByEdgeDifference();
     
 //    System.out.println(orderOfNodeMap);
@@ -169,7 +169,8 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
         if (info.get(1).intValue() <= currentNode.edgeDiff) {
 //          System.out.println("NOTHING HAS CHANGED");
           //real contraction
-          contractNode(orderOfNodeMap.get(currentNode.id), false);
+          info = contractNode(orderOfNodeMap.get(currentNode.id), false);
+          numberOfAddedShortcuts = numberOfAddedShortcuts + info.get(0);
         } else {
           orderOfNodeMap.remove(currentNode.id);
           nodeOrdering.remove(new Integer(currentNode.id));
@@ -194,6 +195,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
       // orderOfNodeU);
 
     }
+    return numberOfAddedShortcuts;
   }
 
   /**
