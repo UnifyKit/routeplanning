@@ -3,6 +3,7 @@ package routeplanning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -205,6 +206,8 @@ public class ContractionHiearchiesTest {
    */
   @Test
   public void testRoadNetwork() {
+    System.out.println("------------------------testRoadNetwork"
+        + "------------------------");
     RoadNetwork rn = createSampleGraph();
     ContractionHierarchies ch = new ContractionHierarchies(rn);
     int min = 0;
@@ -218,6 +221,8 @@ public class ContractionHiearchiesTest {
    */
   @Test
   public void testComputeRandomNodeOrdering() {
+    System.out.println("------------------------testComputeRandomNodeOrdering"
+        + "------------------------");
     RoadNetwork rn = createSampleGraph();
     ContractionHierarchies ch = new ContractionHierarchies(rn);
     ch.computeRandomNodeOrdering();
@@ -271,6 +276,16 @@ public class ContractionHiearchiesTest {
     // Checks if the elements in the reordered list are the same
     // as in the old list.
     Assert.assertTrue(realOrdering.size() == 0);
+    
+    PriorityQueue<ContractedNode> pq = ch.getPriorityQueue();
+    System.out.println("PRIORITY QUEUE");
+    System.out.println(pq);
+    
+    String expectedQueue = "[ID: 1 ED: -3, ID: 2 ED: -2, ID: 4 ED: -1,"
+      + " ID: 8 ED: -2, ID: 7 ED: -2, ID: 6 ED: -1, ID: 5 ED: -1,"
+      + " ID: 3 ED: -1, ID: 9 ED: -1, ID: 10 ED: -1, ID: 11 ED: -2,"
+      + " ID: 12 ED: -1, ID: 13 ED: 0]";
+    Assert.assertEquals(expectedQueue, pq.toString());
   }
 
   /**
@@ -279,6 +294,8 @@ public class ContractionHiearchiesTest {
    */
   @Test
   public void testArcFlags() {
+    System.out.println("------------------------testArcFlags"
+        + "------------------------");
     RoadNetwork rn = createSampleGraph();
     List<List<Arc>> adjacentArcs = rn.getAdjacentArcs();
 
@@ -313,14 +330,7 @@ public class ContractionHiearchiesTest {
 
     // We are not invoking precompute(), therefore
     // we have to set all arcs as flags manually
-    List<List<Arc>> adjacentArcs = rn.getAdjacentArcs();
-    for (int i = 0; i < adjacentArcs.size(); i++) {
-      List<Arc> arcList = adjacentArcs.get(i);
-      for (int k = 0; k < arcList.size(); k++) {
-        Arc currentArc = arcList.get(k);
-        currentArc.arcFlag = true;
-      }
-    }
+    ch.setAllArcsToTrue();
 
     System.out.println(rn.getNodeIds());
 
@@ -336,12 +346,16 @@ public class ContractionHiearchiesTest {
     ch.setNodeOrdering(ordering);
 
     // Now we contract the node V with ID = 3
-    ch.contractNode(0, false);
+    List<Integer> info = ch.contractNode(0, false);
 
     System.out.println(rn.asString());
     String expectedValue = "1|3-4-2-\n3|1-2-4-5-6-\n2|3-1-4-5-6-"
         + "\n4|1-3-5-2-\n5|3-4-6-2-\n6|3-5-2-\n";
     Assert.assertEquals(expectedValue, rn.asString());
+    //Checks the numer of 
+    Assert.assertEquals(new Integer(4), info.get(0));
+    Assert.assertEquals(new Integer(-1), info.get(1));
+    
   }
 
   /**
@@ -478,6 +492,36 @@ public class ContractionHiearchiesTest {
     Assert.assertEquals(new Integer(-20), new Integer(totalEdgeDifference));
     Assert.assertEquals(new Integer(1), new Integer(totalAddedShortcuts));
   }
+  
+  /**
+   * Tests the precomputation method with lazy heuristic.
+   */
+  @Test
+  public void testPrecomputationLazy() {
+    System.out.println("----------------------testPrecomputationLazy"
+        + "----------------------");
+    RoadNetwork rn = createSampleGraph();
+    System.out.println(rn.asString());
+    
+    ContractionHierarchies ch = new ContractionHierarchies(rn);
+    ch.precomputationLazy();
+    
+    List<Integer> nodeOrdering = ch.getNodeOrdering();
+    PriorityQueue<ContractedNode> pq = ch.getPriorityQueue();    
+    Map<Integer, Integer> orderingMap = ch.getNodeOrderingMap();
+    System.out.println(nodeOrdering);
+    System.out.println(orderingMap);
+    
+    Assert.assertTrue(pq.isEmpty());
+    Assert.assertEquals(new Integer(nodeOrdering.size()), 
+        new Integer(rn.getNodeIds().size()));
+    
+    for (int i = 0; i < nodeOrdering.size(); i++) {
+      Integer nodeId =  nodeOrdering.get(i);
+      Assert.assertEquals(orderingMap.get(nodeId), new Integer(i));
+    }       
+  }
+}
 
   /**
    * 
