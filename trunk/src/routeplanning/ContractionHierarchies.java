@@ -139,8 +139,8 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
     int numberOfAddedShortcuts = 0;
     computeNodeOrderingByEdgeDifference();
     System.out.println("computeNodeOrderingByEdgeDifference .... COMPLETED!");
-    
-//    System.out.println(orderOfNodeMap);
+    System.out.println(nodeOrdering);    
+    System.out.println(orderOfNodeMap);
     
     nodeOrdering = new ArrayList();
     orderOfNodeMap = new HashMap();
@@ -152,7 +152,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
     nodeOrdering.add(currentNode.id);
     contractNode(positionCounter, false);
     orderOfNodeMap.put(currentNode.id, positionCounter);
-//    System.out.println("BY: " + currentNode.toString());
+//      System.out.println("BY: " + currentNode.toString());
     
     while (!pq.isEmpty()) {
       positionCounter++;
@@ -160,17 +160,17 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
       
       if (!orderOfNodeMap.containsKey(currentNode.id)) {
         nodeOrdering.add(currentNode.id);
-//        System.out.println(nodeOrdering);
-//        System.out.println("BY: " + currentNode.toString());
+//          System.out.println(nodeOrdering);
+//          System.out.println("BY: " + currentNode.toString());
         orderOfNodeMap.put(currentNode.id, positionCounter);
         //Just getting the info
         List<Integer> info = 
           contractNode(orderOfNodeMap.get(currentNode.id), true);
-//        System.out.println("NEW ED: " + info.get(1));
-//        System.out.println("ADDED SC: " + info.get(0));
+//          System.out.println("NEW ED: " + info.get(1));
+//          System.out.println("ADDED SC: " + info.get(0));
         //nothing has changed
         if (info.get(1).intValue() <= currentNode.edgeDiff) {
-//          System.out.println("NOTHING HAS CHANGED");
+//            System.out.println("NOTHING HAS CHANGED");
           //real contraction
           info = contractNode(orderOfNodeMap.get(currentNode.id), false);
           numberOfAddedShortcuts = numberOfAddedShortcuts + info.get(0);
@@ -179,6 +179,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
           nodeOrdering.remove(new Integer(currentNode.id));
           ContractedNode newContractedNode 
             = new ContractedNode(currentNode.id, info.get(1));
+          pq.add(newContractedNode);
           positionCounter--;
         }
       } 
@@ -258,8 +259,8 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
     while (it.hasNext()) {
       Integer currentEdgeDiff = (Integer) it.next();
       List<Integer> nodes = edgeDiffMap.get(currentEdgeDiff);
-//      System.out.println("EDGE DIFF: " + currentEdgeDiff);
-//      System.out.println(nodes);
+//        System.out.println("EDGE DIFF: " + currentEdgeDiff);
+//        System.out.println(nodes);
       for (int i = 0; i < nodes.size(); i++) {
         orderOfNodeMap.put(nodes.get(i), counter);
         nodeOrdering.add(nodes.get(i));
