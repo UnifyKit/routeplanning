@@ -132,6 +132,8 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
    * below. After all nodes have been contracted (and various shortcuts added to
    * the original graph), reset the arc flags such that only the arc flags for
    * arcs u, v with orderOfNode[u] < orderOfNode[v] are true.
+   * 
+   * @return the number of added shortcuts.
    */
   public int precomputationLazy() {
     int numberOfAddedShortcuts = 0;
