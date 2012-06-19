@@ -347,6 +347,9 @@ public class ContractionHierarchies {
         }
       }
     }
+    createdShortcuts = createdShortcuts / 2;
+    removedArcs = removedArcs / 2;
+    
     edgeDifference = createdShortcuts - removedArcs;
     infoList.add(createdShortcuts);
     infoList.add(edgeDifference);
