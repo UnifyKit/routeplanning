@@ -484,7 +484,7 @@ public class MainClass {
     for (int i = 0; i < numberOfExecutions; i++) {
       // Compute Edge difference values, without modifying the graph.
       long start = System.currentTimeMillis();
-      List<Integer> info = ch.contractNode(i, false);
+      List<Integer> info = ch.contractNode(i, true);
       long end = System.currentTimeMillis();
       
       int ed = info.get(1);
@@ -506,7 +506,7 @@ public class MainClass {
         System.out.println("???");
       }
       
-      System.out.println("------------------------------------------------");
+      //System.out.println("------------------------------------------------");
       int shortcutsAdded = info.get(0);
 
       if (shortcutsAdded == 0) {
@@ -522,9 +522,8 @@ public class MainClass {
       } else {
         System.out.println("???shortcutsAdded" + shortcutsAdded);
       }
-
       totalExecutionTime = totalExecutionTime + (end - start);
-      System.out.println("------------------------------------------------");
+      //System.out.println("------------------------------------------------");
     }
 
     System.out.println("AVERAGE CONTRACTION TIME: "
