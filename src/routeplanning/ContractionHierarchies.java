@@ -186,18 +186,29 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
 //        System.out.println(currentNode.toString() + " ALREADY THERE");
 //      }
     }
+    //System.out.println(graph.asString());
     // Reset Arc Flags such that only the arc flags for arcs u,v
     // with orderOfNode[u] < orderOfNode[v]
     List<List<Arc>> adjArcs = graph.getAdjacentArcs();
     List<Integer> nodeIds = graph.getNodeIds();
-    // System.out.println("orderOfNodeMap: " + orderOfNodeMap.toString());
+    //System.out.println("orderOfNodeMap: " + orderOfNodeMap.toString());
     for (int i = 0; i < adjArcs.size(); i++) {
       int nodeId = nodeIds.get(i);
       int orderOfNodeU = orderOfNodeMap.get(nodeId);
       // System.out.println("nodeId: " + nodeId + " orderOfNode: " +
       // orderOfNodeU);
-
+      List<Arc> adjArcsU = adjArcs.get(i);
+      for(int j = 0; j < adjArcsU.size(); j++) {
+        int adjNodeId = adjArcsU.get(j).headNode.getId();
+        int orderOfAdjNode = orderOfNodeMap.get(adjNodeId);
+        if(orderOfAdjNode < orderOfNodeU) {
+          adjArcsU.get(j).arcFlag = false;
+        } else {
+          adjArcsU.get(j).arcFlag = true;
+        }
+      }
     }
+    //System.out.println(graph.asStringWithArcFlags());
     return numberOfAddedShortcuts;
   }
 
@@ -688,9 +699,6 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
               activeNode = new ActiveNode(arc.headNode.id, distToAdjNode, 0,
                   currentNode.id);
             } else {
-              // activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
-              // heuristic.get(this.graph.getNodeIds()
-//              .indexOf(arc.headNode.id)));
               activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
                   heuristic.get(this.graph.getNodeIdPosAdjArc().get(
                       arc.headNode.id)), currentNode.id);
