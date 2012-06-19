@@ -138,6 +138,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
   public int precomputationLazy() {
     int numberOfAddedShortcuts = 0;
     computeNodeOrderingByEdgeDifference();
+    System.out.println("computeNodeOrderingByEdgeDifference .... COMPLETED!");
     
 //    System.out.println(orderOfNodeMap);
     
