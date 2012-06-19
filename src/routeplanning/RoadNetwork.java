@@ -490,7 +490,29 @@ public class RoadNetwork {
     }
     return outputString;
   }
-
+  /**
+   * Get RoadNetwork as a String with arcFlags.
+   * 
+   * @return
+   */
+  public String asStringWithArcFlags() {
+    String outputString = new String();
+    for (int i = 0; i < nodeIds.size(); i++) {
+      Integer nodeId = nodeIds.get(i);
+      outputString = outputString + nodeId + "|";
+      List<Arc> arcs = getAdjacentArcs().get(i);
+      if (!arcs.isEmpty()) {
+        for (int k = 0; k < arcs.size(); k++) {
+          if(arcs.get(k).arcFlag) {
+            outputString = outputString + ((arcs.get(k)).getHeadNode()).getId()
+                + "(" + arcs.get(k).cost + ")" + "-";
+          }
+        }
+      }
+      outputString = outputString + "\n";
+    }
+    return outputString;
+  }
   /**
    * Generated a random integers in range from 0 to the size of the nodes' list.
    * It returns the node ID saved at that position in the list.
