@@ -476,7 +476,6 @@ public class MainClass {
         + largestComponent.getNumberOfArcs());
 
     ContractionHierarchies ch = new ContractionHierarchies(largestComponent);
-    ch.setAllArcsToTrue();
     ch.computeRandomNodeOrdering();
 
     long totalExecutionTime = 0;
