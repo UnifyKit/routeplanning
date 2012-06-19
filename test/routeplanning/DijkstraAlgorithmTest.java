@@ -11,6 +11,7 @@ import org.junit.Test;
 
 /**
  * Testing class of class DijkstraAlgorithm.
+ * 
  * @author AAA
  */
 public class DijkstraAlgorithmTest {
@@ -128,7 +129,8 @@ public class DijkstraAlgorithmTest {
     Integer cost = alg.computeShortestPath(0, 4);
     Integer expectedValue = 3;
     Assert.assertEquals(cost, expectedValue);
-  }  
+  }
+
   /**
    * Tests ComputeShortestPath() with target node having -1 as parameter.
    */
@@ -139,31 +141,31 @@ public class DijkstraAlgorithmTest {
     alg.computeShortestPath(0, -1);
     Map<Integer, Integer> visitedNodes = alg.getVisitedNodes();
     System.out.println("SIZE OF VISITED NODES" + visitedNodes.size());
-    Assert.assertTrue("Visited nodes is not of the expected size", 
+    Assert.assertTrue("Visited nodes is not of the expected size",
         visitedNodes.size() == 6);
-    
+
     boolean conformsResult = true;
-    
+
     if (visitedNodes.get(1) != 1) {
       conformsResult = false;
     }
-    
+
     if (visitedNodes.get(2) != 4) {
       conformsResult = false;
     }
-    
+
     if (visitedNodes.get(3) != 2) {
       conformsResult = false;
     }
-    
+
     if (visitedNodes.get(4) != 3) {
       conformsResult = false;
     }
-    
+
     if (visitedNodes.get(5) != 4) {
       conformsResult = false;
     }
-    
+
     Assert.assertTrue(conformsResult);
   }
 
@@ -176,68 +178,68 @@ public class DijkstraAlgorithmTest {
     DijkstraAlgorithm alg = new DijkstraAlgorithm(rn);
     alg.computeShortestPath(0, 4);
     Map<Integer, Integer> visitedNodes = alg.getVisitedNodes();
-    
+
     boolean conformsResult = true;
-    
+
     if (visitedNodes.get(1) != 1) {
       conformsResult = false;
     }
-    
+
     if (visitedNodes.get(3) != 2) {
       conformsResult = false;
     }
-    
+
     if (visitedNodes.get(4) != 3) {
       conformsResult = false;
     }
-    
+
     Assert.assertTrue(conformsResult);
   }
-  
+
   /**
    * Tests ComputeShortestPath() between two nodes reading from OSM.
    */
   @Test
   public void testComputeShortestPathFromOsm() {
-    //reduced version of the graph
+    // reduced version of the graph
     RoadNetwork rn = buildGraphFromOsm().reduceToLargestConnectedComponent();
     DijkstraAlgorithm alg = new DijkstraAlgorithm(rn);
     Integer cost = alg.computeShortestPath(0, 4);
 
-    //Calculate the expected value (used to verify result):
-//    Node node0 = new Node(0, 49.3413853, 7.3014897);
-//    Node node1 = new Node(1, 49.3407084, 7.3006280);
-//    Node node2 = new Node(2, 49.3406105, 7.3004165);
-//    Node node3 = new Node(3, 49.3407516, 7.2998333);
-//    Node node4 = new Node(4, 49.3401466, 7.3997222);
-//    Node node5 = new Node(5, 49.3401942, 7.2998333);
-//    
-//    int cost01 = rn.computeCost("motorway", rn.getDistance2(node0, node1));
-//    int cost02 = rn.computeCost("motorway", rn.getDistance2(node0, node2));
-//    int cost03 = rn.computeCost("motorway", rn.getDistance2(node0, node3));
-//    int cost04 = rn.computeCost("motorway", rn.getDistance2(node0, node4));
-//    
-//    int cost34 = rn.computeCost("motorway", rn.getDistance2(node3, node4));
-//    int cost13 = rn.computeCost("motorway", rn.getDistance2(node1, node3));
-//    int cost25 = rn.computeCost("motorway", rn.getDistance2(node2, node5));
-//    int cost23 = rn.computeCost("motorway", rn.getDistance2(node2, node3));
-//    int cost54 = rn.computeCost("motorway", rn.getDistance2(node5, node4));
-//    
-//    System.out.println("==================================");
-//    System.out.println("0-1::: " + cost01);
-//    System.out.println("0-2::: " + cost02);
-//    System.out.println("0-3::: " + cost03);
-//    System.out.println("0-4::: " + cost04);
-//    System.out.println("3-4::: " + cost34);
-//    System.out.println("1-3::: " + cost13);
-//    System.out.println("2-5::: " + cost25);
-//    System.out.println("2-3::: " + cost23); 
-//    System.out.println("5-4::: " + cost54);
-    
+    // Calculate the expected value (used to verify result):
+    // Node node0 = new Node(0, 49.3413853, 7.3014897);
+    // Node node1 = new Node(1, 49.3407084, 7.3006280);
+    // Node node2 = new Node(2, 49.3406105, 7.3004165);
+    // Node node3 = new Node(3, 49.3407516, 7.2998333);
+    // Node node4 = new Node(4, 49.3401466, 7.3997222);
+    // Node node5 = new Node(5, 49.3401942, 7.2998333);
+    //
+    // int cost01 = rn.computeCost("motorway", rn.getDistance2(node0, node1));
+    // int cost02 = rn.computeCost("motorway", rn.getDistance2(node0, node2));
+    // int cost03 = rn.computeCost("motorway", rn.getDistance2(node0, node3));
+    // int cost04 = rn.computeCost("motorway", rn.getDistance2(node0, node4));
+    //
+    // int cost34 = rn.computeCost("motorway", rn.getDistance2(node3, node4));
+    // int cost13 = rn.computeCost("motorway", rn.getDistance2(node1, node3));
+    // int cost25 = rn.computeCost("motorway", rn.getDistance2(node2, node5));
+    // int cost23 = rn.computeCost("motorway", rn.getDistance2(node2, node3));
+    // int cost54 = rn.computeCost("motorway", rn.getDistance2(node5, node4));
+    //
+    // System.out.println("==================================");
+    // System.out.println("0-1::: " + cost01);
+    // System.out.println("0-2::: " + cost02);
+    // System.out.println("0-3::: " + cost03);
+    // System.out.println("0-4::: " + cost04);
+    // System.out.println("3-4::: " + cost34);
+    // System.out.println("1-3::: " + cost13);
+    // System.out.println("2-5::: " + cost25);
+    // System.out.println("2-3::: " + cost23);
+    // System.out.println("5-4::: " + cost54);
+
     Integer expectedValue = 230;
     Assert.assertEquals(cost, expectedValue);
   }
-  
+
   /**
    * Heuristic function test using graph sample from lecture 3.
    */
@@ -341,8 +343,7 @@ public class DijkstraAlgorithmTest {
     heuristic.add(10);
 
     String stringRep = rn.asString();
-    System.out
-        .println("--------------HeuristicTest----------------");
+    System.out.println("--------------HeuristicTest----------------");
     System.out.println(rn.asString());
     DijkstraAlgorithm dij = new DijkstraAlgorithm(rn);
     dij.setHeuristic(heuristic);
@@ -355,11 +356,10 @@ public class DijkstraAlgorithmTest {
     Assert.assertEquals(expectedCost, cost);
     Assert.assertEquals(expectedVisitedNodes, visitedNodes);
 
-    System.out
-        .println("--------------HeuristicTest----------------");
+    System.out.println("--------------HeuristicTest----------------");
 
   }
-  
+
   /**
    * Tests if all the structures needed by DijkstraAlgorithm are correctly
    * reseted.
@@ -370,64 +370,64 @@ public class DijkstraAlgorithmTest {
     DijkstraAlgorithm alg = new DijkstraAlgorithm(rn);
     Integer cost = alg.computeShortestPath(0, 4);
     Integer expectedValue = 230;
-    
+
     cost = alg.computeShortestPath(0, 4);
     Assert.assertEquals(cost, expectedValue);
   }
-  
-//Commented because it uses saarland.osm as hardcoded test file
-  
+
+  // Commented because it uses saarland.osm as hardcoded test file
+
   /**
-   * Test of heuristic to see if it is admissable using a random value 
-   * h(u) <= dist(u,v).
+   * Test of heuristic to see if it is admissable using a random value h(u) <=
+   * dist(u,v).
    */
-//  @Test
-//  public void heuristicAdmissableTest() {
-//    RoadNetwork rn = new RoadNetwork();
-//    RoadNetwork lc;
-//    List<Integer> heuristic;
-//    boolean admissableTest = true;
-//    int sourceNodeId;
-//    int targetNodeId;
-//    int distUT;
-//    int hu;
-//    System.out.println("-----------------HeuristicAdmissableTest--"
-//      + "-------------------");
-//    rn.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
-//        + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
-//    //rn.readFromOsmFile("D:/workspace/routeplanning/src/
-//    //+routeplanning/resources/saarland_reduced.osm");
-//    //rn.computeStraightLineHeuristic(259000790);
-//    
-//    //lc = rn.reduceToLargestConnectedComponent();
-//    
-//    DijkstraAlgorithm dij = new DijkstraAlgorithm(rn);
-//    
-//    for (int i = 0; i < 10; i++) {
-//      sourceNodeId = rn.getRandomNodeId();
-//      targetNodeId = rn.getRandomNodeId();
-//      distUT = dij.computeShortestPath(sourceNodeId, targetNodeId);
-//      heuristic = rn.computeStraightLineHeuristic(targetNodeId);
-//      hu = heuristic.get(rn.getNodeIdPosAdjArc().get(sourceNodeId));
-//      if (hu > distUT) {
-//        System.out.println("Error h(u) is not admissable from: " 
-//          + sourceNodeId + " to: " + targetNodeId);
-//        admissableTest = false;
-//      }
-//      System.out.println("h(u): " + hu);
-//      System.out.println("dist(u,t): " + distUT);
-//      System.out.println("************************");
-//    }
-//    boolean expectedValue = true;
-//    Assert.assertEquals(expectedValue, admissableTest);
-//    System.out.println("-----------------HeuristicAdmissableTest--"
-//        + "-------------------");
-//  }
-  
+  // @Test
+  // public void heuristicAdmissableTest() {
+  // RoadNetwork rn = new RoadNetwork();
+  // RoadNetwork lc;
+  // List<Integer> heuristic;
+  // boolean admissableTest = true;
+  // int sourceNodeId;
+  // int targetNodeId;
+  // int distUT;
+  // int hu;
+  // System.out.println("-----------------HeuristicAdmissableTest--"
+  // + "-------------------");
+  // rn.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
+  // + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
+  // //rn.readFromOsmFile("D:/workspace/routeplanning/src/
+  // //+routeplanning/resources/saarland_reduced.osm");
+  // //rn.computeStraightLineHeuristic(259000790);
+  //
+  // //lc = rn.reduceToLargestConnectedComponent();
+  //
+  // DijkstraAlgorithm dij = new DijkstraAlgorithm(rn);
+  //
+  // for (int i = 0; i < 10; i++) {
+  // sourceNodeId = rn.getRandomNodeId();
+  // targetNodeId = rn.getRandomNodeId();
+  // distUT = dij.computeShortestPath(sourceNodeId, targetNodeId);
+  // heuristic = rn.computeStraightLineHeuristic(targetNodeId);
+  // hu = heuristic.get(rn.getNodeIdPosAdjArc().get(sourceNodeId));
+  // if (hu > distUT) {
+  // System.out.println("Error h(u) is not admissable from: "
+  // + sourceNodeId + " to: " + targetNodeId);
+  // admissableTest = false;
+  // }
+  // System.out.println("h(u): " + hu);
+  // System.out.println("dist(u,t): " + distUT);
+  // System.out.println("************************");
+  // }
+  // boolean expectedValue = true;
+  // Assert.assertEquals(expectedValue, admissableTest);
+  // System.out.println("-----------------HeuristicAdmissableTest--"
+  // + "-------------------");
+  // }
+
   /**
-   * Tests visited node marks and parents list after computation
-   * of shortest path.
-   */ 
+   * Tests visited node marks and parents list after computation of shortest
+   * path.
+   */
   @Test
   public void pathTest() {
     RoadNetwork rn;
@@ -441,4 +441,5 @@ public class DijkstraAlgorithmTest {
     Assert.assertEquals(expectedValue, dij.parents.toString());
     System.out.println("----------------PathTest-----------------------");
   }
+
 }
