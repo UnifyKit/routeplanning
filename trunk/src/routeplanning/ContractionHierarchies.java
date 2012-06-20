@@ -139,8 +139,8 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
     int numberOfAddedShortcuts = 0;
     computeNodeOrderingByEdgeDifference();
     System.out.println("computeNodeOrderingByEdgeDifference .... COMPLETED!");
-    System.out.println(nodeOrdering);    
-    System.out.println(orderOfNodeMap);
+//    System.out.println(nodeOrdering);    
+//    System.out.println(orderOfNodeMap);
     
     nodeOrdering = new ArrayList();
     orderOfNodeMap = new HashMap();
@@ -199,13 +199,13 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
       // System.out.println("nodeId: " + nodeId + " orderOfNode: " +
       // orderOfNodeU);
       List<Arc> adjArcsU = adjArcs.get(i);
-      for(int j = 0; j < adjArcsU.size(); j++) {
+      for (int j = 0; j < adjArcsU.size(); j++) {
         int adjNodeId = adjArcsU.get(j).headNode.getId();
         int orderOfAdjNode = orderOfNodeMap.get(adjNodeId);
-        if(orderOfAdjNode < orderOfNodeU) {
-          adjArcsU.get(j).arcFlag = false;
+        if (orderOfAdjNode < orderOfNodeU) {
+          (adjArcsU.get(j)).arcFlag = false;
         } else {
-          adjArcsU.get(j).arcFlag = true;
+          (adjArcsU.get(j)).arcFlag = true;
         }
       }
     }
