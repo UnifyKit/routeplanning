@@ -503,7 +503,7 @@ public class RoadNetwork {
       List<Arc> arcs = getAdjacentArcs().get(i);
       if (!arcs.isEmpty()) {
         for (int k = 0; k < arcs.size(); k++) {
-          if(arcs.get(k).arcFlag) {
+          if (arcs.get(k).arcFlag) {
             outputString = outputString + ((arcs.get(k)).getHeadNode()).getId()
                 + "(" + arcs.get(k).cost + ")" + "-";
           }
