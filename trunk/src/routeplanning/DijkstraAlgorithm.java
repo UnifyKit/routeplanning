@@ -16,12 +16,12 @@ public class DijkstraAlgorithm {
    * Indicator which node was visited by a particular run of Dijkstra. Useful
    * for computing the connected components;
    */
-  protected Map<Integer, Integer> visitedNodeMarks;
+  protected Map<Long, Integer> visitedNodeMarks;
 
   /**
    * Reference to graph on which this object is supposed to work.
    */
-  protected RoadNetwork graph;
+  protected Network graph;
 
   /**
    * Class needed to compare the current values of two nodes. This is required
@@ -47,7 +47,7 @@ public class DijkstraAlgorithm {
   /**
    * Parent pointers computed by the last call to computeShortestPath.
    */
-  protected Map<Integer, Integer> parents;
+  protected Map<Long, Long> parents;
 
   /**
    * Whether computeShortestPath should consider the arcFlag from each Arc or
@@ -71,7 +71,7 @@ public class DijkstraAlgorithm {
    * 
    * @param graph
    */
-  public DijkstraAlgorithm(RoadNetwork graph) {
+  public DijkstraAlgorithm(Network graph) {
     this.graph = graph;
     this.costUpperBound = Integer.MAX_VALUE;
     this.maxNumSettledNodes = Integer.MAX_VALUE;
@@ -114,9 +114,9 @@ public class DijkstraAlgorithm {
    * @param targetNodeId
    * @return
    */
-  public int computeShortestPath(int sourceNodeId, int targetNodeId) {
-    visitedNodeMarks = new HashMap<Integer, Integer>();
-    parents = new HashMap<Integer, Integer>();
+  public int computeShortestPath(long sourceNodeId, long targetNodeId) {
+    visitedNodeMarks = new HashMap<Long, Integer>();
+    parents = new HashMap<Long, Long>();
     int shortestPathCost = 0;
     List<Arc> adjArcsCurrentNode;
     // int pos;
@@ -148,7 +148,7 @@ public class DijkstraAlgorithm {
 
       // settle node
       visitedNodeMarks.put(currentNode.id, currentNode.dist);
-      parents.put((Integer) currentNode.id, (Integer) currentNode.parent);
+      parents.put((Long) currentNode.id, (Long) currentNode.parent);
       numSettledNodes++;
       /*
        * System.out.println("ADDED:" + (Integer) currentNode.id + " -> " +
@@ -173,25 +173,28 @@ public class DijkstraAlgorithm {
 
       // search adjacent node with shortest distance
       adjArcsCurrentNode = this.graph.getNodeAdjacentArcs(currentNode.id);
-      for (int i = 0; i < adjArcsCurrentNode.size(); i++) {
-        Arc arc;
-        arc = adjArcsCurrentNode.get(i);
-        if (this.considerArcFlags && !arc.arcFlag) {
-          continue;
-        }
-        if (!isVisited(arc.headNode.id)) {
-          distToAdjNode = currentNode.dist + arc.cost;
-          if (heuristic == null) {
-            activeNode = new ActiveNode(arc.headNode.id, distToAdjNode, 0,
-                currentNode.id);
-          } else {
-            // activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
-            // heuristic.get(this.graph.getNodeIds().indexOf(arc.headNode.id)));
-            activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
-                heuristic.get(this.graph.getNodeIdPosAdjArc().get(
-                    arc.headNode.id)), currentNode.id);
+      if (adjArcsCurrentNode != null) {
+        for (int i = 0; i < adjArcsCurrentNode.size(); i++) {
+          Arc arc;
+          arc = adjArcsCurrentNode.get(i);
+          if (this.considerArcFlags && !arc.arcFlag) {
+            continue;
           }
-          pq.add(activeNode);
+          if (!isVisited(arc.headNode.getId())) {
+            distToAdjNode = currentNode.dist + arc.cost;
+            if (heuristic == null) {
+              activeNode = new ActiveNode(arc.headNode.getId(), distToAdjNode,
+                  0, currentNode.id);
+            } else {
+              // activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
+              // heuristic.get(this.graph.getNodeIds()
+              //.indexOf(arc.headNode.id)));
+              activeNode = new ActiveNode(arc.headNode.getId(), distToAdjNode,
+                  heuristic.get(this.graph.getNodeIdPosAdjArc().get(
+                      arc.headNode.getId())), currentNode.id);
+            }
+            pq.add(activeNode);
+          }
         }
       }
     }
@@ -208,7 +211,7 @@ public class DijkstraAlgorithm {
    * 
    * @param nodeId
    */
-  public Boolean isVisited(int nodeId) {
+  public Boolean isVisited(long nodeId) {
     if (visitedNodeMarks.containsKey(nodeId)) {
       return true;
     }
@@ -220,7 +223,7 @@ public class DijkstraAlgorithm {
    * 
    * @return visitedNodeMarks
    */
-  public Map<Integer, Integer> getVisitedNodes() {
+  public Map<Long, Integer> getVisitedNodes() {
     return visitedNodeMarks;
   }
 
@@ -229,7 +232,7 @@ public class DijkstraAlgorithm {
    * 
    * @return visitedNodeMarks
    */
-  public Map<Integer, Integer> getParents() {
+  public Map<Long, Long> getParents() {
     return parents;
   }
 
@@ -249,11 +252,11 @@ public class DijkstraAlgorithm {
    * @param targetNodeId
    * @return
    */
-  public List<Float> getPathForGoogle(int sourceNodeId, int targetNodeId) {
+  public List<Float> getPathForGoogle(long sourceNodeId, long targetNodeId) {
     List<Float> pathCoordinates = new ArrayList();
 
     Node currentNode, prevNode;
-    int currentNodeId, prevNodeId;
+    long currentNodeId, prevNodeId;
 
     currentNode = graph.getMapNodeId().get(targetNodeId);
     currentNodeId = targetNodeId;
@@ -261,7 +264,7 @@ public class DijkstraAlgorithm {
     pathCoordinates.add((currentNode.latitude).floatValue());
     pathCoordinates.add((currentNode.longitude).floatValue());
 
-    while (currentNode.id != sourceNodeId) {
+    while (currentNode.getId() != sourceNodeId) {
       currentNodeId = parents.get(currentNodeId);
       currentNode = graph.getMapNodeId().get(currentNodeId);
       pathCoordinates.add((currentNode.latitude).floatValue());
@@ -295,14 +298,14 @@ public class DijkstraAlgorithm {
   protected void printShortestPath(int sourceNodeId, int targetNodeId) {
     String path = "";
     Node currentNode;
-    int currentNodeId;
+    long currentNodeId;
 
     currentNode = graph.getMapNodeId().get(targetNodeId);
     currentNodeId = targetNodeId;
 
     path = path + currentNodeId + "->";
 
-    while (currentNode.id != sourceNodeId) {
+    while (currentNode.getId() != sourceNodeId) {
       currentNodeId = parents.get(currentNodeId);
       currentNode = graph.getMapNodeId().get(currentNodeId);
       path = path + currentNodeId + "->";

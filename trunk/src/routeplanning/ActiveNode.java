@@ -8,7 +8,7 @@ public class ActiveNode {
   /**
    *Id of node.
    */
-  public int id;
+  public long id;
   /**
    * travel time.
    */
@@ -21,11 +21,11 @@ public class ActiveNode {
   /**
    * Parent.
    */
-  public int parent;
+  public long parent;
   /**
    *Constructor.
   */
-  public ActiveNode(int id, int dist, int heuristic, int parent) {
+  public ActiveNode(long id, int dist, int heuristic, long parent) {
     this.id = id;
     this.dist = dist;
     this.heuristic = heuristic;

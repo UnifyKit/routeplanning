@@ -15,11 +15,11 @@ import java.util.Random;
  * 
  * @author CJC | AAA
  */
-public class RoadNetwork {
+public class RoadNetwork implements Network {
   /**
    * List of all Nodes that have adjacent arcs.
    */
-  private List<Integer> nodeIds;
+  private List<Long> nodeIds;
   /**
    * List of adjacent Arcs. First element of a each list is the head node.
    */
@@ -28,33 +28,28 @@ public class RoadNetwork {
   /**
    * Map nodeId->Node. Contains all nodes
    */
-  private Map<Integer, Node> mapNodeId;
+  private Map<Long, Node> mapNodeId;
   /**
    * Map nodeid -> position of node as tail node in adjacentArcs used to avoid
    * search by id of the node in adjacentArcs, when adding a new arc.
    */
-  private Map<Integer, Integer> nodeIdPosAdjArc;
-
-  /**
-   * Keeps track of the number of arcs.
-   */
-  // private Integer numberOfArcs = 0;
+  private Map<Long, Integer> nodeIdPosAdjArc;
 
   /**
    * Default Constructor.
    */
   public RoadNetwork() {
     adjacentArcs = new ArrayList<List<Arc>>();
-    mapNodeId = new HashMap<Integer, Node>();
-    nodeIds = new ArrayList<Integer>();
-    nodeIdPosAdjArc = new HashMap<Integer, Integer>();
+    mapNodeId = new HashMap<Long, Node>();
+    nodeIds = new ArrayList<Long>();
+    nodeIdPosAdjArc = new HashMap<Long, Integer>();
   }
 
   /**
    * Setter method for nodes.
    */
   // TODO
-  public void setNodes(List<Integer> nodeIds) {
+  public void setNodes(List<Long> nodeIds) {
     this.nodeIds = nodeIds;
   }
 
@@ -69,21 +64,21 @@ public class RoadNetwork {
   /**
    * Setter method for mapNodeId.
    */
-  public void setMapNodeId(Map<Integer, Node> mapNodeId) {
+  public void setMapNodeId(Map<Long, Node> mapNodeId) {
     this.mapNodeId = mapNodeId;
   }
 
   /**
    * Setter method for nodeIdPosAdjArc.
    */
-  public void setNodeIdPosAdjArc(Map<Integer, Integer> nodeIdPosAdjArc) {
+  public void setNodeIdPosAdjArc(Map<Long, Integer> nodeIdPosAdjArc) {
     this.nodeIdPosAdjArc = nodeIdPosAdjArc;
   }
 
   /**
    * Getter method for nodes.
    */
-  public List<Integer> getNodeIds() {
+  public List<Long> getNodeIds() {
     return nodeIds;
   }
 
@@ -97,14 +92,14 @@ public class RoadNetwork {
   /**
    * Getter method for mapNodeId.
    */
-  public Map<Integer, Node> getMapNodeId() {
+  public Map<Long, Node> getMapNodeId() {
     return mapNodeId;
   }
 
   /**
    * Getter method for nodeIdPosAdjArc.
    */
-  public Map<Integer, Integer> getNodeIdPosAdjArc() {
+  public Map<Long, Integer> getNodeIdPosAdjArc() {
     return nodeIdPosAdjArc;
   }
 
@@ -130,7 +125,7 @@ public class RoadNetwork {
    */
   public void addNodeToGraph(Node tailNode) {
     if (tailNode != null) {
-      Integer nodeId = tailNode.getId();
+      Long nodeId = tailNode.getId();
       // Is the node already there?
       boolean alreadyInNetwork = mapNodeId.containsKey(nodeId);
       if (!alreadyInNetwork) {
@@ -150,7 +145,7 @@ public class RoadNetwork {
   public void addAdjacentArc(Node tailNode, Arc arc) {
     if (tailNode != null && arc != null) {
       if (arc.getHeadNode() != null) {
-        Integer tailNodeId = tailNode.getId();
+        Long tailNodeId = tailNode.getId();
         if (!mapNodeId.containsKey(tailNodeId)) {
           mapNodeId.put(tailNodeId, tailNode);
         }
@@ -180,7 +175,7 @@ public class RoadNetwork {
    *          The ID of the node
    * @return The list of adjacent arcs corresponding to the node
    */
-  public List<Arc> getNodeAdjacentArcs(Integer nodeId) {
+  public List<Arc> getNodeAdjacentArcs(Long nodeId) {
     List<Arc> arcs = null;
     if (nodeIdPosAdjArc.containsKey(nodeId)) {
       arcs = adjacentArcs.get(nodeIdPosAdjArc.get(nodeId));
@@ -196,7 +191,7 @@ public class RoadNetwork {
    * @param nodeid
    *          ID of head node
    */
-  public Boolean arcAlreadyInserted(int tailNodePos, int nodeid) {
+  public Boolean arcAlreadyInserted(int tailNodePos, long nodeid) {
     if (adjacentArcs.size() > 0) {
       for (int k = 0; k < adjacentArcs.get(tailNodePos).size(); k++) {
         if (nodeid == adjacentArcs.get(tailNodePos).get(k).headNode.getId()) {
@@ -213,9 +208,9 @@ public class RoadNetwork {
   public void readFromOsmFile(String pathIn) {
     // List <String> nodesIDs = new ArrayList<String>();
     // String strFile = new String();
-    int tmpNodeID = 0;
-    Double tmpLatitude = 0.0;
-    Double tmpLongitude = 0.0;
+    long tmpNodeID = 0;
+    Float tmpLatitude = 0.0f;
+    Float tmpLongitude = 0.0f;
     Node currentNode;
     Node prevNode;
     String lineIn = "";
@@ -232,11 +227,11 @@ public class RoadNetwork {
       while ((lineIn = inBuff.readLine()) != null) {
         // System.out.println(lineIn);
         if (lineIn.contains("<node")) {
-          tmpNodeID = Integer.valueOf(lineIn.substring(
+          tmpNodeID = Long.valueOf(lineIn.substring(
               lineIn.indexOf("id=") + 4, lineIn.indexOf("\" lat")));
-          tmpLatitude = Double.valueOf(lineIn.substring(
+          tmpLatitude = Float.valueOf(lineIn.substring(
               lineIn.indexOf("lat=") + 5, lineIn.indexOf("\" lon")));
-          tmpLongitude = Double.valueOf(lineIn.substring(
+          tmpLongitude = Float.valueOf(lineIn.substring(
               lineIn.indexOf("lon=") + 5, lineIn.indexOf("\">")));
 
           newNode = new Node(tmpNodeID, tmpLatitude, tmpLongitude);
@@ -258,7 +253,7 @@ public class RoadNetwork {
           if (tmpWay.size() > 1) { // To avoid arcs without head nodes.
             // System.out.println(tmpWay.toString());
             for (int i = 0; i < tmpWay.size(); i++) {
-              currentNode = mapNodeId.get(Integer.valueOf(tmpWay.get(i)));
+              currentNode = mapNodeId.get(Long.valueOf(tmpWay.get(i)));
               // position = nodeIdPosAdjArc.get(currentNode.getId());
               // // If node doesn't exist in adjacentArcs, then add it
               // if (position == null) {
@@ -330,28 +325,28 @@ public class RoadNetwork {
    */
   public RoadNetwork reduceToLargestConnectedComponent() {
     RoadNetwork biggestConnectedComponent = new RoadNetwork();
-    List<Integer> bConnectedCompNodes = new ArrayList<Integer>();
-    List<Integer> remainingNodes = new ArrayList<Integer>();
+    List<Long> bConnectedCompNodes = new ArrayList<Long>();
+    List<Long> remainingNodes = new ArrayList<Long>();
     for (int i = 0; i < nodeIds.size(); i++) {
       remainingNodes.add(nodeIds.get(i));
     }
-    Integer nextNodeId = nodeIds.get(0);
+    Long nextNodeId = nodeIds.get(0);
 
     while (remainingNodes.size() > 0) {
-      remainingNodes.remove(new Integer(nextNodeId));
+      remainingNodes.remove(new Long(nextNodeId));
 
-      List<Integer> connectedNodes = new ArrayList<Integer>();
+      List<Long> connectedNodes = new ArrayList<Long>();
       // List<List<Arc>> arcsOfComp = new ArrayList<List<Arc>>();
 
       DijkstraAlgorithm dij = new DijkstraAlgorithm(this);
       dij.computeShortestPath(nextNodeId, -1);
-      Map<Integer, Integer> costs = dij.getVisitedNodes();
+      Map<Long, Integer> costs = dij.getVisitedNodes();
 
-      Iterator<Integer> it = costs.keySet().iterator();
+      Iterator<Long> it = costs.keySet().iterator();
       while (it.hasNext()) {
-        Integer nodeId = (Integer) it.next();
+        Long nodeId = (Long) it.next();
         connectedNodes.add(nodeId);
-        remainingNodes.remove(new Integer(nodeId));
+        remainingNodes.remove(new Long(nodeId));
       }
       if (connectedNodes.size() > bConnectedCompNodes.size()) {
         bConnectedCompNodes = connectedNodes;
@@ -362,11 +357,11 @@ public class RoadNetwork {
     }
 
     List<List<Arc>> listOfArcs = new ArrayList<List<Arc>>();
-    Map<Integer, Node> lccMapIdNode = new HashMap<Integer, Node>();
-    Map<Integer, Integer> lccMapIdList = new HashMap<Integer, Integer>();
+    Map<Long, Node> lccMapIdNode = new HashMap<Long, Node>();
+    Map<Long, Integer> lccMapIdList = new HashMap<Long, Integer>();
 
     for (int i = 0; i < bConnectedCompNodes.size(); i++) {
-      Integer nodeId = bConnectedCompNodes.get(i);
+      Long nodeId = bConnectedCompNodes.get(i);
       lccMapIdNode.put(nodeId, (Node) mapNodeId.get(nodeId));
       List<Arc> arcs = getNodeAdjacentArcs(nodeId);
       listOfArcs.add(arcs);
@@ -440,9 +435,9 @@ public class RoadNetwork {
     double distance;
     Double tmpdist;
     Integer diffLat, diffLon;
-    tmpdist = (node1.latitude * 111229) - (node2.latitude * 111229);
+    tmpdist = (double) ((node1.latitude * 111229) - (node2.latitude * 111229));
     diffLat = tmpdist.intValue();
-    tmpdist = (node1.longitude * 71695) - (node2.longitude * 71695);
+    tmpdist = (double) ((node1.longitude * 71695) - (node2.longitude * 71695));
     diffLon = tmpdist.intValue();
 
     tmpdist = Math.sqrt(Math.pow(diffLat, 2) + Math.pow(diffLon, 2));
@@ -477,7 +472,7 @@ public class RoadNetwork {
   public String asString() {
     String outputString = new String();
     for (int i = 0; i < nodeIds.size(); i++) {
-      Integer nodeId = nodeIds.get(i);
+      Long nodeId = nodeIds.get(i);
       outputString = outputString + nodeId + "|";
       List<Arc> arcs = getAdjacentArcs().get(i);
       if (!arcs.isEmpty()) {
@@ -498,7 +493,7 @@ public class RoadNetwork {
   public String asStringWithArcFlags() {
     String outputString = new String();
     for (int i = 0; i < nodeIds.size(); i++) {
-      Integer nodeId = nodeIds.get(i);
+      Long nodeId = nodeIds.get(i);
       outputString = outputString + nodeId + "|";
       List<Arc> arcs = getAdjacentArcs().get(i);
       if (!arcs.isEmpty()) {
@@ -519,7 +514,7 @@ public class RoadNetwork {
    * 
    * @return
    */
-  public int getRandomNodeId() {
+  public long getRandomNodeId() {
     Random randomGenerator = new Random();
     int randomInt = randomGenerator.nextInt(nodeIds.size());
     return nodeIds.get(randomInt);
@@ -530,11 +525,11 @@ public class RoadNetwork {
    * 
    * @return
    */
-  public int getRandomNodeIdWithinRegion(double latMin, double latMax,
+  public long getRandomNodeIdWithinRegion(double latMin, double latMax,
       double longMin, double longMax) {
     Random randomGenerator = new Random();
     int randomInt = randomGenerator.nextInt(nodeIds.size());
-    Integer nodeId = nodeIds.get(randomInt);
+    Long nodeId = nodeIds.get(randomInt);
     boolean inRegion = false;
     while (!inRegion) {
       Node currentNode = mapNodeId.get(nodeId);
@@ -557,7 +552,7 @@ public class RoadNetwork {
    * @param targetNodeId
    * @return
    */
-  public List<Integer> computeStraightLineHeuristic(int targetNodeId) {
+  public List<Integer> computeStraightLineHeuristic(long targetNodeId) {
     List<Integer> heuristic = new ArrayList<Integer>();
     Node targetNode = mapNodeId.get(targetNodeId);
     /**
@@ -585,11 +580,11 @@ public class RoadNetwork {
   /**
    * Returns the id of the closest node from the given coordinates.
    */
-  public List<Integer> getNodeIdsFromCoordinates(double sourceLat,
-      double sourceLng, double targetLat, double targetLng) {
-    List<Integer> nodeIdsSourceAndTarget = new ArrayList<Integer>();
-    int sourceNodeId = 0;
-    int targetNodeId = 0;
+  public List<Long> getNodeIdsFromCoordinates(float sourceLat,
+      float sourceLng, float targetLat, float targetLng) {
+    List<Long> nodeIdsSourceAndTarget = new ArrayList<Long>();
+    long sourceNodeId = 0;
+    long targetNodeId = 0;
     boolean sourceFound = false;
     boolean targetFound = false;
     Node currentNode;
@@ -612,7 +607,7 @@ public class RoadNetwork {
 
       if (currentNode.latitude == sourceLat
           && currentNode.longitude == sourceLng) {
-        sourceNodeId = currentNode.id;
+        sourceNodeId = currentNode.getId();
         sourceFound = true;
       } else if (bestDistanceToSourceNode > distanceToSourceNode) {
         bestDistanceToSourceNode = distanceToSourceNode;
@@ -621,7 +616,7 @@ public class RoadNetwork {
 
       if (currentNode.latitude == targetLat
           && currentNode.longitude == targetLng) {
-        targetNodeId = currentNode.id;
+        targetNodeId = currentNode.getId();
         targetFound = true;
       } else if (bestDistanceToTargetNode > distanceToTargetNode) {
         bestDistanceToTargetNode = distanceToTargetNode;

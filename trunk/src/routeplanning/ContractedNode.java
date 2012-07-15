@@ -8,7 +8,7 @@ public class ContractedNode {
   /**
    *Id of node.
    */
-  public int id;
+  public long id;
   
   /**
    * edge difference.
@@ -18,7 +18,7 @@ public class ContractedNode {
   /**
    *Constructor.
   */
-  public ContractedNode(int id, int edgeDiff) {
+  public ContractedNode(long id, int edgeDiff) {
     this.id = id;
     this.edgeDiff = edgeDiff;
   }

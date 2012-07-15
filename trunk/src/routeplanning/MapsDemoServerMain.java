@@ -65,10 +65,14 @@ public class MapsDemoServerMain {
       // id="385925420" lat="49.3139855" lon="6.8137583">
       // id="962989650" lat="49.3136879" lon="6.8140206
       // id="962989607" lat="49.3132449" lon="6.8143430
-      List<Integer> nodeIds = new ArrayList<Integer>();
-      nodeIds = rn.getNodeIdsFromCoordinates(truncCoordinate(sourceLat, 7),
-          truncCoordinate(sourceLng, 7), truncCoordinate(targetLat, 7),
-          truncCoordinate(targetLng, 7));
+//      List<Integer> nodeIds = new ArrayList<Integer>();
+//      nodeIds = rn.getNodeIdsFromCoordinates(truncCoordinate(sourceLat, 7),
+//          truncCoordinate(sourceLng, 7), truncCoordinate(targetLat, 7),
+//          truncCoordinate(targetLng, 7));
+      
+      List<Long> nodeIds = new ArrayList<Long>();
+      nodeIds = rn.getNodeIdsFromCoordinates(sourceLat, sourceLng, targetLat,
+          targetLng);
 
       System.out.println("A* Landmark SP:"
           + lm.computeShortestPath(nodeIds.get(0), nodeIds.get(1)));

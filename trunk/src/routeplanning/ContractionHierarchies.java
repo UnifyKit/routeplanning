@@ -35,7 +35,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
   /**
    * ordering of the nodes.
    */
-  private List<Integer> nodeOrdering = new ArrayList();
+  private List<Long> nodeOrdering = new ArrayList();
   
   /**
    * Class needed to compare the current values of two nodes. This is required
@@ -63,7 +63,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
    * nodeordering. The key is the node id, the value is its position in the
    * nodeOrdering list.
    */
-  private Map<Integer, Integer> orderOfNodeMap = new HashMap();
+  private Map<Long, Integer> orderOfNodeMap = new HashMap();
   
   /**
    * The map maps each edge difference with a list of nodes that have
@@ -73,7 +73,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
   /**
    * VisitedNodeMarks map for second dijkstra used in computeShortestPath.
    */
-  Map<Integer, Integer> visitedNodeMarks2;
+  Map<Long, Integer> visitedNodeMarks2;
 
 
   /**
@@ -92,14 +92,14 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
   /**
    * Getter for nodeOrdering.
    */
-  public List<Integer> getNodeOrdering() {
+  public List<Long> getNodeOrdering() {
     return nodeOrdering;
   }
 
   /**
    * Getter for nodeOrderingMap.
    */
-  public Map<Integer, Integer> getNodeOrderingMap() {
+  public Map<Long, Integer> getNodeOrderingMap() {
     return orderOfNodeMap;
   }
   
@@ -114,11 +114,11 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
   /**
    * Setter for nodeOrdering.
    */
-  public void setNodeOrdering(List<Integer> nodeOrdering) {
+  public void setNodeOrdering(List<Long> nodeOrdering) {
     this.nodeOrdering = nodeOrdering;
     orderOfNodeMap = new HashMap();
     for (int i = 0; i < nodeOrdering.size(); i++) {
-      Integer currentNodeId = nodeOrdering.get(i);
+      Long currentNodeId = nodeOrdering.get(i);
       orderOfNodeMap.put(currentNodeId, i);
     }
   } 
@@ -176,7 +176,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
           numberOfAddedShortcuts = numberOfAddedShortcuts + info.get(0);
         } else {
           orderOfNodeMap.remove(currentNode.id);
-          nodeOrdering.remove(new Integer(currentNode.id));
+          nodeOrdering.remove(new Long(currentNode.id));
           ContractedNode newContractedNode 
             = new ContractedNode(currentNode.id, info.get(1));
           pq.add(newContractedNode);
@@ -191,16 +191,16 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
     // Reset Arc Flags such that only the arc flags for arcs u,v
     // with orderOfNode[u] < orderOfNode[v]
     List<List<Arc>> adjArcs = graph.getAdjacentArcs();
-    List<Integer> nodeIds = graph.getNodeIds();
+    List<Long> nodeIds = graph.getNodeIds();
     //System.out.println("orderOfNodeMap: " + orderOfNodeMap.toString());
     for (int i = 0; i < adjArcs.size(); i++) {
-      int nodeId = nodeIds.get(i);
+      long nodeId = nodeIds.get(i);
       int orderOfNodeU = orderOfNodeMap.get(nodeId);
       // System.out.println("nodeId: " + nodeId + " orderOfNode: " +
       // orderOfNodeU);
       List<Arc> adjArcsU = adjArcs.get(i);
       for (int j = 0; j < adjArcsU.size(); j++) {
-        int adjNodeId = adjArcsU.get(j).headNode.getId();
+        long adjNodeId = adjArcsU.get(j).headNode.getId();
         int orderOfAdjNode = orderOfNodeMap.get(adjNodeId);
         if (orderOfAdjNode < orderOfNodeU) {
           (adjArcsU.get(j)).arcFlag = false;
@@ -226,15 +226,15 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
 
     // We have already the list "nodes" which has all the ids of the nodes.
     // We will work on a copy of this list (it only copies the references).
-    List<Integer> tempNodeOrdering = new ArrayList<Integer>();
+    List<Long> tempNodeOrdering = new ArrayList<Long>();
     tempNodeOrdering.addAll(graph.getNodeIds());
     // The map maps each edge difference with a list of nodes that have
     // this edge difference
-    TreeMap<Integer, List<Integer>> edgeDiffMap = new TreeMap();
+    TreeMap<Integer, List<Long>> edgeDiffMap = new TreeMap();
 
     // linear time (on the number of nodes)
     for (int i = 0; i < tempNodeOrdering.size(); i++) {
-      Integer currentNodeId = tempNodeOrdering.get(i);
+      Long currentNodeId = tempNodeOrdering.get(i);
       List<Integer> info = contractNode(i, true);
       Integer edgeDifference = info.get(1);
       //Inserting this values to the queue.
@@ -243,22 +243,22 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
       
       
       if (edgeDiffMap.containsKey(edgeDifference)) {
-        List<Integer> nodes = edgeDiffMap.get(edgeDifference);
+        List<Long> nodes = edgeDiffMap.get(edgeDifference);
         nodes.add(currentNodeId);
       } else {
-        List<Integer> nodes = new ArrayList();
+        List<Long> nodes = new ArrayList();
         nodes.add(currentNodeId);
         edgeDiffMap.put(edgeDifference, nodes);
       }
     }
-    nodeOrdering = new ArrayList<Integer>();
+    nodeOrdering = new ArrayList<Long>();
     orderOfNodeMap = new HashMap();
     int counter = 0;
     
     Iterator it = edgeDiffMap.keySet().iterator();
     while (it.hasNext()) {
       Integer currentEdgeDiff = (Integer) it.next();
-      List<Integer> nodes = edgeDiffMap.get(currentEdgeDiff);
+      List<Long> nodes = edgeDiffMap.get(currentEdgeDiff);
 //        System.out.println("EDGE DIFF: " + currentEdgeDiff);
 //        System.out.println(nodes);
       for (int i = 0; i < nodes.size(); i++) {
@@ -278,19 +278,19 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
     orderOfNodeMap = new HashMap();
     // We have already the list "nodes" which has all the ids of the nodes.
     // We will work on a copy of this list (it only copies the references).
-    List<Integer> randomNodeOrdering = new ArrayList<Integer>();
+    List<Long> randomNodeOrdering = new ArrayList<Long>();
     randomNodeOrdering.addAll(graph.getNodeIds());
     int numberOfNodes = randomNodeOrdering.size();
 
     // linear time (on the number of nodes)
     for (int i = 0; i < randomNodeOrdering.size(); i++) {
-      Integer currentNodeId = randomNodeOrdering.get(i);
+      Long currentNodeId = randomNodeOrdering.get(i);
       // We have to swap this with a random position
       int newPos = generateRandomNodePosition(numberOfNodes);
       while (newPos == i) {
         newPos = generateRandomNodePosition(numberOfNodes);
       }
-      Integer tempRef = currentNodeId;
+      Long tempRef = currentNodeId;
       randomNodeOrdering.set(i, randomNodeOrdering.get(newPos));
       orderOfNodeMap.put(randomNodeOrdering.get(newPos), i);
       randomNodeOrdering.set(newPos, tempRef);
@@ -321,7 +321,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
     List<Integer> infoList = new ArrayList();
 
     // The following map will save the costs from all Ui to V
-    Map<Integer, Integer> costsMap = new HashMap();
+    Map<Long, Integer> costsMap = new HashMap();
     // The following map keeps all the new arcs that will be added
     // in the end.
     Map<Node, List<Arc>> addedArcsMap = new HashMap();
@@ -332,7 +332,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
     List<Arc> changedArcs = new ArrayList();
 
     // nodeId is "v" the node I want to contract.
-    Integer nodeVId = nodeOrdering.get(i);
+    Long nodeVId = nodeOrdering.get(i);
     // System.out.println("-----------(" + (i + 1) + ")"
     // + " :: Contracting node "
     // + nodeVId);
@@ -347,7 +347,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
       Arc arcToV = nodeVarcs.get(k);
       // System.out.println("ADJACENT NODES: " + nodeVarcs.size());
       if (arcToV.arcFlag) {
-        Integer nodeUi = nodeVarcs.get(k).getHeadNode().getId();
+        Long nodeUi = nodeVarcs.get(k).getHeadNode().getId();
         Integer positionOfUi = orderOfNodeMap.get(nodeUi);
         // System.out.println("Analyzing edge " + nodeVId
         // + " - " + nodeUi + " :: ");
@@ -370,7 +370,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
     // For each pair of adjacent nodes:
     for (int k = 0; k < nodeVarcs.size(); k++) {
 
-      Integer nodeIdUi = nodeVarcs.get(k).getHeadNode().getId();
+      Long nodeIdUi = nodeVarcs.get(k).getHeadNode().getId();
       // We have to detect if the node Ui was processed.
       // We can use the nodeOrderingMap to do that:
       Integer positionOfUi = orderOfNodeMap.get(nodeIdUi);
@@ -385,7 +385,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
       // We set the arc from Ui to V as arcFlag False
       for (int q = 0; q < uiArcs.size(); q++) {
         Arc currentUiArc = uiArcs.get(q);
-        Integer headNodeId = currentUiArc.getHeadNode().getId();
+        Long headNodeId = currentUiArc.getHeadNode().getId();
         if (headNodeId == nodeVId) {
           if (currentUiArc.arcFlag) {
             currentUiArc.arcFlag = false;
@@ -398,7 +398,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
       }
 
       for (int j = 0; j < nodeVarcs.size(); j++) {
-        Integer nodeIdWj = nodeVarcs.get(j).getHeadNode().getId();
+        Long nodeIdWj = nodeVarcs.get(j).getHeadNode().getId();
 
         // Checks if an adjacent node was deleted in previous contractions.
         Integer positionOfWj = orderOfNodeMap.get(nodeIdWj);
@@ -501,13 +501,13 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
    * @return
    */
   public int computeShortestPath(int sourceNodeId, int targetNodeId) {
-    visitedNodeMarks = new HashMap<Integer, Integer>();
+    visitedNodeMarks = new HashMap<Long, Integer>();
     // For second dijkstra from target to source
-    visitedNodeMarks2 = new HashMap<Integer, Integer>();
+    visitedNodeMarks2 = new HashMap<Long, Integer>();
 
-    parents = new HashMap<Integer, Integer>();
+    parents = new HashMap<Long, Long>();
     // For second dijkstra from target to source
-    Map<Integer, Integer> parents2 = new HashMap<Integer, Integer>();
+    Map<Long, Long> parents2 = new HashMap<Long, Long>();
 
     int shortestPathCost = 0;
     // For second dijkstra from target to source
@@ -567,7 +567,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
 
         // settle node
         visitedNodeMarks.put(currentNode.id, currentNode.dist);
-        parents.put((Integer) currentNode.id, (Integer) currentNode.parent);
+        parents.put((Long) currentNode.id, (Long) currentNode.parent);
         numSettledNodes++;
         // Check if the node was settled in pq2, if it is stop and compute
         // shortest path
@@ -613,18 +613,18 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
           if (this.considerArcFlags && !arc.arcFlag) {
             continue;
           }
-          if (!isVisited(arc.headNode.id)) {
+          if (!isVisited(arc.headNode.getId())) {
             distToAdjNode = currentNode.dist + arc.cost;
             if (heuristic == null) {
-              activeNode = new ActiveNode(arc.headNode.id, distToAdjNode, 0,
-                  currentNode.id);
+              activeNode = new ActiveNode(arc.headNode.getId(), distToAdjNode,
+                  0, currentNode.id);
             } else {
               // activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
               // heuristic.get(this.graph.getNodeIds()
 //              .indexOf(arc.headNode.id)));
-              activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
+              activeNode = new ActiveNode(arc.headNode.getId(), distToAdjNode,
                   heuristic.get(this.graph.getNodeIdPosAdjArc().get(
-                      arc.headNode.id)), currentNode.id);
+                      arc.headNode.getId())), currentNode.id);
             }
             pq.add(activeNode);
             // System.out.println("Add pq: " + activeNode.id + " dist: "
@@ -641,7 +641,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
 
         // settle node
         visitedNodeMarks2.put(currentNode.id, currentNode.dist);
-        parents2.put((Integer) currentNode.id, (Integer) currentNode.parent);
+        parents2.put((Long) currentNode.id, (Long) currentNode.parent);
         numSettledNodes2++;
 
         if (visitedNodeMarks.containsKey(currentNode.id)) {
@@ -699,12 +699,12 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
           if (!visitedNodeMarks2.containsKey(arc.headNode.id)) {
             distToAdjNode = currentNode.dist + arc.cost;
             if (heuristic == null) {
-              activeNode = new ActiveNode(arc.headNode.id, distToAdjNode, 0,
-                  currentNode.id);
+              activeNode = new ActiveNode(arc.headNode.getId(), distToAdjNode,
+                  0, currentNode.id);
             } else {
-              activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
+              activeNode = new ActiveNode(arc.headNode.getId(), distToAdjNode,
                   heuristic.get(this.graph.getNodeIdPosAdjArc().get(
-                      arc.headNode.id)), currentNode.id);
+                      arc.headNode.getId())), currentNode.id);
             }
             pq2.add(activeNode);
             // System.out.println("Add pq2: " + activeNode.id + " dist: "
@@ -728,12 +728,12 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
    * @return
    */
   public Integer getMinDisFromPq(PriorityQueue<ActiveNode> pq,
-      PriorityQueue<ActiveNode> pq2, Map<Integer, Integer> visitedNodeMarks,
-      Map<Integer, Integer> visitedNodeMarks2) {
+      PriorityQueue<ActiveNode> pq2, Map<Long, Integer> visitedNodeMarks,
+      Map<Long, Integer> visitedNodeMarks2) {
 
     int mindistUsUt = Integer.MAX_VALUE;
     // relaxedPq<NodeId,relaxedDist>
-    HashMap<Integer, Integer> relaxedPq = new HashMap<Integer, Integer>();
+    HashMap<Long, Integer> relaxedPq = new HashMap<Long, Integer>();
     while (!pq.isEmpty()) {
       ActiveNode vnode = pq.poll();
       // Check if it is already in map, because we could have repeated values
@@ -742,7 +742,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
         relaxedPq.put(vnode.id, vnode.dist);
       }
     }
-    HashMap<Integer, Integer> relaxedPq2 = new HashMap<Integer, Integer>();
+    HashMap<Long, Integer> relaxedPq2 = new HashMap<Long, Integer>();
     while (!pq2.isEmpty()) {
       ActiveNode vnode = pq2.poll();
       // Check if it is already in map, because we could have repeated values
@@ -764,7 +764,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
     // }
     Iterator it = visitedNodeMarks.keySet().iterator();
     while (it.hasNext()) {
-      Integer vnodeId = (Integer) it.next();
+      Long vnodeId = (Long) it.next();
       int distUs = visitedNodeMarks.get(vnodeId);
       if (relaxedPq2.containsKey(vnodeId)) {
         int distUt = relaxedPq2.get(vnodeId);
@@ -776,7 +776,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
     int mindistUsUt2 = Integer.MAX_VALUE;
     Iterator it2 = visitedNodeMarks2.keySet().iterator();
     while (it2.hasNext()) {
-      Integer vnodeId = (Integer) it2.next();
+      Long vnodeId = (Long) it2.next();
       int distUt2 = visitedNodeMarks2.get(vnodeId);
       if (relaxedPq.containsKey(vnodeId)) {
         int distUs2 = relaxedPq.get(vnodeId);
