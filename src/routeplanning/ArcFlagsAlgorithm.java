@@ -44,7 +44,7 @@ public class ArcFlagsAlgorithm {
   /**
    * List of boundary nodes.
    */
-  List<Integer> boundaryNodes = new ArrayList<Integer>();
+  List<Long> boundaryNodes = new ArrayList<Long>();
 
   /**
    * Constructor.
@@ -58,7 +58,7 @@ public class ArcFlagsAlgorithm {
   /**
    * Returns structure list of boundary nodes.
    */
-  public List<Integer> getBoundaryNodes() {
+  public List<Long> getBoundaryNodes() {
     return boundaryNodes;
   }
 
@@ -83,7 +83,7 @@ public class ArcFlagsAlgorithm {
           headNode = arc0.headNode;
           if (!isInRegion(latMin, latMax, lngMin, lngMax, headNode)) {
             if (!boundaryNodes.contains(tailNode.id)) {
-              boundaryNodes.add(tailNode.id);
+              boundaryNodes.add(tailNode.getId());
             }
             // break;
           } else {
@@ -100,16 +100,16 @@ public class ArcFlagsAlgorithm {
     // compute Dijkstra for each of the boundary nodes
     // saves the map parents into a list
     for (int i = 0; i < boundaryNodes.size(); i++) {
-      int boundaryNodeId = boundaryNodes.get(i);
+      long boundaryNodeId = boundaryNodes.get(i);
       DijkstraAlgorithm dijAlg = new DijkstraAlgorithm(graph);
       dijAlg.computeShortestPath(boundaryNodeId, -1);
 
       // we set flags
-      Map<Integer, Integer> parents = dijAlg.getParents();
-      Iterator<Integer> it = parents.keySet().iterator();
+      Map<Long, Long> parents = dijAlg.getParents();
+      Iterator<Long> it = parents.keySet().iterator();
       while (it.hasNext()) {
-        Integer currentNodeId = (Integer) it.next();
-        Integer parentNodeId = parents.get(currentNodeId);
+        Long currentNodeId = (Long) it.next();
+        Long parentNodeId = parents.get(currentNodeId);
 
         // System.out.println(currentNodeId + "-" + parentNodeId);
 
@@ -118,7 +118,7 @@ public class ArcFlagsAlgorithm {
 
           for (int k = 0; k < allArcs.size(); k++) {
             Arc arc = allArcs.get(k);
-            if (arc.getHeadNode().getId().equals(parentNodeId)) {
+            if (arc.getHeadNode().getId() == parentNodeId) {
               arc.arcFlag = true;
             }
           }
@@ -163,21 +163,21 @@ public class ArcFlagsAlgorithm {
   /**
    * Invokes Dijkstra algorithm.
    */
-  public int computeShortestPath(int sourceNodeId, int targetNodeId) {
+  public int computeShortestPath(long sourceNodeId, long targetNodeId) {
     return dijkstra.computeShortestPath(sourceNodeId, targetNodeId);
   }
 
   /**
    * Returns the settled nodes from the inner Dijkstra Algorithm.
    */
-  public Map<Integer, Integer> getVisitedNodes() {
+  public Map<Long, Integer> getVisitedNodes() {
     return dijkstra.getVisitedNodes();
   }
   
   /**
    * Returns the settled nodes from the inner Dijkstra Algorithm.
    */ 
-  public Map<Integer, Integer> getParents() {
+  public Map<Long, Long> getParents() {
     return dijkstra.getParents();
   }
   

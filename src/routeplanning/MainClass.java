@@ -156,8 +156,8 @@ public class MainClass {
 
     for (int i = 0; i < numberOfExecutions; i++) {
       // System.out.println("------------------------------------------------");
-      Integer sourceNodeId = largestComponent.getRandomNodeId();
-      Integer targetNodeId = largestComponent.getRandomNodeId();
+      Long sourceNodeId = largestComponent.getRandomNodeId();
+      Long targetNodeId = largestComponent.getRandomNodeId();
       while (sourceNodeId == targetNodeId) {
         targetNodeId = largestComponent.getRandomNodeId();
       }
@@ -167,7 +167,7 @@ public class MainClass {
       long start = System.currentTimeMillis();
       Integer cost = newDijAlg.computeShortestPath(sourceNodeId, targetNodeId);
       long end = System.currentTimeMillis();
-      Map<Integer, Integer> settledNodeCosts = newDijAlg.getVisitedNodes();
+      Map<Long, Integer> settledNodeCosts = newDijAlg.getVisitedNodes();
       totalSettledNodes = totalSettledNodes + settledNodeCosts.size();
       totalCost = totalCost + cost;
       totalExecutionTime = totalExecutionTime + (end - start);
@@ -212,8 +212,8 @@ public class MainClass {
 
     for (int i = 0; i < numberOfExecutions; i++) {
       // System.out.println("------------------------------------------------");
-      Integer sourceNodeId = largestComponent.getRandomNodeId();
-      Integer targetNodeId = largestComponent.getRandomNodeId();
+      Long sourceNodeId = largestComponent.getRandomNodeId();
+      Long targetNodeId = largestComponent.getRandomNodeId();
       while (sourceNodeId == targetNodeId) {
         targetNodeId = largestComponent.getRandomNodeId();
       }
@@ -225,7 +225,7 @@ public class MainClass {
       dijAlg.setHeuristic(heuristic);
       Integer cost = dijAlg.computeShortestPath(sourceNodeId, targetNodeId);
       long end = System.currentTimeMillis();
-      Map<Integer, Integer> settledNodeCosts = dijAlg.getVisitedNodes();
+      Map<Long, Integer> settledNodeCosts = dijAlg.getVisitedNodes();
       totalSettledNodes = totalSettledNodes + settledNodeCosts.size();
       totalCost = totalCost + cost;
       totalExecutionTime = totalExecutionTime + (end - start);
@@ -276,8 +276,8 @@ public class MainClass {
 
     for (int i = 0; i < numberOfExecutions; i++) {
       // System.out.println("------------------------------------------------");
-      Integer sourceNodeId = largestComponent.getRandomNodeId();
-      Integer targetNodeId = largestComponent.getRandomNodeId();
+      Long sourceNodeId = largestComponent.getRandomNodeId();
+      Long targetNodeId = largestComponent.getRandomNodeId();
       while (sourceNodeId == targetNodeId) {
         targetNodeId = largestComponent.getRandomNodeId();
       }
@@ -286,7 +286,7 @@ public class MainClass {
       long start = System.currentTimeMillis();
       Integer cost = landAlg.computeShortestPath(sourceNodeId, targetNodeId);
       long end = System.currentTimeMillis();
-      Map<Integer, Integer> settledNodeCosts = landAlg.getVisitedNodes();
+      Map<Long, Integer> settledNodeCosts = landAlg.getVisitedNodes();
       totalSettledNodes = totalSettledNodes + settledNodeCosts.size();
       totalCost = totalCost + cost;
       totalExecutionTime = totalExecutionTime + (end - start)
@@ -342,8 +342,8 @@ public class MainClass {
 
     for (int i = 0; i < numberOfExecutions; i++) {
       // System.out.println("------------------------------------------------");
-      Integer sourceNodeId = largestComponent.getRandomNodeId();
-      Integer targetNodeId = largestComponent.getRandomNodeIdWithinRegion(
+      Long sourceNodeId = largestComponent.getRandomNodeId();
+      Long targetNodeId = largestComponent.getRandomNodeIdWithinRegion(
           49.20, 49.25, 6.95, 7.05);
       while (sourceNodeId == targetNodeId) {
         targetNodeId = largestComponent.getRandomNodeId();
@@ -354,7 +354,7 @@ public class MainClass {
       Integer cost = afg.computeShortestPath(sourceNodeId, targetNodeId);
       long end = System.currentTimeMillis();
 
-      Map<Integer, Integer> settledNodeCosts = afg.getVisitedNodes();
+      Map<Long, Integer> settledNodeCosts = afg.getVisitedNodes();
       totalSettledNodes = totalSettledNodes + settledNodeCosts.size();
       totalCost = totalCost + cost;
 
@@ -515,8 +515,8 @@ public class MainClass {
 
     for (int i = 0; i < numberOfExecutions; i++) {
       // System.out.println("------------------------------------------------");
-      Integer sourceNodeId = largestComponent.getRandomNodeId();
-      Integer targetNodeId = largestComponent.getRandomNodeId();
+      Long sourceNodeId = largestComponent.getRandomNodeId();
+      Long targetNodeId = largestComponent.getRandomNodeId();
       
       while (sourceNodeId == targetNodeId) {
         targetNodeId = largestComponent.getRandomNodeId();
@@ -662,7 +662,7 @@ public class MainClass {
       outWriter.write(currentNode.id + ";" + currentNode.latitude + ";"
           + currentNode.longitude);
 
-      while (currentNode.id != sourceNodeId) {
+      while (currentNode.getId() != sourceNodeId) {
         System.out.println(currentNodeId);
         currentNodeId = parent.get(currentNodeId);
         currentNode = rn.getMapNodeId().get(currentNodeId);

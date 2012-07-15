@@ -25,7 +25,7 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
    * List of the nodes used as landmarks.
    */
   // The set of landmarks. Each entry in the array is a node id.
-  private List<Integer> landmarkIds =  new ArrayList<Integer>();
+  private List<Long> landmarkIds =  new ArrayList<Long>();
   
   /**
    * Each entry of the list represent the values dist(l,u) calculated
@@ -40,8 +40,8 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
   // suffices to store one distance array per landmark. For arbitrary directed
   // graphs we would need one array for the distances *to* the landmark and one
   // array for the distances *from* the landmark.
-  private List<Map<Integer, Integer>> costMaps 
-    = new ArrayList<Map<Integer, Integer>>();
+  private List<Map<Long, Integer>> costMaps 
+    = new ArrayList<Map<Long, Integer>>();
 
   
   /**
@@ -54,14 +54,14 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
   /**
    * Getter for landmarkIds.
    */
-  public List<Integer> getLandmarkIds() {
+  public List<Long> getLandmarkIds() {
     return landmarkIds;
   }
   
   /**
    * Getter for costMaps.
    */
-  public List<Map<Integer, Integer>> getCostMaps() {
+  public List<Map<Long, Integer>> getCostMaps() {
     return costMaps;
   }
   
@@ -75,14 +75,14 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
   /**
    * Setter for landmarkIds.
    */
-  public void setLandmarkIds(List<Integer> landmarkIds) {
+  public void setLandmarkIds(List<Long> landmarkIds) {
     this.landmarkIds = landmarkIds;
   }
 
   /**
    * Setter for costMaps.
    */
-  public void setCostMaps(List<Map<Integer, Integer>> costMaps) {
+  public void setCostMaps(List<Map<Long, Integer>> costMaps) {
     this.costMaps = costMaps;
   }
 
@@ -93,9 +93,9 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
     if (numberOfLandmarks < graph.getNodeIds().size()) {
       this.numberOfLandmarks = numberOfLandmarks;
       for (int i = 0; i < numberOfLandmarks; i++) {
-        Integer landmarkId = graph.getRandomNodeId();
+        Long landmarkId = graph.getRandomNodeId();
         while (landmarkIds.contains(landmarkId)) {
-          landmarkId = graph.getRandomNodeId();
+          landmarkId = (graph).getRandomNodeId();
         }
         landmarkIds.add(landmarkId);
       }
@@ -114,7 +114,7 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
     DijkstraAlgorithm dijAlg = new DijkstraAlgorithm(graph);
     
     for (int i = 0; i < this.landmarkIds.size(); i++) {
-      Integer currentLandMarkId = this.landmarkIds.get(i);
+      Long currentLandMarkId = this.landmarkIds.get(i);
       //System.out.println("currentLandMarkId: " + currentLandMarkId);
       //DijkstraAlgorithm with target -1
       dijAlg.computeShortestPath(currentLandMarkId, -1);
@@ -135,7 +135,7 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
    * @param targetNodeId
    * @return
    */
-  public int computeShortestPath(int sourceNodeId, int targetNodeId) {
+  public int computeShortestPath(long sourceNodeId, long targetNodeId) {
     long startHeuristic = System.currentTimeMillis();
     List<Integer> heuristic = calculateHeuristicList(targetNodeId);
     setHeuristic(heuristic);
@@ -149,11 +149,11 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
   /**
    * Calculates h(u) for each node of the graph. 
    */ 
-  public List<Integer> calculateHeuristicList(int targetNodeId) {
+  public List<Integer> calculateHeuristicList(long targetNodeId) {
     List<Integer> heuristic = new ArrayList<Integer>();
-    List<Integer> nodeIds = graph.getNodeIds();
+    List<Long> nodeIds = graph.getNodeIds();
     for (int i = 0; i < nodeIds.size(); i++) {
-      Integer sourceNodeId = nodeIds.get(i);
+      Long sourceNodeId = nodeIds.get(i);
       int nodeHeuristic = calculateHeuristic(sourceNodeId, targetNodeId);
       heuristic.add(nodeHeuristic);
     }
@@ -164,13 +164,13 @@ public class LandmarkAlgorithm extends DijkstraAlgorithm {
    * Calculates max (h(u)) where each h(u) is given by one landmark.
    * h(u) = abs ( dist(l,u) - dist(l,t)). 
    */ 
-  private int calculateHeuristic(int sourceNodeId, int targetNodeId) {
+  private int calculateHeuristic(long sourceNodeId, long targetNodeId) {
     //System.out.println("calculateHeuristic sourceNodeId: " 
     //+ sourceNodeId + " targetNodeId: " + targetNodeId);
     int heuristic = 0;
     //we check the maximum value for all the landmarks
     for (int i = 0; i < this.costMaps.size(); i++) {
-      Map<Integer, Integer > cost = this.costMaps.get(i);
+      Map<Long, Integer > cost = this.costMaps.get(i);
       if (cost.containsKey(sourceNodeId)) {
         int distFromLtoU = cost.get(sourceNodeId);
         int distFromLtoT = cost.get(targetNodeId);       
