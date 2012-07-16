@@ -20,19 +20,19 @@ public class ContractionHiearchiesTest {
    */
   public RoadNetwork createSampleGraph() {
     RoadNetwork rn = new RoadNetwork();
-    Node nodeA = new Node(1, 1.0, 1.0);
-    Node nodeB = new Node(2, 1.0, 1.0);
-    Node nodeC = new Node(3, 1.0, 1.0);
-    Node nodeD = new Node(4, 1.0, 1.0);
-    Node nodeE = new Node(5, 1.0, 1.0);
-    Node nodeF = new Node(6, 1.0, 1.0);
-    Node nodeG = new Node(7, 1.0, 1.0);
-    Node nodeH = new Node(8, 1.0, 1.0);
-    Node nodeI = new Node(9, 1.0, 1.0);
-    Node nodeJ = new Node(10, 1.0, 1.0);
-    Node nodeK = new Node(11, 1.0, 1.0);
-    Node nodeL = new Node(12, 1.0, 1.0);
-    Node nodeM = new Node(13, 1.0, 1.0);
+    Node nodeA = new Node(1, 1.0f, 1.0f);
+    Node nodeB = new Node(2, 1.0f, 1.0f);
+    Node nodeC = new Node(3, 1.0f, 1.0f);
+    Node nodeD = new Node(4, 1.0f, 1.0f);
+    Node nodeE = new Node(5, 1.0f, 1.0f);
+    Node nodeF = new Node(6, 1.0f, 1.0f);
+    Node nodeG = new Node(7, 1.0f, 1.0f);
+    Node nodeH = new Node(8, 1.0f, 1.0f);
+    Node nodeI = new Node(9, 1.0f, 1.0f);
+    Node nodeJ = new Node(10, 1.0f, 1.0f);
+    Node nodeK = new Node(11, 1.0f, 1.0f);
+    Node nodeL = new Node(12, 1.0f, 1.0f);
+    Node nodeM = new Node(13, 1.0f, 1.0f);
 
     rn.addNodeToGraph(nodeA);
     rn.addNodeToGraph(nodeB);
@@ -142,19 +142,19 @@ public class ContractionHiearchiesTest {
    */
   public RoadNetwork createSampleGraph2() {
     RoadNetwork rn = new RoadNetwork();
-    Node node0 = new Node(0, 1.0, 1.0);
-    Node node1 = new Node(1, 1.0, 1.0);
-    Node node2 = new Node(2, 1.0, 1.0);
-    Node node3 = new Node(3, 1.0, 1.0);
-    Node node4 = new Node(4, 1.0, 1.0);
-    Node node5 = new Node(5, 1.0, 1.0);
-    Node node6 = new Node(6, 1.0, 1.0);
-    Node node7 = new Node(7, 1.0, 1.0);
-    Node node8 = new Node(8, 1.0, 1.0);
-    Node node9 = new Node(9, 1.0, 1.0);
-    Node node10 = new Node(10, 1.0, 1.0);
-    Node node11 = new Node(11, 1.0, 1.0);
-    Node node12 = new Node(12, 1.0, 1.0);
+    Node node0 = new Node(0, 1.0f, 1.0f);
+    Node node1 = new Node(1, 1.0f, 1.0f);
+    Node node2 = new Node(2, 1.0f, 1.0f);
+    Node node3 = new Node(3, 1.0f, 1.0f);
+    Node node4 = new Node(4, 1.0f, 1.0f);
+    Node node5 = new Node(5, 1.0f, 1.0f);
+    Node node6 = new Node(6, 1.0f, 1.0f);
+    Node node7 = new Node(7, 1.0f, 1.0f);
+    Node node8 = new Node(8, 1.0f, 1.0f);
+    Node node9 = new Node(9, 1.0f, 1.0f);
+    Node node10 = new Node(10, 1.0f, 1.0f);
+    Node node11 = new Node(11, 1.0f, 1.0f);
+    Node node12 = new Node(12, 1.0f, 1.0f);
     
     Arc newArc01 = new Arc(node1, 2);
     Arc newArc05 = new Arc(node5, 5);
@@ -288,12 +288,12 @@ public class ContractionHiearchiesTest {
    */
   public RoadNetwork createContractionSampleGraph() {
     RoadNetwork rn = new RoadNetwork();
-    Node nodeU1 = new Node(1, 1.0, 1.0);
-    Node nodeU2 = new Node(2, 1.0, 1.0);
-    Node nodeV = new Node(3, 1.0, 1.0);
-    Node nodeW1 = new Node(4, 1.0, 1.0);
-    Node nodeW2 = new Node(5, 1.0, 1.0);
-    Node nodeW3 = new Node(6, 1.0, 1.0);
+    Node nodeU1 = new Node(1, 1.0f, 1.0f);
+    Node nodeU2 = new Node(2, 1.0f, 1.0f);
+    Node nodeV = new Node(3, 1.0f, 1.0f);
+    Node nodeW1 = new Node(4, 1.0f, 1.0f);
+    Node nodeW2 = new Node(5, 1.0f, 1.0f);
+    Node nodeW3 = new Node(6, 1.0f, 1.0f);
 
     rn.addNodeToGraph(nodeU1);
     rn.addNodeToGraph(nodeU2);
@@ -373,9 +373,9 @@ public class ContractionHiearchiesTest {
     RoadNetwork rn = createSampleGraph();
     ContractionHierarchies ch = new ContractionHierarchies(rn);
     ch.computeRandomNodeOrdering();
-    List<Integer> randomPosNodeIds = ch.getNodeOrdering();
-    List<Integer> realOrdering = rn.getNodeIds();
-    Map<Integer, Integer> orderingMap = ch.getNodeOrderingMap();
+    List<Long> randomPosNodeIds = ch.getNodeOrdering();
+    List<Long> realOrdering = rn.getNodeIds();
+    Map<Long, Integer> orderingMap = ch.getNodeOrderingMap();
 
     System.out.println(realOrdering);
     System.out.println(randomPosNodeIds);
@@ -385,7 +385,7 @@ public class ContractionHiearchiesTest {
     Assert.assertTrue(randomPosNodeIds.size() == realOrdering.size());
 
     for (int i = 0; i < randomPosNodeIds.size(); i++) {
-      Integer nodeId = randomPosNodeIds.get(i);
+      Long nodeId = randomPosNodeIds.get(i);
       Assert.assertEquals(orderingMap.get(nodeId), new Integer(i));
       realOrdering.remove(nodeId);
     }
@@ -404,9 +404,9 @@ public class ContractionHiearchiesTest {
     RoadNetwork rn = createSampleGraph();
     ContractionHierarchies ch = new ContractionHierarchies(rn);
     ch.computeNodeOrderingByEdgeDifference();
-    List<Integer> randomPosNodeIds = ch.getNodeOrdering();
-    List<Integer> realOrdering = rn.getNodeIds();
-    Map<Integer, Integer> orderingMap = ch.getNodeOrderingMap();
+    List<Long> randomPosNodeIds = ch.getNodeOrdering();
+    List<Long> realOrdering = rn.getNodeIds();
+    Map<Long, Integer> orderingMap = ch.getNodeOrderingMap();
 
     System.out.println(realOrdering);
     System.out.println(randomPosNodeIds);
@@ -416,7 +416,7 @@ public class ContractionHiearchiesTest {
     Assert.assertTrue(randomPosNodeIds.size() == realOrdering.size());
 
     for (int i = 0; i < randomPosNodeIds.size(); i++) {
-      Integer nodeId = randomPosNodeIds.get(i);
+      Long nodeId = randomPosNodeIds.get(i);
       Assert.assertEquals(orderingMap.get(nodeId), new Integer(i));
       realOrdering.remove(nodeId);
     }
@@ -482,7 +482,7 @@ public class ContractionHiearchiesTest {
     System.out.println(rn.getNodeIds());
 
     // we have to set manually the nodeOrdering list
-    List<Integer> ordering = new ArrayList();
+    List<Long> ordering = new ArrayList();
     ordering.add(rn.getNodeIds().get(1));
     ordering.add(rn.getNodeIds().get(0));
     ordering.add(rn.getNodeIds().get(2));
@@ -530,20 +530,20 @@ public class ContractionHiearchiesTest {
 
     // we have to set manually the nodeOrdering list
     // as in the lecture.
-    List<Integer> ordering = new ArrayList();
-    ordering.add(1);
-    ordering.add(2);
-    ordering.add(13);
-    ordering.add(11);
-    ordering.add(10);
-    ordering.add(7);
-    ordering.add(8);
-    ordering.add(3);
-    ordering.add(5);
-    ordering.add(6);
-    ordering.add(9);
-    ordering.add(12);
-    ordering.add(4);
+    List<Long> ordering = new ArrayList();
+    ordering.add(1L);
+    ordering.add(2L);
+    ordering.add(13L);
+    ordering.add(11L);
+    ordering.add(10L);
+    ordering.add(7L);
+    ordering.add(8L);
+    ordering.add(3L);
+    ordering.add(5L);
+    ordering.add(6L);
+    ordering.add(9L);
+    ordering.add(12L);
+    ordering.add(4L);
 
     ch.setNodeOrdering(ordering);
 
@@ -586,20 +586,20 @@ public class ContractionHiearchiesTest {
 
     // we have to set manually the nodeOrdering list
     // as in the lecture.
-    List<Integer> ordering = new ArrayList();
-    ordering.add(1);
-    ordering.add(2);
-    ordering.add(13);
-    ordering.add(11);
-    ordering.add(10);
-    ordering.add(7);
-    ordering.add(8);
-    ordering.add(3);
-    ordering.add(5);
-    ordering.add(6);
-    ordering.add(9);
-    ordering.add(12);
-    ordering.add(4);
+    List<Long> ordering = new ArrayList();
+    ordering.add(1L);
+    ordering.add(2L);
+    ordering.add(13L);
+    ordering.add(11L);
+    ordering.add(10L);
+    ordering.add(7L);
+    ordering.add(8L);
+    ordering.add(3L);
+    ordering.add(5L);
+    ordering.add(6L);
+    ordering.add(9L);
+    ordering.add(12L);
+    ordering.add(4L);
 
     ch.setNodeOrdering(ordering);
 
@@ -653,9 +653,9 @@ public class ContractionHiearchiesTest {
     ContractionHierarchies ch = new ContractionHierarchies(rn);
     ch.precomputationLazy();
     
-    List<Integer> nodeOrdering = ch.getNodeOrdering();
+    List<Long> nodeOrdering = ch.getNodeOrdering();
     PriorityQueue<ContractedNode> pq = ch.getPriorityQueue();    
-    Map<Integer, Integer> orderingMap = ch.getNodeOrderingMap();
+    Map<Long, Integer> orderingMap = ch.getNodeOrderingMap();
     System.out.println(nodeOrdering);
     System.out.println(orderingMap);
     
@@ -664,7 +664,7 @@ public class ContractionHiearchiesTest {
         new Integer(rn.getNodeIds().size()));
     
     for (int i = 0; i < nodeOrdering.size(); i++) {
-      Integer nodeId =  nodeOrdering.get(i);
+      Long nodeId =  nodeOrdering.get(i);
       Assert.assertEquals(orderingMap.get(nodeId), new Integer(i));
     }       
   }
@@ -683,9 +683,9 @@ public class ContractionHiearchiesTest {
     ContractionHierarchies ch = new ContractionHierarchies(rn);
     ch.precomputationLazy();
     
-    List<Integer> nodeOrdering = ch.getNodeOrdering();
+    List<Long> nodeOrdering = ch.getNodeOrdering();
     PriorityQueue<ContractedNode> pq = ch.getPriorityQueue();    
-    Map<Integer, Integer> orderingMap = ch.getNodeOrderingMap();
+    Map<Long, Integer> orderingMap = ch.getNodeOrderingMap();
     System.out.println(nodeOrdering);
     System.out.println(orderingMap);
     
@@ -694,7 +694,7 @@ public class ContractionHiearchiesTest {
         new Integer(rn.getNodeIds().size()));
     
     for (int i = 0; i < nodeOrdering.size(); i++) {
-      Integer nodeId =  nodeOrdering.get(i);
+      Long nodeId =  nodeOrdering.get(i);
       Assert.assertEquals(orderingMap.get(nodeId), new Integer(i));
     }       
   }
@@ -713,8 +713,8 @@ public class ContractionHiearchiesTest {
     DijkstraAlgorithm dij = new DijkstraAlgorithm(rn);
     ContractionHierarchies ch = new ContractionHierarchies(rn);
 
-    int node1 = rn.getRandomNodeId();
-    int node2 = rn.getRandomNodeId();
+    long node1 = rn.getRandomNodeId();
+    long node2 = rn.getRandomNodeId();
     Integer spdij = dij.computeShortestPath(node1, node2);
     Integer spch = ch.computeShortestPath(node1, node2);
 

@@ -14,7 +14,7 @@ public class NodeTest {
    */
   @Test
   public void testNode() {
-    Node testNode = new Node(1, 1.0, 1.0);
+    Node testNode = new Node(1, 1.0f, 1.0f);
     assertNotNull(testNode);
     
     String representation = new String("(1|1.0|1.0)");
@@ -29,9 +29,9 @@ public class NodeTest {
    */
   @Test
   public void testGetId() {
-    Node testNode1 = new Node(1, 1.0, 1.0);
-    Integer nodeId = new Integer(1);
-    Assert.assertEquals(nodeId, testNode1.getId());
+    Node testNode1 = new Node(1, 1.0f, 1.0f);
+    Long nodeId = new Long(1);
+    Assert.assertEquals(nodeId, new Long(testNode1.getId()));
   }
   
   /**
@@ -39,8 +39,8 @@ public class NodeTest {
    */
   @Test
   public void testGetLongitude() {
-    Node testNode = new Node(1, 1.0, 1.0);
-    Double longitude = new Double(1.0);
+    Node testNode = new Node(1, 1.0f, 1.0f);
+    Float longitude = new Float(1.0f);
     Assert.assertEquals(longitude, testNode.getLongitude());
   }
   
@@ -49,8 +49,8 @@ public class NodeTest {
    */
   @Test
   public void testGetLatitude() {
-    Node testNode = new Node(1, 1.0, 2.0);
-    Double latitude = new Double(2.0);
+    Node testNode = new Node(1, 1.0f, 2.0f);
+    Float latitude = new Float(2.0f);
     Assert.assertEquals(latitude, testNode.getLongitude());
   }
 }

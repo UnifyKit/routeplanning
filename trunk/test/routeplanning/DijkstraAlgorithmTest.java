@@ -33,12 +33,12 @@ public class DijkstraAlgorithmTest {
    */
   public RoadNetwork createSampleGraph() {
     RoadNetwork rn = new RoadNetwork();
-    Node node0 = new Node(0, 1.0, 1.0);
-    Node node1 = new Node(1, 1.0, 1.0);
-    Node node2 = new Node(2, 1.0, 1.0);
-    Node node3 = new Node(3, 1.0, 1.0);
-    Node node4 = new Node(4, 1.0, 1.0);
-    Node node5 = new Node(5, 1.0, 1.0);
+    Node node0 = new Node(0, 1.0f, 1.0f);
+    Node node1 = new Node(1, 1.0f, 1.0f);
+    Node node2 = new Node(2, 1.0f, 1.0f);
+    Node node3 = new Node(3, 1.0f, 1.0f);
+    Node node4 = new Node(4, 1.0f, 1.0f);
+    Node node5 = new Node(5, 1.0f, 1.0f);
 
     Arc newArc00 = new Arc(node0, 0);
     Arc newArc01 = new Arc(node1, 1);
@@ -108,9 +108,9 @@ public class DijkstraAlgorithmTest {
     rn.addAdjacentArc(node5, newArc54);
 
     // Adding irrelevant nodes:
-    Node nodex = new Node(100, 1.0, 1.0);
-    Node nodey = new Node(101, 1.0, 1.0);
-    Node nodez = new Node(105, 1.0, 1.0);
+    Node nodex = new Node(100, 1.0f, 1.0f);
+    Node nodey = new Node(101, 1.0f, 1.0f);
+    Node nodez = new Node(105, 1.0f, 1.0f);
 
     rn.addNodeToGraph(nodex);
     rn.addNodeToGraph(nodey);
@@ -139,30 +139,30 @@ public class DijkstraAlgorithmTest {
     RoadNetwork rn = createSampleGraph();
     DijkstraAlgorithm alg = new DijkstraAlgorithm(rn);
     alg.computeShortestPath(0, -1);
-    Map<Integer, Integer> visitedNodes = alg.getVisitedNodes();
+    Map<Long, Integer> visitedNodes = alg.getVisitedNodes();
     System.out.println("SIZE OF VISITED NODES" + visitedNodes.size());
     Assert.assertTrue("Visited nodes is not of the expected size",
         visitedNodes.size() == 6);
 
     boolean conformsResult = true;
 
-    if (visitedNodes.get(1) != 1) {
+    if (visitedNodes.get(1L) != 1) {
       conformsResult = false;
     }
 
-    if (visitedNodes.get(2) != 4) {
+    if (visitedNodes.get(2L) != 4) {
       conformsResult = false;
     }
 
-    if (visitedNodes.get(3) != 2) {
+    if (visitedNodes.get(3L) != 2) {
       conformsResult = false;
     }
 
-    if (visitedNodes.get(4) != 3) {
+    if (visitedNodes.get(4L) != 3) {
       conformsResult = false;
     }
 
-    if (visitedNodes.get(5) != 4) {
+    if (visitedNodes.get(5L) != 4) {
       conformsResult = false;
     }
 
@@ -177,19 +177,19 @@ public class DijkstraAlgorithmTest {
     RoadNetwork rn = createSampleGraph();
     DijkstraAlgorithm alg = new DijkstraAlgorithm(rn);
     alg.computeShortestPath(0, 4);
-    Map<Integer, Integer> visitedNodes = alg.getVisitedNodes();
+    Map<Long, Integer> visitedNodes = alg.getVisitedNodes();
 
     boolean conformsResult = true;
 
-    if (visitedNodes.get(1) != 1) {
+    if (visitedNodes.get(1L) != 1) {
       conformsResult = false;
     }
 
-    if (visitedNodes.get(3) != 2) {
+    if (visitedNodes.get(3L) != 2) {
       conformsResult = false;
     }
 
-    if (visitedNodes.get(4) != 3) {
+    if (visitedNodes.get(4L) != 3) {
       conformsResult = false;
     }
 
@@ -249,15 +249,15 @@ public class DijkstraAlgorithmTest {
     // Source node0, Target node4
 
     RoadNetwork rn = new RoadNetwork();
-    Node node0 = new Node(0, 49.3413853, 7.3014897);
-    Node node1 = new Node(1, 49.3407084, 7.3006280);
-    Node node2 = new Node(2, 49.3406105, 7.3004165);
-    Node node3 = new Node(3, 49.3407516, 7.2998333);
-    Node node4 = new Node(4, 49.3401466, 7.3997222);
-    Node node5 = new Node(5, 49.3401942, 7.2998333);
-    Node node6 = new Node(6, 49.3401942, 7.2998333);
-    Node node7 = new Node(7, 49.3401942, 7.2998333);
-    Node node8 = new Node(8, 49.3401942, 7.2998333);
+    Node node0 = new Node(0, 49.3413853f, 7.3014897f);
+    Node node1 = new Node(1, 49.3407084f, 7.3006280f);
+    Node node2 = new Node(2, 49.3406105f, 7.3004165f);
+    Node node3 = new Node(3, 49.3407516f, 7.2998333f);
+    Node node4 = new Node(4, 49.3401466f, 7.3997222f);
+    Node node5 = new Node(5, 49.3401942f, 7.2998333f);
+    Node node6 = new Node(6, 49.3401942f, 7.2998333f);
+    Node node7 = new Node(7, 49.3401942f, 7.2998333f);
+    Node node8 = new Node(8, 49.3401942f, 7.2998333f);
 
     Arc arc01 = new Arc(node1, 2);
     Arc arc05 = new Arc(node5, 1);
