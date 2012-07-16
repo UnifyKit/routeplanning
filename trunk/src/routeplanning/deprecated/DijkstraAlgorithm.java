@@ -92,8 +92,9 @@ public class DijkstraAlgorithm {
       //Add adjacent nodes of source -> activeNodes
       for (int i = 0; i < adjacentsArcs.get(pos).size(); i++) {
         if (visitedNodeMarks.get(posInGraph(
-          adjacentsArcs.get(pos).get(i).headNode.getId())) == null) {
-          activeNodesId.add(adjacentsArcs.get(pos).get(i).headNode.getId());
+          (int) adjacentsArcs.get(pos).get(i).headNode.getId())) == null) {
+          activeNodesId.add((int) adjacentsArcs.get(pos).get(i).
+              headNode.getId());
           activeNodesCost.add(shortestPathCost 
               + adjacentsArcs.get(pos).get(i).cost);    
           noAdjacentNodes = true;
@@ -120,17 +121,18 @@ public class DijkstraAlgorithm {
       
       //calcular distancias y escoger la mejor 
       //despues poner testNode como settled
-      adjArcsTestNode = adjacentsArcs.get(this.graph.getNodeIds().indexOf(testNode));
+      adjArcsTestNode = adjacentsArcs.get(this.graph.
+          getNodeIds().indexOf(testNode));
       //System.out.println("adjacentArcsTestNode: " 
       //+ adjArcsTestNode.toString());
       minDist = Integer.MAX_VALUE;
       for (int i = 0; i < adjArcsTestNode.size(); i++) {
         if (visitedNodeMarks.get(posInGraph(
-            adjArcsTestNode.get(i).headNode.getId())) == null) {
+            (int) adjArcsTestNode.get(i).headNode.getId())) == null) {
           distToAdjNode = shortestPathCost + adjArcsTestNode.get(i).cost;
           if (minDist > distToAdjNode) {
             minDist = distToAdjNode;
-            minDistNode = adjArcsTestNode.get(i).headNode.getId();
+            minDistNode = (int) adjArcsTestNode.get(i).headNode.getId();
             minValueKey = i; 
           }  
         }
