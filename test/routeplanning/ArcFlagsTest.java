@@ -23,7 +23,7 @@ public class ArcFlagsTest {
     rn.readFromOsmFile("E:/Documents/UNI/SS12/Efficient Route Planning/"
       + "groupRepository/src/routeplanning/resources/saarland_reduced.osm");
     ArcFlagsAlgorithm afg = new ArcFlagsAlgorithm(rn);
-    int targetNodeId = rn
+    long targetNodeId = rn
         .getRandomNodeIdWithinRegion(49.20, 49.25, 6.95, 7.05);
     Node targetNode = rn.getMapNodeId().get(targetNodeId);
     Assert.assertTrue(targetNode.getLatitude() > 49.20);

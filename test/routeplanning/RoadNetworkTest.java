@@ -31,7 +31,7 @@ public class RoadNetworkTest {
   @Test
   public void testRoadNetwork() {
     RoadNetwork rn = new RoadNetwork();
-    List<Integer> nodes =  rn.getNodeIds();
+    List<Long> nodes =  rn.getNodeIds();
     List<List<Arc>> adjacentArcs = rn.getAdjacentArcs();
     Assert.assertTrue("Node's structure was created", nodes.size() >= 0);
     Assert.assertTrue("Arc's structure was created", adjacentArcs.size() >= 0);
@@ -42,10 +42,10 @@ public class RoadNetworkTest {
    */
   @Test
   public void testSetGetNodes() {
-    List<Integer> testNodes = new ArrayList<Integer>();
+    List<Long> testNodes = new ArrayList<Long>();
     //Adds 5 elements to the list
     for (int i = 0; i < 5; i++) {
-      testNodes.add(i);
+      testNodes.add(new Long(i));
     }
     RoadNetwork rn = new RoadNetwork();
     rn.setNodes(testNodes);
@@ -64,7 +64,7 @@ public class RoadNetworkTest {
       for (Integer k = 0; k < 3; k++) {
         Integer nodeId = Integer.parseInt(
           new String(i.toString() + k.toString()));
-        Arc newArc = new Arc(new Node(nodeId, 1.0, 1.0), 1);
+        Arc newArc = new Arc(new Node(nodeId, 1.0f, 1.0f), 1);
         arcs.add(newArc);
       }
       testAdjArcs.add(arcs);
@@ -90,12 +90,12 @@ public class RoadNetworkTest {
   public void testLectureGraph() {
     RoadNetwork rn = new RoadNetwork();
     
-    Node node0 = new Node(0, 1.0, 1.0);
-    Node node1 = new Node(1, 1.0, 1.0);
-    Node node2 = new Node(2, 1.0, 1.0);
-    Node node3 = new Node(3, 1.0, 1.0);
-    Node node4 = new Node(4, 1.0, 1.0);
-    Node node5 = new Node(5, 1.0, 1.0);
+    Node node0 = new Node(0, 1.0f, 1.0f);
+    Node node1 = new Node(1, 1.0f, 1.0f);
+    Node node2 = new Node(2, 1.0f, 1.0f);
+    Node node3 = new Node(3, 1.0f, 1.0f);
+    Node node4 = new Node(4, 1.0f, 1.0f);
+    Node node5 = new Node(5, 1.0f, 1.0f);
     
     Arc newArc00 = new Arc(node0, 0);
     Arc newArc01 = new Arc(node1, 1);
@@ -165,9 +165,9 @@ public class RoadNetworkTest {
     rn.addAdjacentArc(node5, newArc54);
     
     //Adding irrelevant nodes:
-    Node nodex = new Node(100, 1.0, 1.0);
-    Node nodey = new Node(101, 1.0, 1.0);
-    Node nodez = new Node(105, 1.0, 1.0);
+    Node nodex = new Node(100, 1.0f, 1.0f);
+    Node nodey = new Node(101, 1.0f, 1.0f);
+    Node nodez = new Node(105, 1.0f, 1.0f);
     
     rn.addNodeToGraph(nodex);
     rn.addNodeToGraph(nodey);
@@ -187,12 +187,12 @@ public class RoadNetworkTest {
   public void testAddNodeToGraph() {
     RoadNetwork rn = new RoadNetwork();
     
-    Node node0 = new Node(0, 1.0, 1.0);
-    Node node1 = new Node(1, 1.0, 1.0);
-    Node node2 = new Node(2, 1.0, 1.0);
-    Node node3 = new Node(3, 1.0, 1.0);
-    Node node4 = new Node(4, 1.0, 1.0);
-    Node node5 = new Node(5, 1.0, 1.0);
+    Node node0 = new Node(0, 1.0f, 1.0f);
+    Node node1 = new Node(1, 1.0f, 1.0f);
+    Node node2 = new Node(2, 1.0f, 1.0f);
+    Node node3 = new Node(3, 1.0f, 1.0f);
+    Node node4 = new Node(4, 1.0f, 1.0f);
+    Node node5 = new Node(5, 1.0f, 1.0f);
     
     Node nullNode = null;
     
@@ -203,13 +203,13 @@ public class RoadNetworkTest {
     rn.addNodeToGraph(node4);
     rn.addNodeToGraph(node5);
     
-    Map<Integer, Node> expectedNodeMap = new HashMap<Integer, Node>();
-    expectedNodeMap.put(0, node0);
-    expectedNodeMap.put(1, node1);
-    expectedNodeMap.put(2, node2);
-    expectedNodeMap.put(3, node3);
-    expectedNodeMap.put(4, node4);
-    expectedNodeMap.put(5, node5);    
+    Map<Long, Node> expectedNodeMap = new HashMap<Long, Node>();
+    expectedNodeMap.put(0L, node0);
+    expectedNodeMap.put(1L, node1);
+    expectedNodeMap.put(2L, node2);
+    expectedNodeMap.put(3L, node3);
+    expectedNodeMap.put(4L, node4);
+    expectedNodeMap.put(5L, node5);    
     
     Assert.assertEquals(expectedNodeMap, rn.getMapNodeId());
     
@@ -224,9 +224,9 @@ public class RoadNetworkTest {
   public void testAddAdjacentArc() {
     RoadNetwork rn = new RoadNetwork();
     
-    Node node0 = new Node(0, 1.0, 1.0);
-    Node node1 = new Node(1, 1.0, 1.0);
-    Node ghostNode = new Node(5, 1.0, 1.0);
+    Node node0 = new Node(0, 1.0f, 1.0f);
+    Node node1 = new Node(1, 1.0f, 1.0f);
+    Node ghostNode = new Node(5, 1.0f, 1.0f);
     Node nullNode = null;
     
     Arc arc00 = new Arc(node0, 0);
@@ -249,9 +249,9 @@ public class RoadNetworkTest {
     rn.addAdjacentArc(ghostNode, arcGhost0);
     
     //Adding irrelevant nodes:
-    Node nodex = new Node(100, 1.0, 1.0);
-    Node nodey = new Node(101, 1.0, 1.0);
-    Node nodez = new Node(1055, 1.0, 1.0);
+    Node nodex = new Node(100, 1.0f, 1.0f);
+    Node nodey = new Node(101, 1.0f, 1.0f);
+    Node nodez = new Node(1055, 1.0f, 1.0f);
     
     rn.addNodeToGraph(nodex);
     rn.addNodeToGraph(nodey);
@@ -272,12 +272,12 @@ public class RoadNetworkTest {
     //The first subgraph is the lecture graph:
     RoadNetwork rn = new RoadNetwork();
     
-    Node node0 = new Node(0, 1.0, 1.0);
-    Node node1 = new Node(1, 1.0, 1.0);
-    Node node2 = new Node(2, 1.0, 1.0);
-    Node node3 = new Node(3, 1.0, 1.0);
-    Node node4 = new Node(4, 1.0, 1.0);
-    Node node5 = new Node(5, 1.0, 1.0);
+    Node node0 = new Node(0, 1.0f, 1.0f);
+    Node node1 = new Node(1, 1.0f, 1.0f);
+    Node node2 = new Node(2, 1.0f, 1.0f);
+    Node node3 = new Node(3, 1.0f, 1.0f);
+    Node node4 = new Node(4, 1.0f, 1.0f);
+    Node node5 = new Node(5, 1.0f, 1.0f);
     
     Arc newArc00 = new Arc(node0, 0);
     Arc newArc01 = new Arc(node1, 1);
@@ -347,8 +347,8 @@ public class RoadNetworkTest {
     rn.addAdjacentArc(node5, newArc54);
     
     //The second component consists of only connected nodes:
-    Node node6 = new Node(6, 1.0, 1.0);
-    Node node7 = new Node(7, 1.0, 1.0);
+    Node node6 = new Node(6, 1.0f, 1.0f);
+    Node node7 = new Node(7, 1.0f, 1.0f);
     
     Arc newArc66 = new Arc(node6, 0);
     Arc newArc77 = new Arc(node7, 0);
@@ -362,8 +362,8 @@ public class RoadNetworkTest {
     rn.addAdjacentArc(node7, newArc76);
 
     //Third component
-    Node node8 = new Node(8, 1.0, 1.0);
-    Node node9 = new Node(9, 1.0, 1.0);
+    Node node8 = new Node(8, 1.0f, 1.0f);
+    Node node9 = new Node(9, 1.0f, 1.0f);
     
     Arc arc88 = new Arc(node8, 0);
     Arc arc89 = new Arc(node9, 10);
@@ -378,9 +378,9 @@ public class RoadNetworkTest {
     rn.addAdjacentArc(node9, arc99);
     
     //Adding irrelevant nodes:
-    Node nodex = new Node(100, 1.0, 1.0);
-    Node nodey = new Node(101, 1.0, 1.0);
-    Node nodez = new Node(105, 1.0, 1.0);
+    Node nodex = new Node(100, 1.0f, 1.0f);
+    Node nodey = new Node(101, 1.0f, 1.0f);
+    Node nodez = new Node(105, 1.0f, 1.0f);
     
     rn.addNodeToGraph(nodex);
     rn.addNodeToGraph(nodey);
@@ -433,8 +433,8 @@ public class RoadNetworkTest {
     
     RoadNetwork rn = new RoadNetwork();
     
-    Node node0 = new Node(0, 49.3705278, 7.3613889);
-    Node node1 = new Node(1, 49.3705278, 7.3611944);
+    Node node0 = new Node(0, 49.3705278f, 7.3613889f);
+    Node node1 = new Node(1, 49.3705278f, 7.3611944f);
     
     double distanceInKMeters = rn.getDistance2(node0, node1);
     
