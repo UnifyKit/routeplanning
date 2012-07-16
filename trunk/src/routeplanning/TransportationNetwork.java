@@ -436,7 +436,8 @@ public class TransportationNetwork implements Network {
           Arc waitingArc = new Arc(depNode, waitingCost);
           addAdjacentArc(arrNode, waitingArc);
           
-          Node transferNode = new Node(3, stationId, depTime + transferBuffer);
+          Node transferNode 
+            = new Node(3, stationId, depTime + transferBuffer);
           int transferCost = transferNode.getTime() - arrNode.getTime();
           Arc transferArc = new Arc(transferNode, transferCost);
           addNodeToGraph(transferNode);
