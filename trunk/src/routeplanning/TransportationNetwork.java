@@ -170,7 +170,7 @@ public class TransportationNetwork implements Network {
       numberOfArcs = numberOfArcs + arcs.size();
     }
 
-    return numberOfArcs / 2;
+    return numberOfArcs;
   }
 
   /**
@@ -211,6 +211,7 @@ public class TransportationNetwork implements Network {
           arcs.add(arc);
           nodeIdPosAdjArc.put(tailNodeId, adjacentArcs.size() - 1);
           nodeIds.add(tailNodeId);
+          addNodeToStationMap(tailNode.getStationId(), tailNode);
         } else {
           Integer position = nodeIdPosAdjArc.get(tailNodeId);
           boolean alreadyInserted = arcAlreadyInserted(position, arc
@@ -218,6 +219,15 @@ public class TransportationNetwork implements Network {
           if (!alreadyInserted) {
             adjacentArcs.get(position).add(arc);
           }
+        }
+        if (!nodeIdPosAdjArc.containsKey((arc.getHeadNode()).getId())) {
+          List<Arc> arcs = new ArrayList<Arc>();
+          adjacentArcs.add(arcs);
+          nodeIdPosAdjArc.put((arc.getHeadNode()).getId(),
+              adjacentArcs.size() - 1);
+          nodeIds.add((arc.getHeadNode()).getId());
+          addNodeToStationMap((arc.getHeadNode()).getStationId(),
+              arc.getHeadNode());
         }
       }
     }
@@ -275,12 +285,15 @@ public class TransportationNetwork implements Network {
   /**
    * Read graph from GTFS files in the given directory.
    */
-  public void readFromGtfsFiles(String directoryName) {
+  public void readFromGtfsFiles(String directoryName, boolean debug) {
 
     try {
       // Phase 1: it parses calendar.txt (in a hash set) to save
       // those service ids which contain the given weekday
       CsvParser calendarParser = new CsvParser(directoryName + "/calendar.txt");
+      if (debug) {
+        calendarParser = new CsvParser(directoryName + "/calendar_debug.txt");
+      }
       while (calendarParser.readNextLine()) {
         // In this case we want WEDNESDAY as a day which corresponds to column 3
         String wednesday = calendarParser.getItem(3);
@@ -293,6 +306,9 @@ public class TransportationNetwork implements Network {
       // Phase 2: it parses trips.txt (in a hash set) to save
       // those trip ids which contain a service id saved in serviceHSet
       CsvParser tripParser = new CsvParser(directoryName + "/trips.txt");
+      if (debug) {
+        tripParser = new CsvParser(directoryName + "/trips_debug.txt");
+      }
       while (tripParser.readNextLine()) {
         // The service id corresponds to column 1
         String serviceId = tripParser.getItem(1);
@@ -307,7 +323,12 @@ public class TransportationNetwork implements Network {
       // a mapping from the GTFS stop id strings to consecutive numerical
       // stop ids
       CsvParser stopsParser = new CsvParser(directoryName + "/stops.txt");
-      int consecutiveId = 0;
+      if (debug) {
+        stopsParser = new CsvParser(directoryName + "/stops_debug.txt");
+      }
+      // We skip the first line
+      stopsParser.readNextLine();
+      int consecutiveId = 1;
       while (stopsParser.readNextLine()) {
         // The station unique id (string) corresponds to column 0
         String stopId = stopsParser.getItem(0);
@@ -320,6 +341,10 @@ public class TransportationNetwork implements Network {
       // Assumes that the file is ordered by trip_id
       CsvParser stopTimesParser = new CsvParser(directoryName
           + "/stop_times.txt");
+      if (debug) {
+        stopTimesParser 
+          = new CsvParser(directoryName + "/stop_times_debug.txt");
+      }
 
       // Will save the current trip code
       String tripId = null;
@@ -331,6 +356,8 @@ public class TransportationNetwork implements Network {
       boolean newTrip = true;
       // We skip the first line
       stopTimesParser.readNextLine();
+
+      boolean firstIteration = true;
 
       while (stopTimesParser.readNextLine()) {
         if (newTrip) {
@@ -345,61 +372,82 @@ public class TransportationNetwork implements Network {
         String realStationId = stopTimesParser.getItem(3);
         Integer stationId = stationIdMap.get(realStationId);
         int depTime = convertTimeToSeconds(stopTimesParser.getItem(2));
+        int arrivalTime = convertTimeToSeconds(stopTimesParser.getItem(1));
 
         // we are in the same trip
         if (previousTripId.equals(tripId)) {
           newTrip = false;
 
           if (tripHSet.contains(tripId)) {
-//            System.out.println("Working on TRIP: " + tripId);
-            int arrivalTime = convertTimeToSeconds(stopTimesParser.getItem(1));
+            // System.out.println("Working on TRIP: " + tripId);
+            Node arrNode = new Node(1, stationId, arrivalTime);
 
-            // 0 if station is arrival, 1 if it's departure, 2 if it's
-            // transfer.
-            Node arrNode = new Node(0, stationId, arrivalTime);
-            Node incomingNode = outgoingNode;
-            int cost = arrivalTime - incomingNode.getTime();
-            // With this arc we connect one departure with one arrival
-            // (on two different lines)
-            Arc newArc = new Arc(arrNode, cost);
-            addNodeToGraph(arrNode);
-            addNodeToStationMap(stationId, arrNode);
+            // The case outgoingNode == null happens only when
+            // the file meets its first line
+            if (!firstIteration) {
+              // 0 if station is arrival, 1 if it's departure, 2 if it's
+              // transfer.
+              Node incomingNode = outgoingNode;
+              int cost = arrivalTime - incomingNode.getTime();
+              // With this arc we connect one departure with one arrival
+              // (on two different lines)
+              Arc newArc = new Arc(arrNode, cost);
+              addNodeToGraph(arrNode);
+              // addNodeToStationMap(stationId, arrNode);
+              addAdjacentArc(incomingNode, newArc);
+              // System.out.println(incomingNode + "-(" + cost + ")->" +
+              // arrNode);
+            }
 
-            addAdjacentArc(incomingNode, newArc);
-//            System.out.println(incomingNode + "-(" + cost + ")->" + arrNode);
-
-            Node depNode = new Node(1, stationId, depTime);
+            Node depNode = new Node(2, stationId, depTime);
             // This arc represents the waiting time at one station
             int waitingCost = depNode.getTime() - arrNode.getTime();
             Arc waitingArc = new Arc(depNode, waitingCost);
             addNodeToGraph(depNode);
-            addNodeToStationMap(stationId, depNode);
+            // addNodeToStationMap(stationId, depNode);
             addAdjacentArc(arrNode, waitingArc);
-//            System.out.println(arrNode + "-(0)->" + depNode);
+            // System.out.println(arrNode + "-(0)->" + depNode);
             // important for the next iteration
             outgoingNode = depNode;
 
             // Now we add the transfer node and the related arc
             Node transferNode 
-              = new Node(2, stationId, depTime + transferBuffer);
+              = new Node(3, stationId, depTime + transferBuffer);
             int transferCost = transferNode.getTime() - arrNode.getTime();
             Arc transferArc = new Arc(transferNode, transferCost);
             addNodeToGraph(transferNode);
-            addNodeToStationMap(stationId, transferNode);
+            // addNodeToStationMap(stationId, transferNode);
             addAdjacentArc(arrNode, transferArc);
-//            System.out.println(arrNode + "-(" + transferCost + ")->"
-//                + transferNode);
+            // System.out.println(arrNode + "-(" + transferCost + ")->"
+            // + transferNode);
 
           }
         } else {
           newTrip = true;
           // In the first iteration we only save the departure node for the
           // next iterations.
-          Node depNode = new Node(1, stationId, depTime);
+          Node depNode = new Node(2, stationId, depTime);
           addNodeToGraph(depNode);
-          addNodeToStationMap(stationId, depNode);
+          // addNodeToStationMap(stationId, depNode);
+          Node arrNode = new Node(1, stationId, arrivalTime);
+          addNodeToGraph(arrNode);
+
+          int waitingCost = depNode.getTime() - arrNode.getTime();
+          Arc waitingArc = new Arc(depNode, waitingCost);
+          addAdjacentArc(arrNode, waitingArc);
+          
+          Node transferNode = new Node(3, stationId, depTime + transferBuffer);
+          int transferCost = transferNode.getTime() - arrNode.getTime();
+          Arc transferArc = new Arc(transferNode, transferCost);
+          addNodeToGraph(transferNode);
+          // addNodeToStationMap(stationId, transferNode);
+          addAdjacentArc(arrNode, transferArc);
+          // System.out.println(arrNode + "-(" + transferCost + ")->"
+          // + transferNode);
+
           outgoingNode = depNode;
         }
+        firstIteration = false;
       }
 
       // Phase 5: for each station we order the nodes by time.
@@ -409,35 +457,36 @@ public class TransportationNetwork implements Network {
       // First I have to loop on each station
       for (Integer stationKey : nodesPerStation.keySet()) {
         List<Node> stationNodes = nodesPerStation.get(stationKey);
-        //The following comparator sorts the list with the given
-        //criteria.
+        // The following comparator sorts the list with the given
+        // criteria.
         Collections.sort(stationNodes, new NodeComparator());
-        
+        //System.out.println(stationNodes);
+
         Node lastTransferNode = null;
-        
-        //Now I have to connect the nodes as required
+
+        // Now I have to connect the nodes as required
         for (Node stationNode : stationNodes) {
-          //If the node is a transfer node 
-          if (stationNode.stationType() == 2) {            
-            //I have to save the last transfer node since
-            //I have to connect this transfer node with
-            //the previous one.
+          // If the node is a transfer node
+          if (stationNode.stationType() == 3) {
+            // I have to save the last transfer node since
+            // I have to connect this transfer node with
+            // the previous one.
             if (lastTransferNode != null) {
               int cost = stationNode.getTime() - lastTransferNode.getTime();
               Arc transToTransArc = new Arc(stationNode, cost);
               addAdjacentArc(lastTransferNode, transToTransArc);
             }
-            lastTransferNode = stationNode;            
-          } else if (stationNode.stationType() == 1) {
-            //I found a departure node. Now I have to connect
-            //the last transfer node found with it
-            if (lastTransferNode != null) {            
+            lastTransferNode = stationNode;
+          } else if (stationNode.stationType() == 2) {
+            // I found a departure node. Now I have to connect
+            // the last transfer node found with it
+            if (lastTransferNode != null) {
               int cost = stationNode.getTime() - lastTransferNode.getTime();
               Arc transToDepArc = new Arc(stationNode, cost);
               addAdjacentArc(lastTransferNode, transToDepArc);
             }
-          }                             
-        }        
+          }
+        }
       }
     } catch (FileNotFoundException e) {
       // TODO Auto-generated catch block
@@ -467,7 +516,7 @@ public class TransportationNetwork implements Network {
 
     while (remainingNodes.size() > 0) {
       remainingNodes.remove(new Long(nextNodeId));
-
+      // System.out.println(remainingNodes);
       List<Long> connectedNodes = new ArrayList<Long>();
       // List<List<Arc>> arcsOfComp = new ArrayList<List<Arc>>();
 
@@ -536,12 +585,13 @@ public class TransportationNetwork implements Network {
     String outputString = new String();
     for (int i = 0; i < nodeIds.size(); i++) {
       Long nodeId = nodeIds.get(i);
-      outputString = outputString + nodeId + "|";
+      outputString = outputString + mapNodeId.get(nodeId).toString() + "  |  ";
       List<Arc> arcs = getAdjacentArcs().get(i);
       if (!arcs.isEmpty()) {
         for (int k = 0; k < arcs.size(); k++) {
-          outputString = outputString + ((arcs.get(k)).getHeadNode()).getId()
-              + "-";
+          outputString = outputString
+              + mapNodeId.get(((arcs.get(k)).getHeadNode()).getId()).toString()
+              + "  -  ";
         }
       }
       outputString = outputString + "\n";
@@ -603,9 +653,9 @@ public class TransportationNetwork implements Network {
       } else if (timeNode1 < timeNode2) {
         return -1;
       } else {
-        if (stationType1 == 2 && stationType2 == 1) {
+        if (stationType1 == 3 && stationType2 == 2) {
           return -1;
-        } else if (stationType2 == 2 && stationType1 == 1) {
+        } else if (stationType2 == 3 && stationType1 == 2) {
           return +1;
         }
         return 0;

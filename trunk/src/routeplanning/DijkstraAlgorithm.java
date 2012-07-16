@@ -173,28 +173,31 @@ public class DijkstraAlgorithm {
 
       // search adjacent node with shortest distance
       adjArcsCurrentNode = this.graph.getNodeAdjacentArcs(currentNode.id);
-      if (adjArcsCurrentNode != null) {
-        for (int i = 0; i < adjArcsCurrentNode.size(); i++) {
-          Arc arc;
-          arc = adjArcsCurrentNode.get(i);
-          if (this.considerArcFlags && !arc.arcFlag) {
-            continue;
+      
+      if (adjArcsCurrentNode == null) {
+        System.out.println(currentNode.id);
+      }
+
+      for (int i = 0; i < adjArcsCurrentNode.size(); i++) {
+        Arc arc;
+        arc = adjArcsCurrentNode.get(i);
+        if (this.considerArcFlags && !arc.arcFlag) {
+          continue;
+        }
+        if (!isVisited(arc.headNode.getId())) {
+          distToAdjNode = currentNode.dist + arc.cost;
+          if (heuristic == null) {
+            activeNode = new ActiveNode(arc.headNode.getId(), distToAdjNode, 0,
+                currentNode.id);
+          } else {
+            // activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
+            // heuristic.get(this.graph.getNodeIds()
+            // .indexOf(arc.headNode.id)));
+            activeNode = new ActiveNode(arc.headNode.getId(), distToAdjNode,
+                heuristic.get(this.graph.getNodeIdPosAdjArc().get(
+                    arc.headNode.getId())), currentNode.id);
           }
-          if (!isVisited(arc.headNode.getId())) {
-            distToAdjNode = currentNode.dist + arc.cost;
-            if (heuristic == null) {
-              activeNode = new ActiveNode(arc.headNode.getId(), distToAdjNode,
-                  0, currentNode.id);
-            } else {
-              // activeNode = new ActiveNode(arc.headNode.id, distToAdjNode,
-              // heuristic.get(this.graph.getNodeIds()
-              //.indexOf(arc.headNode.id)));
-              activeNode = new ActiveNode(arc.headNode.getId(), distToAdjNode,
-                  heuristic.get(this.graph.getNodeIdPosAdjArc().get(
-                      arc.headNode.getId())), currentNode.id);
-            }
-            pq.add(activeNode);
-          }
+          pq.add(activeNode);
         }
       }
     }

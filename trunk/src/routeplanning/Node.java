@@ -37,8 +37,8 @@ public class Node {
   }
 
   /**
-   * Constructor 2 for creating an node with Station id. Station type 0 is
-   * departure station Station type 1 is arrival station Station type 2 is
+   * Constructor 2 for creating an node with Station id. Station type 1 is
+   * departure station. Station type 2 is arrival station. Station type 3 is
    * transit station
    * 
    * @param stationType
@@ -56,7 +56,7 @@ public class Node {
    * Get the ID of the node. Note: for transportation networks, the ID is made
    * of station type, station id and time (in seconds).
    * 
-   * For example: Arrival Station: 1 Station id: 70 Time: 14615
+   * For example: Arrival Station: 2 Station id: 70 Time: 14615
    * 
    * ID: 17014615
    */
@@ -95,7 +95,7 @@ public class Node {
   }
 
   /**
-   * Returns 0 if station is arrival, 1 if it's departure, 2 if it's transfer.
+   * Returns 1 if station is arrival, 2 if it's departure, 3 if it's transfer.
    * 
    * @return
    */
@@ -204,8 +204,8 @@ public class Node {
     }
 
     /**
-     * Getter of Station type Returns 0 if station is arrival, 1 if it's
-     * departure, 2 if it's transfer.
+     * Getter of Station type Returns 1 if station is arrival, 2 if it's
+     * departure, 3 if it's transfer.
      */
     public int getStationType() {
       return stationType;
@@ -256,11 +256,11 @@ public class Node {
         sb.append("@");
         sb.append(hoursCount + ":" + minutes + ":" + seconds);
         sb.append("/");
-        if (stationType == 0) {
+        if (stationType == 1) {
           sb.append("ARR");
-        } else if (stationType == 1) {
-          sb.append("DEP");
         } else if (stationType == 2) {
+          sb.append("DEP");
+        } else if (stationType == 3) {
           sb.append("TRA");
         }
       }
