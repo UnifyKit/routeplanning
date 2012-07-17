@@ -35,7 +35,7 @@ public class NewMainClass {
     DijkstraAlgorithm dijAlg = new DijkstraAlgorithm(network);
 
     for (int i = 0; i < numberOfExecutions; i++) {
-      // System.out.println("------------------------------------------------");
+      System.out.println("------------------------------------------------");
       Long sourceNodeId = network.getRandomNodeId();
       Long targetNodeId = network.getRandomNodeId();
       while (sourceNodeId == targetNodeId) {
@@ -52,9 +52,10 @@ public class NewMainClass {
       totalCost = totalCost + cost;
       totalExecutionTime = totalExecutionTime + (end - start);
 
-      // System.out.println("SHORTEST PATH FROM NODE: " + sourceNodeId
-      // + " TO NODE: " + targetNodeId + " :::: " + cost + " seconds");
-      // System.out.println("------------------------------------------------");
+      System.out.println("SHORTEST PATH FROM NODE: " 
+         + sourceNodeId
+         + " TO NODE: " + targetNodeId + " :::: " + cost + " seconds");
+      System.out.println("------------------------------------------------");
     }
 
     System.out.println("AVERAGE RUNNING TIME: "
@@ -74,7 +75,7 @@ public class NewMainClass {
         + "groupRepository/src/routeplanning/resources", false);
     System.out.println("****************************"
         + "*****************************");
-    NewMainClass.tryDijkstrasOnTransportationNet(tNet, 10);
+    NewMainClass.tryDijkstrasOnTransportationNet(tNet, 1000);
     System.out.println("****************************"
         + "*****************************");
   }
