@@ -48,7 +48,7 @@ public class TransportationNetworkTest {
     Assert.assertTrue(stationIdMap.get("401977").equals(new Integer(1831)));
     Assert.assertTrue(stationIdMap.size() == 1831);
     
-    System.out.println(testNetwork.asString());
+    //System.out.println(testNetwork.asString());
     
     System.out.println("--------------testHashSets--------------");
   }
