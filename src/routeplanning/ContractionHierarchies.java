@@ -139,6 +139,7 @@ public class ContractionHierarchies extends DijkstraAlgorithm {
     int numberOfAddedShortcuts = 0;
     computeNodeOrderingByEdgeDifference();
     System.out.println("computeNodeOrderingByEdgeDifference .... COMPLETED!");
+
 //    System.out.println(nodeOrdering);    
 //    System.out.println(orderOfNodeMap);
     
